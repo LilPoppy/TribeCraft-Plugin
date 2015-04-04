@@ -1,0 +1,16 @@
+name: TribeCraft
+main: com.HotFlow.TribeCraft.TribeCraft
+version: 1.0.0.0
+author: HotFlow
+depend: [Residence,Vault]
+commands:
+  Tribe:
+    description: Display all of the user commands.
+    aliases: tri
+    permission: Tribe.user
+    permission-message: You dont have permission to perform this command.
+  TribeAdmin:
+    description: Display all of the admin commands.
+    aliases: triadmin
+    permission: Tribe.admin
+    permission-message: You dont have permission to perform this command.
