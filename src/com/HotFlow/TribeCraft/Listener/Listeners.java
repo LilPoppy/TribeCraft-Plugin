@@ -6,11 +6,14 @@ import com.HotFlow.TribeCraft.Player.TribePlayer;
 import com.HotFlow.TribeCraft.PortalGate.PortalGate;
 import com.HotFlow.TribeCraft.PortalGate.PortalGateType;
 import com.HotFlow.TribeCraft.TribeCraft;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
+
 import static org.bukkit.Bukkit.getServer;
+
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -221,7 +224,8 @@ public class Listeners implements Listener
         TribeCraft.getPlayerManager().setPlayer(event.getPlayer().getName(), player);
     }
     
-    @EventHandler
+    @SuppressWarnings("deprecation")
+	@EventHandler
     public void onPlayerInteract(PlayerInteractEvent event)
     {
         if ((event.getPlayer().getItemInHand() != null) && (!event.getPlayer().getItemInHand().getType().equals(Material.AIR)))

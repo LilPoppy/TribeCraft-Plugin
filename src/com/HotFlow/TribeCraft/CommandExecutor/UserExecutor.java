@@ -3,8 +3,11 @@ package com.HotFlow.TribeCraft.CommandExecutor;
 import com.HotFlow.TribeCraft.Player.TribePlayer;
 import com.HotFlow.TribeCraft.TribeCraft;
 import com.HotFlow.TribeCraft.World.Area;
+
 import java.util.Random;
+
 import static org.bukkit.Bukkit.getServer;
+
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
@@ -17,7 +20,8 @@ import org.bukkit.entity.Player;
  */
 public class UserExecutor implements CommandExecutor
 {
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) 
+    @SuppressWarnings("deprecation")
+	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) 
     {
         if(sender instanceof Player)
         {
