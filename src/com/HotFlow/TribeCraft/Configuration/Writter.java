@@ -72,4 +72,18 @@ public class Writter
     {
         this.write(0, "传送门列表:");
     }
+    
+    public void genConfig()
+    {
+        this.write(0, "全局配置:");
+        this.write(1, "  用户指令:");
+        this.write(2, "    Survival:");
+        this.write(3, "      开启: true");
+        this.write(4, "      主城领地: Main");
+        this.write(5, "      子领地: main");
+        this.write(6, "      目的地可为领地: false");
+        this.write(7, "      随机最大X: 3000");
+        this.write(8, "      随机最大Y: 100");
+        this.write(9, "      随机最大Z: 3000");
+    }
 }

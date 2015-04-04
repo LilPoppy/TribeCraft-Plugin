@@ -1,30 +1,29 @@
-package com.HotFlow.TribeCraft.Event.Player;
+package com.HotFlow.TribeCraft.Event.Plugin;
 
-import com.HotFlow.TribeCraft.Player.TribePlayer;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
+import org.bukkit.plugin.Plugin;
 
 /**
- *
- * @author Jerry
+ * @author HotFlow
  */
-public class PlayerEvent extends Event
+public class PluginEvent extends Event
 {
     private static final HandlerList handlers = new HandlerList();
-    private final TribePlayer player;
+    private final Plugin plugin;
     
-    public PlayerEvent(TribePlayer player)
+    public PluginEvent(Plugin plugin)
     {
-        this.player = player;
+        this.plugin = plugin;
     }
     
     /**
-     * 获取玩家
+     * 获取插件
      * @return 
      */
-    public TribePlayer getPlayer()
+    public Plugin getPlugin()
     {
-        return this.player;
+        return this.plugin;
     }
     
     /**
@@ -44,5 +43,4 @@ public class PlayerEvent extends Event
     {
         return handlers;
     }
-
 }

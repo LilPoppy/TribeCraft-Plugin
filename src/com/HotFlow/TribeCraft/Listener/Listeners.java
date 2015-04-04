@@ -1,7 +1,9 @@
 package com.HotFlow.TribeCraft.Listener;
 
+import com.HotFlow.TribeCraft.Event.Plugin.PluginTimeChangeEvent;
 import com.HotFlow.TribeCraft.Inventory.DeathInventory;
 import com.HotFlow.TribeCraft.Inventory.Item.ArmorType;
+import com.HotFlow.TribeCraft.Player.Extension.PermissionAppointment;
 import com.HotFlow.TribeCraft.Player.TribePlayer;
 import com.HotFlow.TribeCraft.PortalGate.PortalGate;
 import com.HotFlow.TribeCraft.PortalGate.PortalGateType;
@@ -11,9 +13,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
-
-import static org.bukkit.Bukkit.getServer;
-
+import org.bukkit.Bukkit.getServer;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -27,7 +27,6 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerPortalEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
-import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.inventory.ItemStack;
 
@@ -312,7 +311,8 @@ public class Listeners implements Listener
                 }
                 else
                 {
-                    TribeCraft.getPermissionManager().playerAdd(event.getPlayer(), "Tribe.user.survival");
+                    TribeCraft.getPermissionManager().playerAdd(event.getPlayer(),"Tribe.user.survival");
+                    TribeCraft.getPlayerManager().getPlayer(event.getPlayer().getName()).setPermissionAppointment(new PermissionAppointment(10,"Tribe.user.survival"));
                     event.setCancelled(true);
                 }
 
@@ -320,67 +320,55 @@ public class Listeners implements Listener
                 {
                     event.getPlayer().performCommand(command);
                 }
-                
-                TribeCraft.getPermissionManager().playerRemove(event.getPlayer(), "Tribe.user.survival");
             }
         }
     }
     
     @EventHandler
-    public void onPlayerMoveEvent(PlayerMoveEvent event)
+    public void onPlayerMove(PlayerMoveEvent event)
     {
         TribePlayer player = TribeCraft.getPlayerManager().getPlayer(event.getPlayer().getName());
-        if((event.getFrom().getX() != event.getTo().getX()) || (event.getFrom().getZ() != event.getTo().getZ()))
+        if(player.getTeleportingAppointment() != null)
         {
-            if(player.teleportingTask != 0)
+            if((event.getFrom().getX() != event.getTo().getX()) || (event.getFrom().getZ() != event.getTo().getZ()))
             {
-                getServer().getScheduler().cancelTask(player.teleportingTask);
-                player.teleportingTask = 0;
-                player.setTeleportingTime(10);
+                player.setTeleportingAppointment(null);
                 player.getCraftPlayer().sendMessage(ChatColor.GOLD + "已取消传送!");
             }
         }
     }
     
     @EventHandler
-    public void onPlayerTeleport(PlayerTeleportEvent event)
+    public void onPluginTimeChange(PluginTimeChangeEvent event)
     {
-        if(event.getCause().equals(TeleportCause.UNKNOWN))
+        for(TribePlayer player : TribeCraft.getPlayerManager().getPlayers())
         {
-            if(TribeCraft.getPortalGateManager().getPortalGate(event.getPlayer().getLocation()) != null)
+            if(player.getTeleportingAppointment()!= null)
             {
-                PortalGate gate = TribeCraft.getPortalGateManager().getPortalGate(event.getFrom());
-                
-                if(!gate.getMessage().equals(""))
+                if(player.getTeleportingAppointment().getTime() > 0)
                 {
-                    event.getPlayer().sendMessage(gate.getMessage());
-                }
-                if(gate.getType().equals(PortalGateType.Location))
-                {
-                    if(gate.getTo() != null)
-                    {
-                        event.setTo(gate.getTo());
-                    }
-                }
-                else if(gate.getType().equals(PortalGateType.Random))
-                {
-                    Random random = new Random();
-                    int x = random.nextInt(3000) + 1;
-                    int y = 100;
-                    int z = random.nextInt(3000) + 1;
-
-                    Location location = new Location(event.getPlayer().getWorld(),x,y,z);
-
-                   event.getPlayer().teleport(location);
+                    player.getTeleportingAppointment().setTime(player.getTeleportingAppointment().getTime() - 1);
                 }
                 else
                 {
-                    event.setCancelled(true);
+                    player.getCraftPlayer().sendMessage(ChatColor.GOLD + "准备传送...");
+                    player.getCraftPlayer().teleport(player.getTeleportingAppointment().getLocation());
+                    player.setTeleportingAppointment(null);
                 }
 
-                for(String command : gate.getCommands())
+            }
+            
+            if(player.getPermissionAppointment() != null)
+            {
+                if(player.getPermissionAppointment().getTime() > 0)
                 {
-                    event.getPlayer().performCommand(command);
+                    TribeCraft.getPermissionManager().playerAdd(player.getCraftPlayer(), player.getPermissionAppointment().getPermission());
+                    player.getPermissionAppointment().setTime(player.getPermissionAppointment().getTime() - 1);
+                }
+                else
+                {
+                    TribeCraft.getPermissionManager().playerRemove(player.getCraftPlayer(), player.getPermissionAppointment().getPermission());
+                    player.setPermissionAppointment(null);
                 }
             }
         }
