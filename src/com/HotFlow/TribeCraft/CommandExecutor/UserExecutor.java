@@ -1,7 +1,7 @@
 package com.HotFlow.TribeCraft.CommandExecutor;
 
-import com.HotFlow.TribeCraft.Player.Extension.TeleportAppointment;
 import com.HotFlow.TribeCraft.Player.TribePlayer;
+import com.HotFlow.TribeCraft.Player.Extension.TeleportAppointment;
 import com.HotFlow.TribeCraft.TribeCraft;
 import com.HotFlow.TribeCraft.World.Area;
 
@@ -23,7 +23,6 @@ import org.bukkit.entity.Player;
  */
 public class UserExecutor implements CommandExecutor
 {
-    @SuppressWarnings("deprecation")
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) 
     {
         if(sender instanceof Player)
