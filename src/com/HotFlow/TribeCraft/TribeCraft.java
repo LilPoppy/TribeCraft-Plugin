@@ -3,9 +3,11 @@ package com.HotFlow.TribeCraft;
 import com.HotFlow.TribeCraft.Configuration.TribeConfiguration;
 import com.HotFlow.TribeCraft.Configuration.Writter;
 import com.HotFlow.TribeCraft.Manager.PlayerManager;
+import com.HotFlow.TribeCraft.Manager.PluginManager;
 import com.HotFlow.TribeCraft.Manager.PortalGateManager;
 import com.HotFlow.TribeCraft.PortalGate.PortalGate;
 import com.HotFlow.TribeCraft.PortalGate.PortalGateType;
+import com.HotFlow.TribeCraft.Timer.ServerTimer;
 import com.HotFlow.TribeCraft.World.Area;
 import com.bekvon.bukkit.residence.Residence;
 import com.bekvon.bukkit.residence.protection.ResidenceManager;
@@ -30,10 +32,13 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class TribeCraft extends JavaPlugin
 {
     public static TribeCraft plugin;
+    public static File configFile;
     public static File dataFile;
-    public static TribeConfiguration data = new TribeConfiguration();
+    public final static TribeConfiguration config = new TribeConfiguration();
+    public final static TribeConfiguration data = new TribeConfiguration();
     private static final PlayerManager playerManager = new PlayerManager();
     private static final PortalGateManager portalGateManager = new PortalGateManager();
+    private static PluginManager pluginManager;
     public static final Logger logger = Logger.getLogger("HotFlow");
     public static final String prefix = "[蛮族部落]";
     public static Residence residence;
@@ -41,14 +46,21 @@ public class TribeCraft extends JavaPlugin
     private static Economy economyManager;
     private static Permission permissionManager;
     private static Chat chatManager;
+    public static ServerTimer serverTimer;
     
     @Override
     public void onEnable()
     {
         TribeCraft.plugin = this;
+        
+        TribeCraft.configFile = new File(getDataFolder(),"config.yml");
         TribeCraft.dataFile = new File(getDataFolder(),"data.yml");
         
+        TribeCraft.serverTimer = new ServerTimer();
+        TribeCraft.serverTimer.getTimerTask().start();
+        
         this.loadData();
+        this.loadConfig();
         
         if(TribeCraft.setupResidence())
         {
@@ -119,6 +131,15 @@ public class TribeCraft extends JavaPlugin
     public static PortalGateManager getPortalGateManager()
     {
         return TribeCraft.portalGateManager;
+    }
+    
+    /**
+     * 获取插件信息管理中心
+     * @return 
+     */
+    public static PluginManager getPluginManager()
+    {
+        return TribeCraft.pluginManager;
     }
     
     /**
@@ -289,6 +310,42 @@ public class TribeCraft extends JavaPlugin
         {
             TribeCraft.logger.info(ex.toString());
         }
+    }
+    
+    /**
+     * 载入配置
+     */
+    private void loadConfig()
+    {
+        if(!TribeCraft.configFile.exists())
+        {
+            try
+            {
+                TribeCraft.configFile.getParentFile().mkdir();
+                TribeCraft.configFile.createNewFile();
+                Writter writter = new Writter(TribeCraft.configFile);
+                writter.genConfig();
+            }
+            catch(IOException ex)
+            {
+                TribeCraft.logger.info(ex.toString());
+            } 
+        }
+        
+        try
+        {
+            TribeCraft.config.load(TribeCraft.configFile);
+        }
+        catch(IOException ex)
+        {
+            TribeCraft.logger.info(ex.toString());
+        }
+        catch (InvalidConfigurationException ex) 
+        {
+            Logger.getLogger(TribeCraft.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        TribeCraft.pluginManager = new PluginManager();
     }
     
     /**

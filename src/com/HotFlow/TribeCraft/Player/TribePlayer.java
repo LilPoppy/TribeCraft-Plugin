@@ -1,6 +1,8 @@
 package com.HotFlow.TribeCraft.Player;
 
 import com.HotFlow.TribeCraft.Inventory.DeathInventory;
+import com.HotFlow.TribeCraft.Player.Extension.PermissionAppointment;
+import com.HotFlow.TribeCraft.Player.Extension.TeleportAppointment;
 import com.HotFlow.TribeCraft.Player.VIP.VIP;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -19,8 +21,8 @@ public class TribePlayer
     private Location gateLoc2;
     private final List<VIP> vips = new ArrayList<VIP>();
     private DeathInventory deathInventory = new DeathInventory();
-    private int teleportingTime = 10;
-    public int teleportingTask;
+    private TeleportAppointment teleportAppointment;
+    private PermissionAppointment permissionAppointment;
     
     public TribePlayer(Player player)
     {
@@ -28,30 +30,48 @@ public class TribePlayer
     }
     
     /**
-     * 设置传送倒计时剩余时间
-     * @param second 
-     */
-    public void setTeleportingTime(int second)
-    {
-        this.teleportingTime = second;
-    }
-    
-    /**
-     * 获取传送倒计时剩余时间
-     * @return 
-     */
-    public int getTeleportingTime()
-    {
-        return this.teleportingTime;
-    }
-    
-    /**
-     * 返回Player
+     * 获取 org.bukkit.craftbukkit.v1_7_R4.entity.CraftPlayer
      * @return 
      */
     public Player getCraftPlayer()
     {
         return this.player;
+    }
+    
+    /**
+     * 设置定期传送
+     * @param appointment
+     */
+    public void setTeleportingAppointment(TeleportAppointment appointment)
+    {
+        this.teleportAppointment = appointment;
+    }
+    
+    /**
+     * 获取定期传送
+     * @return 
+     */
+    public TeleportAppointment getTeleportingAppointment()
+    {
+        return this.teleportAppointment;
+    }
+    
+    /**
+     * 设置定期权限
+     * @param appointment 
+     */
+    public void setPermissionAppointment(PermissionAppointment appointment)
+    {
+        this.permissionAppointment = appointment;
+    }
+    
+    /**
+     * 获取定期权限
+     * @return 
+     */
+    public PermissionAppointment getPermissionAppointment()
+    {
+        return this.permissionAppointment;
     }
     
     /**
@@ -125,6 +145,4 @@ public class TribePlayer
     {
         return this.deathInventory;
     }
-    
-
 }
