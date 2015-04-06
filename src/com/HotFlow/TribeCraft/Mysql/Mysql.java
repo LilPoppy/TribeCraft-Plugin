@@ -2,9 +2,8 @@ package com.HotFlow.TribeCraft.Mysql;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.ResultSet;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.sql.Statement;
 
 
 /**
@@ -17,12 +16,17 @@ public class Mysql {
 	  public String username;
 	  public String password;
 	  public int port;
+	  public String schema;
+	  public String table;
 	  private Connection conn;
-	  public Mysql(String ip,int port,String username,String password){
+	  public Mysql(String ip,int port,String username,String password,String schema,String table){
 		  this.ip=ip;
 		  this.port=port;
 		  this.username=username;
 		  this.password=password;
+		  this.schema=schema;
+		  this.table=table;
+		  
 	  }
 	  /**
 	   * 连接mysql
@@ -31,11 +35,10 @@ public class Mysql {
 	   * 
 	   */
 	  public Boolean connect(){
-		  String url=ip+":"+port;
 		  String driver = "com.mysql.jdbc.Driver"; 
 		try{
 		  Class.forName(driver);
-		  conn = DriverManager.getConnection(url, username, password); 
+		  conn = DriverManager.getConnection("jdbc:mysql://"+ip+port+"/"+schema,username,password); 
 			if (conn.isClosed()){
 				  return false;
 			  }else{
@@ -46,24 +49,21 @@ public class Mysql {
 		} 
 		return false;
 	  }
-	  /**
-	   * 执行指令
-	   * @param command
-	   * @return 返回信息
-	   */
-	public ResultSet executeCommand(String command){
-		  Statement statement;
-		try {
-			statement = conn.createStatement();
-			return statement.executeQuery(command);
+      public boolean createTalbe(String name,Slot[] slots){
+    	  StringBuilder sb=new StringBuilder();
+    	  for (int i=0;i<slots.length;i++){
+    		  Slot slot=slots[i];
+    		  sb.append(slot.flag);
+    		  if (i<slots.length-1){
+    			  sb.append(", ");
+    		  }
+    	  }
+    	  try {
+			PreparedStatement sql=this.conn.prepareStatement("CREATE TABLE "+this.schema+"."+this.table+"("+sb.toString()+");");
+			return sql.execute();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		return null;
-	  }
-	public ResultSet createDatabase(String name){
-	  String command="create database "+name;
-	  ResultSet rs=executeCommand(command);
-	  
-	}
+		return false;
+      }
 }
