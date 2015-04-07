@@ -3,6 +3,7 @@ package com.HotFlow.TribeCraft.Listener;
 import com.HotFlow.TribeCraft.Event.Plugin.PluginTimeChangeEvent;
 import com.HotFlow.TribeCraft.Inventory.DeathInventory;
 import com.HotFlow.TribeCraft.Inventory.Item.ArmorType;
+import com.HotFlow.TribeCraft.Permissions.Permissions;
 import com.HotFlow.TribeCraft.Player.Extension.PermissionAppointment;
 import com.HotFlow.TribeCraft.Player.TribePlayer;
 import com.HotFlow.TribeCraft.PortalGate.PortalGate;
@@ -66,19 +67,61 @@ public class Listeners implements Listener
             equiements.put(ArmorType.Boots, player.getCraftPlayer().getInventory().getBoots());
         }
         
+        if(!player.getCraftPlayer().hasPermission(new Permissions().deathSaveAll))
+        {
+            List<ItemStack> protectedItems = new ArrayList<ItemStack>();
+            
+            if(player.getVIPList().size() > 0)
+            {
+                player.getCraftPlayer().sendMessage("您的VIP等级为: " + player.getVIPList().get(0).getLevel());
+                player.getCraftPlayer().sendMessage("物品掉落机率: " + (player.getVIPList().get(0).getItemDropChance() * 100) + "%");
+                player.getCraftPlayer().sendMessage("装备掉落机率: " + (player.getVIPList().get(0).getArmorDropChance() * 100) + "%");
+                player.getCraftPlayer().sendMessage("经验掉落百分比: " + (player.getVIPList().get(0).getExpDropPercentage() * 100) + "%");
+                
+//                for(ItemStack item : items)
+//                {
+//                    for(int i = 1;i < item.getAmount();i++)
+//                    {
+//                        ItemStack newItem = item.clone();
+//                        newItem.setAmount(1);
+//                        if(Math.random() >= player.getVIPList().get(0).getItemDropChance())
+//                        {
+//                            inventory.items.add(newItem);
+//                            protectedItems.add(newItem);
+//                        }
+//                    }
+//                }
+            }
+            else
+            {
+                player.getCraftPlayer().sendMessage("您的VIP等级为: 0");
+                player.getCraftPlayer().sendMessage("物品掉落机率: " + (TribeCraft.config.getDouble("全局配置.死亡保护.普通用户.物品掉落机率") * 100) + "%");
+                player.getCraftPlayer().sendMessage("装备掉落机率: " + (TribeCraft.config.getDouble("全局配置.死亡保护.普通用户.装备掉落机率") * 100) + "%");
+                player.getCraftPlayer().sendMessage("经验掉落百分比: " + (TribeCraft.config.getDouble("全局配置.死亡保护.普通用户.经验掉落百分比") * 100) + "%");
+            }
+        }
+        
+        //旧版本
         if(player.getVIPList().size() > 0)
         {
             player.getCraftPlayer().sendMessage("您的VIP等级为: " + player.getVIPList().get(0).getLevel());
-            player.getCraftPlayer().sendMessage("每件物品的掉落机率为: " + (player.getVIPList().get(0).getChanceOfDrops() * 100) + "%");
+            player.getCraftPlayer().sendMessage("每件物品的掉落机率为: " + (player.getVIPList().get(0).getItemDropChance() * 100) + "%");
+            player.getCraftPlayer().sendMessage("每件装备的掉落机率为: " + (player.getVIPList().get(0).getArmorDropChance() * 100) + "%");
+            player.getCraftPlayer().sendMessage("总共经验掉落: " + (player.getVIPList().get(0).getExpDropPercentage() * 100) + "%");
             
             List<ItemStack> protectedItems = new ArrayList<ItemStack>();
             
             for(ItemStack item : items)
             {
-                if(Math.random() >= player.getVIPList().get(0).getChanceOfDrops())
-                {      
-                    inventory.items.add(item);
-                    protectedItems.add(item);
+                for(int i = 1;i < item.getAmount();i++)
+                {
+                    ItemStack newItem = item.clone();
+                    newItem.setAmount(1);
+                    if(Math.random() >= player.getVIPList().get(0).getItemDropChance())
+                    {
+                        inventory.items.add(newItem);
+                        protectedItems.add(newItem);
+                    }
                 }
             }
             
@@ -86,11 +129,25 @@ public class Listeners implements Listener
             {
                 ItemStack armor = equiements.get(type);
                 
-                if(Math.random() >= player.getVIPList().get(0).getChanceOfDrops())
+                if(Math.random() >= player.getVIPList().get(0).getArmorDropChance())
                 {
                     inventory.equiments.put(type,armor);
                     protectedItems.add(armor);
                 }
+            }
+            
+            List<ItemStack> dropItems = new ArrayList<ItemStack>();
+            for(ItemStack item1 : protectedItems)
+            {
+                ItemStack dropItem = item1.clone();
+                for(ItemStack item2 : protectedItems)
+                {
+                    if(item1.equals(item2))
+                    {
+                        dropItem.setAmount(item1.getAmount() + item2.getAmount());
+                    }
+                }
+                dropItems.add(dropItem);
             }
             
             event.setKeepLevel(true);
@@ -98,12 +155,12 @@ public class Listeners implements Listener
             
             player.setDeathProtectedItems(inventory);
             
-            for(ItemStack pitem : protectedItems)
+            for(ItemStack ditem : dropItems)
             {
                 for(int i = 0;i < items.size();i++)
                 {
                     ItemStack item = items.get(i);
-                    if(item.equals(pitem))
+                    if(item.equals(ditem))
                     {
                         event.getDrops().remove(item);
                         break;
@@ -132,11 +189,19 @@ public class Listeners implements Listener
             
             for(ItemStack item : items)
             {
-                if(Math.random() >= 0.5)
+                ItemStack newItem = item.clone();
+                newItem.setAmount(1);
+                
+                for(int i = 0;i < item.getAmount();i++)
                 {
-                    inventory.items.add(item);
-                    protectedItems.add(item);
+                    if(Math.random() >= 0.5)
+                    {
+                        newItem.setAmount(newItem.getAmount() + 1);
+                    }
                 }
+                
+                inventory.items.add(item);
+                protectedItems.add(item);
             }
             
             for(ArmorType type : equiements.keySet())
