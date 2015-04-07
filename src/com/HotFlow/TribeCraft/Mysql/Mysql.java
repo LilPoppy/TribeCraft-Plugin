@@ -30,8 +30,7 @@ public class Mysql {
 	  }
 	  /**
 	   * 连接mysql
-	   * @return true 连接成功
-	   * false 连接失败
+	   * @return 是否成功
 	   * 
 	   */
 	  public Boolean connect(){
@@ -49,7 +48,12 @@ public class Mysql {
 		} 
 		return false;
 	  }
-      public boolean createTalbe(String name,Slot[] slots){
+	  /**
+	   * 创建表
+	   * @param slots
+	   * @return 是否成功
+	   */
+      public synchronized boolean createTalbe(String name,Slot[] slots){
     	  StringBuilder sb=new StringBuilder();
     	  for (int i=0;i<slots.length;i++){
     		  Slot slot=slots[i];
@@ -66,4 +70,21 @@ public class Mysql {
 		}
 		return false;
       }
+      
+      /**
+       * 添加数据
+       * @param key
+       * @param value
+       * @return 添加数量
+       */
+      public synchronized int insert(String key,String value){
+		try {
+			PreparedStatement sql=this.conn.prepareStatement("Insert into "+this.schema+" "+this.table+"("+key+")"+" vaule "+value+");");
+			sql.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return 0;
+      }
+      
 }
