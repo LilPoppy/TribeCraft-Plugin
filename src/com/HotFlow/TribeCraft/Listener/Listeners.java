@@ -1,5 +1,11 @@
 package com.HotFlow.TribeCraft.Listener;
 
+import com.HotFlow.TribeCraft.Event.Player.PlayerIncSackEvent;
+import com.HotFlow.TribeCraft.Event.Player.PlayerStoreExperienceEvent;
+import com.HotFlow.TribeCraft.Event.Player.PlayerStoreInventoryEvent;
+import com.HotFlow.TribeCraft.Event.Player.PlayerTeleportingMoveEvent;
+import com.HotFlow.TribeCraft.Event.Player.PlayerUseGateEvent;
+import com.HotFlow.TribeCraft.Event.Plugin.PluginTimeChangeEvent;
 import com.HotFlow.TribeCraft.Inventory.DeathInventory;
 import com.HotFlow.TribeCraft.Inventory.Item.ArmorType;
 import com.HotFlow.TribeCraft.Permissions.Permissions;
@@ -8,8 +14,10 @@ import com.HotFlow.TribeCraft.Player.TribePlayer;
 import com.HotFlow.TribeCraft.PortalGate.PortalGate;
 import com.HotFlow.TribeCraft.PortalGate.PortalGateType;
 import com.HotFlow.TribeCraft.TribeCraft;
+import com.HotFlow.TribeCraft.Utils.System.ISystem;
 import java.util.HashMap;
 import java.util.Random;
+import static org.bukkit.Bukkit.getServer;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -81,6 +89,9 @@ public class Listeners implements Listener
                 player.getCraftPlayer().sendMessage("装备掉落机率: " + (player.getVIPList().get(0).getArmorDropChance() * 100) + "%");
                 player.getCraftPlayer().sendMessage("经验掉落百分比: " + (player.getVIPList().get(0).getExpDropPercentage() * 100) + "%");
                 
+                player.setDeathProtectedExp((int) (player.getCraftPlayer().getTotalExperience() * player.getVIPList().get(0).getExpDropPercentage()));
+                event.setDroppedExp((int) (player.getCraftPlayer().getTotalExperience() * player.getVIPList().get(0).getExpDropPercentage()));
+                
                 for(ItemStack item : items.keySet())
                 {
                     ItemStack newItem = item.clone();
@@ -136,9 +147,8 @@ public class Listeners implements Listener
                 player.getCraftPlayer().sendMessage("装备掉落机率: " + (TribeCraft.config.getDouble("全局配置.死亡保护.普通用户.装备掉落机率") * 100) + "%");
                 player.getCraftPlayer().sendMessage("经验掉落百分比: " + (TribeCraft.config.getDouble("全局配置.死亡保护.普通用户.经验掉落百分比") * 100) + "%");
                 
-                event.getEntity().sendMessage("" + (int) (player.getCraftPlayer().getTotalExperience() * (TribeCraft.config.getDouble("全局配置.死亡保护.普通用户.经验掉落百分比"))));
+                player.setDeathProtectedExp((int) (player.getCraftPlayer().getTotalExperience() * (TribeCraft.config.getDouble("全局配置.死亡保护.普通用户.经验掉落百分比"))));
                 event.setDroppedExp((int) (player.getCraftPlayer().getTotalExperience() * (TribeCraft.config.getDouble("全局配置.死亡保护.普通用户.经验掉落百分比"))));
-                event.getEntity().setTotalExperience(500);
                 
                 for(ItemStack item : items.keySet())
                 {
@@ -217,32 +227,56 @@ public class Listeners implements Listener
     {
         final TribePlayer player  = TribeCraft.getPlayerManager().getPlayer(event.getPlayer().getName());
         player.getCraftPlayer().getInventory().clear();
-
-        for(ItemStack item : player.getDeathProtectedItems().items)
+        
+        PlayerStoreInventoryEvent event1 = new PlayerStoreInventoryEvent(player);
+        getServer().getPluginManager().callEvent(event1);
+        
+        if(!event1.isCancelled())
         {
-            event.getPlayer().getInventory().addItem(item);
+            for(ItemStack item : player.getDeathProtectedItems().items)
+            {
+                event.getPlayer().getInventory().addItem(item);
+            }
+
+            for(ArmorType type :  player.getDeathProtectedItems().equiments.keySet())
+            {
+                ItemStack armor = player.getDeathProtectedItems().equiments.get(type);
+
+                if(type == ArmorType.Helmet)
+                {
+                    event.getPlayer().getInventory().setHelmet(armor);
+                }
+                else if(type == ArmorType.Chestplate)
+                {
+                    event.getPlayer().getInventory().setChestplate(armor);
+                }
+                else if(type == ArmorType.Leggings)
+                {
+                    event.getPlayer().getInventory().setLeggings(armor);
+                }
+                else if(type == ArmorType.Boots)
+                {
+                    event.getPlayer().getInventory().setBoots(armor);
+                }
+            }
         }
         
-        for(ArmorType type :  player.getDeathProtectedItems().equiments.keySet())
+        PlayerStoreExperienceEvent event2 = new PlayerStoreExperienceEvent(player);
+        getServer().getPluginManager().callEvent(event2);
+        
+        if(!event2.isCancelled())
         {
-            ItemStack armor = player.getDeathProtectedItems().equiments.get(type);
-
-            if(type == ArmorType.Helmet)
+            player.addDelayTask(new DelayTask(1,"Experience")
             {
-                event.getPlayer().getInventory().setHelmet(armor);
-            }
-            else if(type == ArmorType.Chestplate)
-            {
-                event.getPlayer().getInventory().setChestplate(armor);
-            }
-            else if(type == ArmorType.Leggings)
-            {
-                event.getPlayer().getInventory().setLeggings(armor);
-            }
-            else if(type == ArmorType.Boots)
-            {
-                event.getPlayer().getInventory().setBoots(armor);
-            }
+                @Override
+                public void run()
+                {
+                    if(!player.getCraftPlayer().isDead() && player.getCraftPlayer().isOnline())
+                    {
+                        ISystem.experience.setTotalExperience(player.getCraftPlayer(), player.getDeathProtectedExp());
+                    }
+                }
+            });
         }
     }
     
@@ -272,8 +306,14 @@ public class Listeners implements Listener
                 {
                     if (event.getClickedBlock().getType() == Material.getMaterial(6))
                     {
-                      event.setCancelled(true);
-                      event.getPlayer().sendMessage("本服务器禁止使用骨粉对 " + Material.getMaterial(6).name() + " 进行催长!");
+                        PlayerIncSackEvent event1 = new PlayerIncSackEvent(TribeCraft.getPlayerManager().getPlayer(event.getPlayer().getName()));
+                        getServer().getPluginManager().callEvent(event1);
+                        
+                        if(event1.isCancelled())
+                        {
+                            event.setCancelled(true);
+                            event.getPlayer().sendMessage(ChatColor.RED + "本服务器禁止使用骨粉对 " + ChatColor.WHITE + Material.getMaterial(6).name() + ChatColor.RED + " 进行催长!");
+                        }
                     }
                 }
             }
@@ -311,6 +351,14 @@ public class Listeners implements Listener
             if(TribeCraft.getPortalGateManager().getPortalGate(event.getFrom()) != null)
             {
                 PortalGate gate = TribeCraft.getPortalGateManager().getPortalGate(event.getFrom());
+                
+                PlayerUseGateEvent event1 = new PlayerUseGateEvent(TribeCraft.getPlayerManager().getPlayer(event.getPlayer().getName()),gate);
+                getServer().getPluginManager().callEvent(event1);
+                
+                if(event1.isCancelled())
+                {
+                    return;
+                }
                 
                 if(!gate.getMessage().equals(""))
                 {
@@ -378,6 +426,14 @@ public class Listeners implements Listener
                 {
                     if((event.getFrom().getX() != event.getTo().getX()) || (event.getFrom().getZ() != event.getTo().getZ()))
                     {
+                        PlayerTeleportingMoveEvent event1 = new PlayerTeleportingMoveEvent(player);
+                        getServer().getPluginManager().callEvent(event1);
+                        
+                        if(!event1.isCancelled())
+                        {
+                            return;
+                        }
+                        
                         player.removeDelayTask(task);
                         player.getCraftPlayer().sendMessage(ChatColor.GOLD + "已取消传送!");
                         return;
@@ -385,5 +441,11 @@ public class Listeners implements Listener
                 }
             }
         }
+    }
+    
+    @EventHandler
+    public void onPluginTimeChange(PluginTimeChangeEvent event)
+    {
+        
     }
 }
