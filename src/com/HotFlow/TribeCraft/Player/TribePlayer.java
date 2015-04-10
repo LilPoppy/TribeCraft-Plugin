@@ -1,8 +1,7 @@
 package com.HotFlow.TribeCraft.Player;
 
 import com.HotFlow.TribeCraft.Inventory.DeathInventory;
-import com.HotFlow.TribeCraft.Player.Extension.PermissionAppointment;
-import com.HotFlow.TribeCraft.Player.Extension.TeleportAppointment;
+import com.HotFlow.TribeCraft.Player.Extension.DelayTask;
 import com.HotFlow.TribeCraft.Player.VIP.VIP;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -21,8 +20,7 @@ public class TribePlayer
     private Location gateLoc2;
     private final List<VIP> vips = new ArrayList<VIP>();
     private DeathInventory deathInventory = new DeathInventory();
-    private TeleportAppointment teleportAppointment;
-    private PermissionAppointment permissionAppointment;
+    private final List<DelayTask> delayTaskList = new ArrayList<DelayTask>();
     
     public TribePlayer(Player player)
     {
@@ -36,42 +34,6 @@ public class TribePlayer
     public Player getCraftPlayer()
     {
         return this.player;
-    }
-    
-    /**
-     * 设置定期传送
-     * @param appointment
-     */
-    public void setTeleportingAppointment(TeleportAppointment appointment)
-    {
-        this.teleportAppointment = appointment;
-    }
-    
-    /**
-     * 获取定期传送
-     * @return 
-     */
-    public TeleportAppointment getTeleportingAppointment()
-    {
-        return this.teleportAppointment;
-    }
-    
-    /**
-     * 设置定期权限
-     * @param appointment 
-     */
-    public void setPermissionAppointment(PermissionAppointment appointment)
-    {
-        this.permissionAppointment = appointment;
-    }
-    
-    /**
-     * 获取定期权限
-     * @return 
-     */
-    public PermissionAppointment getPermissionAppointment()
-    {
-        return this.permissionAppointment;
     }
     
     /**
@@ -144,5 +106,32 @@ public class TribePlayer
     public DeathInventory getDeathProtectedItems()
     {
         return this.deathInventory;
+    }
+    
+    /**
+     * 获取预约执行器列表
+     * @return 
+     */
+    public List<DelayTask> getDelayTaskList()
+    {
+        return this.delayTaskList;
+    }
+    
+    /**
+     * 添加预约执行器
+     * @param app 
+     */
+    public void addDelayTask(DelayTask app)
+    {
+        this.delayTaskList.add(app);
+    }
+    
+    /**
+     * 移除预约执行器
+     * @param app 
+     */
+    public void removeDelayTask(DelayTask app)
+    {
+        this.delayTaskList.remove(app);
     }
 }

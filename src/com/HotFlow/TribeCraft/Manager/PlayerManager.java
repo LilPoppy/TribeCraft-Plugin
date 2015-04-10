@@ -46,4 +46,17 @@ public class PlayerManager
         }
         return playerList;
     }
+    
+    public Boolean hasPlayer(String name)
+    {
+        for(TribePlayer player : this.getPlayers())
+        {
+            if(player.getCraftPlayer().getName().equalsIgnoreCase(name))
+            {
+                return true;
+            }
+        }
+        
+        return false;
+    }
 }
