@@ -9,8 +9,7 @@ import org.bukkit.inventory.ItemStack;
 /**
  * @author HotFlow
  */
-public class DeathInventory
-{
-    public List<ItemStack> items = new ArrayList<ItemStack>();
-    public HashMap<ArmorType,ItemStack> equiments = new HashMap<ArmorType,ItemStack>();
+public class DeathInventory {
+	public List<ItemStack> items = new ArrayList<ItemStack>();
+	public HashMap<ArmorType, ItemStack> equiments = new HashMap<ArmorType, ItemStack>();
 }
