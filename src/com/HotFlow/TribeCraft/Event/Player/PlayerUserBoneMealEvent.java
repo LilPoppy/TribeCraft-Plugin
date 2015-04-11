@@ -6,11 +6,11 @@ import org.bukkit.event.Cancellable;
 /**
  * @author HotFlow
  */
-public class PlayerIncSackEvent extends PlayerEvent implements Cancellable
+public class PlayerUserBoneMealEvent extends PlayerEvent implements Cancellable
 {
     private Boolean cancelled = true;
     
-    public PlayerIncSackEvent(TribePlayer player) 
+    public PlayerUserBoneMealEvent(TribePlayer player) 
     {
         super(player);
     }

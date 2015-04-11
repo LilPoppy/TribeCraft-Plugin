@@ -1,10 +1,11 @@
 package com.HotFlow.TribeCraft.Listener;
 
-import com.HotFlow.TribeCraft.Event.Player.PlayerIncSackEvent;
+import com.HotFlow.TribeCraft.Event.Block.BlockDispenseBoneMealEvent;
 import com.HotFlow.TribeCraft.Event.Player.PlayerStoreExperienceEvent;
 import com.HotFlow.TribeCraft.Event.Player.PlayerStoreInventoryEvent;
 import com.HotFlow.TribeCraft.Event.Player.PlayerTeleportingMoveEvent;
 import com.HotFlow.TribeCraft.Event.Player.PlayerUseGateEvent;
+import com.HotFlow.TribeCraft.Event.Player.PlayerUserBoneMealEvent;
 import com.HotFlow.TribeCraft.Event.Plugin.PluginTimeChangeEvent;
 import com.HotFlow.TribeCraft.Inventory.DeathInventory;
 import com.HotFlow.TribeCraft.Inventory.Item.ArmorType;
@@ -25,6 +26,7 @@ import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.block.BlockDispenseEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -304,15 +306,15 @@ public class Listeners implements Listener
                 
                 if (event.getAction() == Action.RIGHT_CLICK_BLOCK)
                 {
-                    if (event.getClickedBlock().getType() == Material.getMaterial(6))
+                    if (event.getClickedBlock().getType() == Material.getMaterial(6) || event.getClickedBlock().getType() == Material.RED_MUSHROOM || event.getClickedBlock().getType() == Material.BROWN_MUSHROOM)
                     {
-                        PlayerIncSackEvent event1 = new PlayerIncSackEvent(TribeCraft.getPlayerManager().getPlayer(event.getPlayer().getName()));
+                        PlayerUserBoneMealEvent event1 = new PlayerUserBoneMealEvent(TribeCraft.getPlayerManager().getPlayer(event.getPlayer().getName()));
                         getServer().getPluginManager().callEvent(event1);
-                        
+
                         if(event1.isCancelled())
                         {
                             event.setCancelled(true);
-                            event.getPlayer().sendMessage(ChatColor.RED + "本服务器禁止使用骨粉对 " + ChatColor.WHITE + Material.getMaterial(6).name() + ChatColor.RED + " 进行催长!");
+                            event.getPlayer().sendMessage(ChatColor.RED + "本服务器禁止使用骨粉对 " + ChatColor.WHITE + event.getClickedBlock().getType().name() + ChatColor.RED + " 进行催长!");
                         }
                     }
                 }
@@ -337,6 +339,21 @@ public class Listeners implements Listener
                         event.setCancelled(true);
                     }
                 }
+            }
+        }
+    }
+    
+    @EventHandler
+    public void onBlockDispense(BlockDispenseEvent event)
+    {
+        if(event.getItem().getType() == Material.INK_SACK)
+        {
+            BlockDispenseBoneMealEvent event1 = new BlockDispenseBoneMealEvent(event.getBlock());
+            getServer().getPluginManager().callEvent(event1);
+            
+            if(event1.isCancelled())
+            {
+                event.setCancelled(true);
             }
         }
     }
