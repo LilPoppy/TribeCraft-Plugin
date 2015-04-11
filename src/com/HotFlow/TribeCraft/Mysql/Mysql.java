@@ -3,8 +3,11 @@ package com.HotFlow.TribeCraft.Mysql;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.logging.Level;
 
+import com.HotFlow.TribeCraft.TribeCraft;
 import com.HotFlow.TribeCraft.Timer.Timer;
 
 /**
@@ -115,5 +118,23 @@ public class Mysql {
 			e.printStackTrace();
 		}
     	return false;
+    }
+    public synchronized boolean hasTable(String table)
+    {
+        int size = 0;
+        try
+        {
+            PreparedStatement sql = this.conn.prepareStatement("SHOW TABLES LIKE '" + table+ "';");
+            ResultSet result = sql.executeQuery();
+            while(result.next())
+            {
+                size++;
+            }
+        }
+        catch(SQLException ex)
+        {
+            TribeCraft.logger.log(Level.SEVERE, ex.toString());
+        }
+        return size > 0;
     }
 }
