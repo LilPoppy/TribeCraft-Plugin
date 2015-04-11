@@ -5,9 +5,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-import com.HotFlow.TribeCraft.TribeCraft;
-import com.HotFlow.TribeCraft.Timer.TimerTask;
-import com.HotFlow.TribeCraft.Timer.ServerTimer;
+import com.HotFlow.TribeCraft.Timer.Timer;
 
 /**
  * 
@@ -21,8 +19,7 @@ public class Mysql {
 	public int port;
 	public String schema;
 	private Connection conn;
-	public boolean isConnection;
-	private TimerTask ConnectionTime=new TimerTask(TribeCraft.plugin, ServerTimer);
+	private Timer ConnectingTime=new Timer();
 
 	public Mysql(String ip, int port, String username, String password,
 			String schema) {
@@ -31,6 +28,7 @@ public class Mysql {
 		this.username = username;
 		this.password = password;
 		this.schema = schema;
+		ConnectingTime.setTime(0);
 	}
 
 	/**
@@ -41,21 +39,21 @@ public class Mysql {
 	 */
 	public synchronized Boolean connect() {
 		String driver = "com.mysql.jdbc.Driver";
+		ConnectingTime.setTime(0);
+		ConnectingTime.setWork(false);
 		try {
 			Class.forName(driver);
 			conn = DriverManager.getConnection("jdbc:mysql://" + ip + port
 					+ "/" + schema, username, password);
 			if (conn.isClosed()) {
-				isConnection=false;
 				return false;
 			} else {
-				isConnection=true;
+				ConnectingTime.setWork(true);
 				return true;
 			}
 		} catch (SQLException | ClassNotFoundException e) {
 			e.printStackTrace();
 		}
-		isConnection=false;
 		return false;
 	}
 
@@ -103,5 +101,19 @@ public class Mysql {
 		}
 		return 0;
 	}
-
+	/**
+	 * 获取mysql连接时间
+	 * @return mysql连接时间
+	 */
+    public long getConnectingTime(){
+    	return ConnectingTime.getTime();
+    }
+    public boolean isConnecting(){
+    	try {
+			return !conn.isClosed();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+    	return false;
+    }
 }

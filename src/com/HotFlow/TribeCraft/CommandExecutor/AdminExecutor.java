@@ -32,10 +32,24 @@ public class AdminExecutor implements CommandExecutor {
 					sender.sendMessage("§a重载完成");
 					sender.sendMessage("§aMysql状态:错误连接");
 				}
+				return true;
 			}
 			if (args[1].equalsIgnoreCase("info")){
-				sender.sendMessage("");
+				sender.sendMessage("§amysql信息:");
+				sender.sendMessage("§a运行时间:"+TribeCraft.mysql.getConnectingTime()+"秒");
+				sender.sendMessage("§aIP:"+TribeCraft.mysql.ip);
+				sender.sendMessage("§a端口:"+TribeCraft.mysql.port);
+				sender.sendMessage("§a用户名:"+TribeCraft.mysql.username);
+				sender.sendMessage("§a库:"+TribeCraft.mysql.schema);
+				if (TribeCraft.mysql.isConnecting()==true){
+					sender.sendMessage("§a连接状态:正常连接");
+				}else{
+					sender.sendMessage("§a连接错误:连接错误");
+				}
+				return true;
 			}
+			sender.sendMessage("§a/TribeCraft mysql info 查询mysql状态");
+			sender.sendMessage("§a/TribeCraft mysql reload 重载mysql");
 		}
 		if (sender instanceof Player) {
 			Player player = (Player) sender;
