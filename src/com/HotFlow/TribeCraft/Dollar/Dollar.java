@@ -8,6 +8,8 @@ import org.bukkit.configuration.InvalidConfigurationException;
 
 import com.HotFlow.TribeCraft.TribeCraft;
 import com.HotFlow.TribeCraft.Configuration.TribeConfiguration;
+import com.HotFlow.TribeCraft.Mysql.Slot;
+import com.HotFlow.TribeCraft.Mysql.SlotRule;
 
 public class Dollar {
 	
@@ -45,8 +47,16 @@ public class Dollar {
         String table=config.getString("table");
         boolean hasTable=TribeCraft.mysql.hasTable(table);
         if (!hasTable){
-        	TribeCraft.mysql.createTalbe(table, )
+        	Slot[] slot=new Slot[1];
+        	SlotRule[] SlotRules=new SlotRule[0];
+        	SlotRules[0]=SlotRule.PrimaryKey;
+            slot[0]=new Slot("CHAR",SlotRules,"name");
+            slot[1]=new Slot("INT",null,"dollar");
+        	TribeCraft.mysql.createTalbe(table,slot);
         }
-		return 0;
+		return 1;
+	}
+	public boolean createAccount(String name){
+		
 	}
 }

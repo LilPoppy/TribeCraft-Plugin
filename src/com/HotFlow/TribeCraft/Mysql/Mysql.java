@@ -85,6 +85,25 @@ public class Mysql {
 		}
 		return false;
 	}
+    
+	 public synchronized boolean isValueExist(String table.String key,String value)
+	    {
+	        int size = 0;
+	        try
+	        {
+	            PreparedStatement sql = this.conn.prepareStatement("SELECT " + key + " FROM " + this.schema + "." + table + " WHERE " + key + " ='" + value + "';");
+	            ResultSet result = sql.executeQuery();
+	            while(result.next())
+	            {
+	                size++;
+	            }
+	        }
+	        catch(SQLException ex)
+	        {
+	            Main.logger.log(Level.SEVERE, ex.toString());
+	        }
+	        return size > 0;
+	    }
 
 	/**
 	 * ЬэМгЪ§Он

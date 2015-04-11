@@ -71,6 +71,8 @@ public class TribeCraft extends JavaPlugin {
         }
 		if (Dollar.init() == 1) {
 			TribeCraft.logger.log(Level.INFO, prefix + "点卷系统安装成功");
+		}else{
+			TribeCraft.logger.log(Level.SEVERE, prefix+"mysql连接失败，点卷系统安装失败");
 		}
 		if (TribeCraft.setupResidence()) {
 			TribeCraft.logger.log(Level.INFO, prefix + " 领地系统安装成功!");
