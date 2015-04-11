@@ -1,6 +1,5 @@
 package com.HotFlow.TribeCraft.Configuration;
 
-import com.HotFlow.TribeCraft.TribeCraft;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -11,6 +10,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Map;
+
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.configuration.file.YamlConstructor;
@@ -129,7 +129,8 @@ public class TribeConfiguration extends YamlConfiguration
      * @param contents
      * @throws org.bukkit.configuration.InvalidConfigurationException
      */
-    @Override
+    @SuppressWarnings("rawtypes")
+	@Override
     public void loadFromString(String contents) throws InvalidConfigurationException {
         Map input;
         try 

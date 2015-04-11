@@ -4,8 +4,11 @@ import com.HotFlow.TribeCraft.Player.Extension.DelayTask;
 import com.HotFlow.TribeCraft.Player.TribePlayer;
 import com.HotFlow.TribeCraft.TribeCraft;
 import com.HotFlow.TribeCraft.World.Area;
+
 import java.util.Random;
+
 import static org.bukkit.Bukkit.getServer;
+
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -76,7 +79,8 @@ public class UserExecutor implements CommandExecutor
 
                                                 
                                                 final Location location = new Location(player.getWorld(),x,(y+1),z);
-                                                Block block1 = location.getBlock();
+                                                @SuppressWarnings("unused")
+												Block block1 = location.getBlock();
                                                 
                                                 if(!Area.isAreaContainLocation(area, location))
                                                 {

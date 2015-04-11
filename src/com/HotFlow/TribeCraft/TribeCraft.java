@@ -11,14 +11,17 @@ import com.HotFlow.TribeCraft.Timer.ServerTimer;
 import com.HotFlow.TribeCraft.World.Area;
 import com.bekvon.bukkit.residence.Residence;
 import com.bekvon.bukkit.residence.protection.ResidenceManager;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import net.milkbowl.vault.chat.Chat;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
@@ -386,7 +389,8 @@ public class TribeCraft extends JavaPlugin
             return false;
         }
         
-        RegisteredServiceProvider economyProvider = Bukkit.getServer().getServicesManager().getRegistration(Economy.class);
+        @SuppressWarnings("rawtypes")
+		RegisteredServiceProvider economyProvider = Bukkit.getServer().getServicesManager().getRegistration(Economy.class);
 
         if (economyProvider != null) 
         {
@@ -407,7 +411,8 @@ public class TribeCraft extends JavaPlugin
             return false;
         }
         
-        RegisteredServiceProvider permissionProvider = Bukkit.getServer().getServicesManager().getRegistration(Permission.class);
+        @SuppressWarnings("rawtypes")
+		RegisteredServiceProvider permissionProvider = Bukkit.getServer().getServicesManager().getRegistration(Permission.class);
 
         if (permissionProvider != null) 
         {
@@ -428,7 +433,8 @@ public class TribeCraft extends JavaPlugin
             return false;
         }
         
-        RegisteredServiceProvider chatProvider = Bukkit.getServer().getServicesManager().getRegistration(Chat.class);
+        @SuppressWarnings("rawtypes")
+		RegisteredServiceProvider chatProvider = Bukkit.getServer().getServicesManager().getRegistration(Chat.class);
 
         if (chatProvider != null) 
         {

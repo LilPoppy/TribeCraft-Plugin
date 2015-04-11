@@ -5,6 +5,7 @@ import com.HotFlow.TribeCraft.Player.Extension.DelayTask;
 import com.HotFlow.TribeCraft.Player.TribePlayer;
 import com.HotFlow.TribeCraft.TribeCraft;
 import static org.bukkit.Bukkit.getServer;
+
 import org.bukkit.plugin.Plugin;
 
 /**
@@ -19,7 +20,8 @@ public final class TimerTask
     {
         this.taskState = TaskState.Suspending;
         
-        int taskID = getServer().getScheduler().scheduleAsyncRepeatingTask(plugin, new Runnable()
+        @SuppressWarnings("deprecation")
+		int taskID = getServer().getScheduler().scheduleAsyncRepeatingTask(plugin, new Runnable()
         {
             @Override
             public void run()
