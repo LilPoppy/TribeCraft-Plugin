@@ -199,6 +199,6 @@ public class TribeConfiguration extends YamlConfiguration
         {
             throw new IOException("Unable to create parent directories of " + file);
         }
-  }
+    }
        
 }

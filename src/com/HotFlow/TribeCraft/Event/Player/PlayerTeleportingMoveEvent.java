@@ -4,16 +4,17 @@ import com.HotFlow.TribeCraft.Player.TribePlayer;
 import org.bukkit.event.Cancellable;
 
 /**
- * @author HotFlow
+ * @author Jerry
  */
-public class PlayerUserBoneMealEvent extends PlayerEvent implements Cancellable
+public class PlayerTeleportingMoveEvent extends PlayerEvent implements Cancellable
 {
-    private Boolean cancelled = true;
+    private Boolean cancelled = false;
     
-    public PlayerUserBoneMealEvent(TribePlayer player) 
+    public PlayerTeleportingMoveEvent(TribePlayer player)
     {
         super(player);
     }
+
     public boolean isCancelled() 
     {
         return this.cancelled;

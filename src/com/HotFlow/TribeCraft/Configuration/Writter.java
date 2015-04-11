@@ -68,6 +68,41 @@ public class Writter
         }
     }
     
+    public void write(String s)
+    {
+        if(!this.file.exists())
+        {
+            return;
+        }
+        
+        try
+        {
+            BufferedReader reader = new BufferedReader(new FileReader(file));
+            ArrayList<String> lines = new ArrayList<String>();
+            String line = null;
+            while((line = reader.readLine())!=null)
+            {
+                lines.add(line);
+            }
+            lines.add(s);
+            
+            reader.close();
+            file.delete();
+            
+            BufferedWriter writer = new BufferedWriter(new FileWriter(file));
+            for(int i = 0;i<lines.size();i++)
+            {
+                writer.write(new String( lines.get(i).getBytes( "gb2312" ), "gb2312"));
+                writer.newLine();
+            }
+            writer.close();
+        }
+        catch(IOException ex)
+        {
+            TribeCraft.logger.warning(ex.toString());
+        }
+    }
+    
     public void genData()
     {
         this.write(0, "传送门列表:");
@@ -75,60 +110,87 @@ public class Writter
     
     public void genConfig()
     {
-        this.write(0, "全局配置:");
-        this.write(1, "  死亡保护:");
-        this.write(2, "    普通用户:");
-        this.write(3, "      物品掉落机率: 0.50");
-        this.write(4, "      装备掉落机率: 0.50");
-        this.write(5, "      经验掉落百分比: 0.50");
-        this.write(6, "    VIP1:");
-        this.write(7, "      物品掉落机率: 0.45");
-        this.write(8, "      装备掉落机率: 0.45");
-        this.write(9, "      经验掉落百分比: 0.45");
-       this.write(10, "    VIP2:");
-       this.write(11, "      物品掉落机率: 0.40");
-       this.write(12, "      装备掉落机率: 0.40");
-       this.write(13, "      经验掉落百分比: 0.40");
-       this.write(14, "    VIP3:");
-       this.write(15, "      物品掉落机率: 0.35");
-       this.write(16, "      装备掉落机率: 0.35");
-       this.write(17, "      经验掉落百分比: 0.35");
-       this.write(18, "    VIP4:");
-       this.write(19, "      物品掉落机率: 0.30");
-       this.write(20, "      装备掉落机率: 0.30");
-       this.write(21, "      经验掉落百分比: 0.30");
-       this.write(22, "    VIP5:");
-       this.write(23, "      物品掉落机率: 0.25");
-       this.write(24, "      装备掉落机率: 0.25");
-       this.write(25, "      经验掉落百分比: 0.25");
-       this.write(26, "    VIP6:");
-       this.write(27, "      物品掉落机率: 0.20");
-       this.write(28, "      装备掉落机率: 0.20");
-       this.write(29, "      经验掉落百分比: 0.20");
-       this.write(30, "    VIP7:");
-       this.write(31, "      物品掉落机率: 0.15");
-       this.write(32, "      装备掉落机率: 0.15");
-       this.write(33, "      经验掉落百分比: 0.15");
-       this.write(34, "    VIP8:");
-       this.write(35, "      物品掉落机率: 0.10");
-       this.write(36, "      装备掉落机率: 0.10");
-       this.write(37, "      经验掉落百分比: 0.10");
-       this.write(38, "    VIP9:");
-       this.write(39, "      物品掉落机率: 0.5");
-       this.write(40, "      装备掉落机率: 0.5");
-       this.write(41, "      经验掉落百分比: 0.5");
-       this.write(42, "    VIP10:");
-       this.write(43, "      物品掉落机率: 0.1");
-       this.write(44, "      装备掉落机率: 0.1");
-       this.write(45, "      经验掉落百分比: 0.1");
-       this.write(46, "  用户指令:");
-       this.write(47, "    Survival:");
-       this.write(48, "      开启: true");
-       this.write(49, "      主城领地: Main");
-       this.write(50, "      子领地: main");
-       this.write(51, "      目的地可为领地: false");
-       this.write(52, "      随机最大X: 3000");
-       this.write(53, "      随机最大Y: 100");
-       this.write(54, "      随机最大Z: 3000");
+        this.write("全局配置:");
+        this.write("  死亡保护:");
+        this.write("    普通用户:");
+        this.write("      物品掉落机率: 0.50");
+        this.write("      装备掉落机率: 0.50");
+        this.write("      经验掉落百分比: 0.50");
+        this.write("    VIP1:");
+        this.write("      物品掉落机率: 0.45");
+        this.write("      装备掉落机率: 0.45");
+        this.write("      经验掉落百分比: 0.45");
+        this.write("    VIP2:");
+        this.write("      物品掉落机率: 0.40");
+        this.write("      装备掉落机率: 0.40");
+        this.write("      经验掉落百分比: 0.40");
+        this.write("    VIP3:");
+        this.write("      物品掉落机率: 0.35");
+        this.write("      装备掉落机率: 0.35");
+        this.write("      经验掉落百分比: 0.35");
+        this.write("    VIP4:");
+        this.write("      物品掉落机率: 0.30");
+        this.write("      装备掉落机率: 0.30");
+        this.write("      经验掉落百分比: 0.30");
+        this.write("    VIP5:");
+        this.write("      物品掉落机率: 0.25");
+        this.write("      装备掉落机率: 0.25");
+        this.write("      经验掉落百分比: 0.25");
+        this.write("    VIP6:");
+        this.write("      物品掉落机率: 0.20");
+        this.write("      装备掉落机率: 0.20");
+        this.write("      经验掉落百分比: 0.20");
+        this.write("    VIP7:");
+        this.write("      物品掉落机率: 0.15");
+        this.write("      装备掉落机率: 0.15");
+        this.write("      经验掉落百分比: 0.15");
+        this.write("    VIP8:");
+        this.write("      物品掉落机率: 0.10");
+        this.write("      装备掉落机率: 0.10");
+        this.write("      经验掉落百分比: 0.10");
+        this.write("    VIP9:");
+        this.write("      物品掉落机率: 0.05");
+        this.write("      装备掉落机率: 0.05");
+        this.write("      经验掉落百分比: 0.05");
+        this.write("    VIP10:");
+        this.write("      物品掉落机率: 0.01");
+        this.write("      装备掉落机率: 0.01");
+        this.write("      经验掉落百分比: 0.01");
+        this.write("  服务器优化:");
+        this.write("    清理掉落物:");
+        this.write("      开启: true");
+        this.write("      周期: 300");
+        this.write("      公告信息: '&c&l[清理公告] &f已移除 %RemovedAmount% 件物品!'");
+        this.write("      提前警告:");
+        this.write("        开启: true");
+        this.write("        警告列表:");
+        this.write("          60: '&c&l[清理公告] &f服务器将在一分钟后清除所有掉落物品!'");
+        this.write("      物品白名单:");
+        this.write("      - 56");
+        this.write("      - 57");
+        this.write("      - 129");
+        this.write("      - 133");
+        this.write("      - 138");
+        this.write("      - 203");
+        this.write("      - 264");
+        this.write("      - 276");
+        this.write("      - 277");
+        this.write("      - 278");
+        this.write("      - 279");
+        this.write("      - 310");
+        this.write("      - 311");
+        this.write("      - 312");
+        this.write("      - 313");
+        this.write("      - 4414");
+        this.write("      - 4415");
+        this.write("  用户指令:");
+        this.write("    Survival:");
+        this.write("      开启: true");
+        this.write("      主城领地: Main");
+        this.write("      子领地: main");
+        this.write("      目的地可为领地: false");
+        this.write("      随机最大X: 3000");
+        this.write("      随机最大Y: 100");
+        this.write("      随机最大Z: 3000");
     }
 }
