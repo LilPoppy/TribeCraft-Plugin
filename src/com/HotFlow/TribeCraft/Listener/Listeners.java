@@ -1,18 +1,27 @@
 package com.HotFlow.TribeCraft.Listener;
 
+import com.HotFlow.TribeCraft.Event.Player.PlayerIncSackEvent;
+import com.HotFlow.TribeCraft.Event.Player.PlayerStoreExperienceEvent;
+import com.HotFlow.TribeCraft.Event.Player.PlayerStoreInventoryEvent;
+import com.HotFlow.TribeCraft.Event.Player.PlayerTeleportingMoveEvent;
+import com.HotFlow.TribeCraft.Event.Player.PlayerUseGateEvent;
 import com.HotFlow.TribeCraft.Event.Plugin.PluginTimeChangeEvent;
 import com.HotFlow.TribeCraft.Inventory.DeathInventory;
 import com.HotFlow.TribeCraft.Inventory.Item.ArmorType;
-import com.HotFlow.TribeCraft.Player.Extension.PermissionAppointment;
+import com.HotFlow.TribeCraft.Permissions.Permissions;
+import com.HotFlow.TribeCraft.Player.Extension.DelayTask;
 import com.HotFlow.TribeCraft.Player.TribePlayer;
 import com.HotFlow.TribeCraft.PortalGate.PortalGate;
 import com.HotFlow.TribeCraft.PortalGate.PortalGateType;
 import com.HotFlow.TribeCraft.TribeCraft;
+<<<<<<< HEAD
 
 import java.util.ArrayList;
+import com.HotFlow.TribeCraft.Utils.System.ISystem;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Random;
+import static org.bukkit.Bukkit.getServer;
+
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -38,147 +47,185 @@ public class Listeners implements Listener
     public void onPlayerDeath(PlayerDeathEvent event)
     {
         final TribePlayer player  = TribeCraft.getPlayerManager().getPlayer(event.getEntity().getPlayer().getName());
-        List<ItemStack> items = new ArrayList<ItemStack>();
-        HashMap<ArmorType,ItemStack> equiements = new HashMap<ArmorType,ItemStack>();
+        HashMap<ItemStack,ItemStack> items = new HashMap<ItemStack,ItemStack>();
+        HashMap<ItemStack,HashMap<ArmorType,ItemStack>> equiements = new HashMap<ItemStack,HashMap<ArmorType,ItemStack>>();
         DeathInventory inventory = new DeathInventory();
         
         for(ItemStack item : event.getEntity().getPlayer().getInventory().getContents())
         {
             if(item != null && item.getType() != Material.AIR)
             {
-                items.add(item);
+                items.put(item,item);
             }
         }
 
         if(player.getCraftPlayer().getInventory().getHelmet() != null)
         {
-            equiements.put(ArmorType.Helmet, player.getCraftPlayer().getInventory().getHelmet());
+            HashMap<ArmorType,ItemStack> map = new HashMap<ArmorType,ItemStack>();
+            map.put(ArmorType.Helmet, player.getCraftPlayer().getInventory().getHelmet());
+            equiements.put(player.getCraftPlayer().getInventory().getHelmet(), map);
         }
         if(player.getCraftPlayer().getInventory().getChestplate() != null)
         {
-            equiements.put(ArmorType.Chestplate, player.getCraftPlayer().getInventory().getChestplate());
+            HashMap<ArmorType,ItemStack> map = new HashMap<ArmorType,ItemStack>();
+            map.put(ArmorType.Chestplate, player.getCraftPlayer().getInventory().getChestplate());
+            equiements.put(player.getCraftPlayer().getInventory().getChestplate(), map);
         }
         if(player.getCraftPlayer().getInventory().getLeggings() != null)
         {
-            equiements.put(ArmorType.Leggings, player.getCraftPlayer().getInventory().getLeggings());
+            HashMap<ArmorType,ItemStack> map = new HashMap<ArmorType,ItemStack>();
+            map.put(ArmorType.Leggings, player.getCraftPlayer().getInventory().getLeggings());
+            equiements.put(player.getCraftPlayer().getInventory().getLeggings(), map);
         }
         if(player.getCraftPlayer().getInventory().getBoots() != null)
         {
-            equiements.put(ArmorType.Boots, player.getCraftPlayer().getInventory().getBoots());
+            HashMap<ArmorType,ItemStack> map = new HashMap<ArmorType,ItemStack>();
+            map.put(ArmorType.Boots, player.getCraftPlayer().getInventory().getBoots());
+            equiements.put(player.getCraftPlayer().getInventory().getBoots(), map);
         }
         
-        if(player.getVIPList().size() > 0)
+        if(!player.getCraftPlayer().hasPermission(new Permissions().deathSaveAll))
         {
-            player.getCraftPlayer().sendMessage("您的VIP等级为: " + player.getVIPList().get(0).getLevel());
-            player.getCraftPlayer().sendMessage("每件物品的掉落机率为: " + (player.getVIPList().get(0).getChanceOfDrops() * 100) + "%");
-            
-            List<ItemStack> protectedItems = new ArrayList<ItemStack>();
-            
-            for(ItemStack item : items)
+            @SuppressWarnings("unused")
+			List<ItemStack> protectedItems = new ArrayList<ItemStack>();
+            if(player.getVIPList().size() > 0)
             {
-                if(Math.random() >= player.getVIPList().get(0).getChanceOfDrops())
-                {      
-                    inventory.items.add(item);
-                    protectedItems.add(item);
-                }
-            }
-            
-            for(ArmorType type : equiements.keySet())
-            {
-                ItemStack armor = equiements.get(type);
+                player.getCraftPlayer().sendMessage("您的VIP等级为: " + player.getVIPList().get(0).getLevel());
+                player.getCraftPlayer().sendMessage("物品掉落机率: " + (player.getVIPList().get(0).getItemDropChance() * 100) + "%");
+                player.getCraftPlayer().sendMessage("装备掉落机率: " + (player.getVIPList().get(0).getArmorDropChance() * 100) + "%");
+                player.getCraftPlayer().sendMessage("经验掉落百分比: " + (player.getVIPList().get(0).getExpDropPercentage() * 100) + "%");
                 
-                if(Math.random() >= player.getVIPList().get(0).getChanceOfDrops())
+                player.setDeathProtectedExp((int) (player.getCraftPlayer().getTotalExperience() * player.getVIPList().get(0).getExpDropPercentage()));
+                event.setDroppedExp((int) (player.getCraftPlayer().getTotalExperience() * player.getVIPList().get(0).getExpDropPercentage()));
+                
+                for(ItemStack item : items.keySet())
                 {
-                    inventory.equiments.put(type,armor);
-                    protectedItems.add(armor);
-                }
-            }
-            
-            event.setKeepLevel(true);
-            event.setDroppedExp(0);
-            
-            player.setDeathProtectedItems(inventory);
-            
-            for(ItemStack pitem : protectedItems)
-            {
-                for(int i = 0;i < items.size();i++)
-                {
-                    ItemStack item = items.get(i);
-                    if(item.equals(pitem))
+                    ItemStack newItem = item.clone();
+                    
+                    for(int i = 0;i <= item.getAmount();i++)
                     {
-                        event.getDrops().remove(item);
-                        break;
+                        if(Math.random() <= player.getVIPList().get(0).getItemDropChance())
+                        {
+                            newItem.setAmount(newItem.getAmount() - 1);
+                        }
+                    }
+                    
+                    items.put(item,newItem);
+                    inventory.items.add(newItem);
+                }
+                
+                for(HashMap<ArmorType,ItemStack> map : equiements.values())
+                {
+                    for(ArmorType type : map.keySet())
+                    {
+                        ItemStack armor = map.get(type);
+
+                        if(Math.random() > player.getVIPList().get(0).getArmorDropChance())
+                        {
+                            equiements.put(armor, null);
+                            inventory.equiments.put(type,armor);
+                        }
                     }
                 }
-            }
-            
-            for(ItemStack pitem : protectedItems)
-            {
-                for(ItemStack armor : equiements.values())
+                
+                
+                for(ItemStack armor : equiements.keySet())
                 {
-                    if(armor.equals(pitem))
+                    if(equiements.get(armor) == null)
                     {
                         event.getDrops().remove(armor);
-                        break;
                     }
                 }
+                
+                for(ItemStack item : items.keySet())
+                {
+                    event.getDrops().remove(item);
+                    ItemStack newItem = item.clone();
+                    newItem.setAmount(item.getAmount() - items.get(item).getAmount());
+                    event.getDrops().add(newItem);
+                }
+                
+            }
+            else
+            {
+                player.getCraftPlayer().sendMessage("您的VIP等级为: 0");
+                player.getCraftPlayer().sendMessage("物品掉落机率: " + (TribeCraft.config.getDouble("全局配置.死亡保护.普通用户.物品掉落机率") * 100) + "%");
+                player.getCraftPlayer().sendMessage("装备掉落机率: " + (TribeCraft.config.getDouble("全局配置.死亡保护.普通用户.装备掉落机率") * 100) + "%");
+                player.getCraftPlayer().sendMessage("经验掉落百分比: " + (TribeCraft.config.getDouble("全局配置.死亡保护.普通用户.经验掉落百分比") * 100) + "%");
+                
+                player.setDeathProtectedExp((int) (player.getCraftPlayer().getTotalExperience() * (TribeCraft.config.getDouble("全局配置.死亡保护.普通用户.经验掉落百分比"))));
+                event.setDroppedExp((int) (player.getCraftPlayer().getTotalExperience() * (TribeCraft.config.getDouble("全局配置.死亡保护.普通用户.经验掉落百分比"))));
+                
+                for(ItemStack item : items.keySet())
+                {
+                    ItemStack newItem = item.clone();
+                    
+                    for(int i = 0;i <= item.getAmount();i++)
+                    {
+                        if(Math.random() <= TribeCraft.config.getDouble("全局配置.死亡保护.普通用户.物品掉落机率"))
+                        {
+                            newItem.setAmount(newItem.getAmount() - 1);
+                        }
+                    }
+                    
+                    items.put(item,newItem);
+                    inventory.items.add(newItem);
+                }
+                
+                for(HashMap<ArmorType,ItemStack> map : equiements.values())
+                {
+                    for(ArmorType type : map.keySet())
+                    {
+                        ItemStack armor = map.get(type);
+
+                        if(Math.random() > TribeCraft.config.getDouble("全局配置.死亡保护.普通用户.装备掉落机率"))
+                        {
+                            equiements.put(armor, null);
+                            inventory.equiments.put(type,armor);
+                        }
+                    }
+                }
+                
+                
+                for(ItemStack armor : equiements.keySet())
+                {
+                    if(equiements.get(armor) == null)
+                    {
+                        event.getDrops().remove(armor);
+                    }
+                }
+                
+                for(ItemStack item : items.keySet())
+                {
+                    event.getDrops().remove(item);
+                    ItemStack newItem = item.clone();
+                    newItem.setAmount(item.getAmount() - items.get(item).getAmount());
+                    event.getDrops().add(newItem);
+                }
+                
             }
         }
         else
         {
-            player.getCraftPlayer().sendMessage("您的VIP等级为: 0");
-            player.getCraftPlayer().sendMessage("每件物品的掉落机率为: 50%");
-            
-            List<ItemStack> protectedItems = new ArrayList<ItemStack>();
-            
-            for(ItemStack item : items)
+            for(ItemStack item : items.keySet())
             {
-                if(Math.random() >= 0.5)
-                {
-                    inventory.items.add(item);
-                    protectedItems.add(item);
-                }
+                inventory.items.add(item);
             }
             
-            for(ArmorType type : equiements.keySet())
+            for(HashMap<ArmorType,ItemStack> map : equiements.values())
             {
-                ItemStack armor = equiements.get(type);
-                
-                if(Math.random() >= 0.5)
+                for(ArmorType type : map.keySet())
                 {
+                    ItemStack armor = map.get(type);
                     inventory.equiments.put(type,armor);
-                    protectedItems.add(armor);
                 }
             }
             
-            player.setDeathProtectedItems(inventory);
-            
-            for(ItemStack pitem : protectedItems)
-            {
-                for(int i = 0;i < items.size();i++)
-                {
-                    ItemStack item = items.get(i);
-                    if(item.equals(pitem))
-                    {
-                        event.getDrops().remove(item);
-                        break;
-                    }
-                }
-            }
-            
-            for(ItemStack pitem : protectedItems)
-            {
-                for(ItemStack armor : equiements.values())
-                {
-                    if(armor.equals(pitem))
-                    {
-                        event.getDrops().remove(armor);
-                        break;
-                    }
-                }
-            }
+            event.getDrops().clear();
+            event.setKeepLevel(true);
         }
         
+        player.setDeathProtectedItems(inventory);
     }
     
     @EventHandler
@@ -186,40 +233,67 @@ public class Listeners implements Listener
     {
         final TribePlayer player  = TribeCraft.getPlayerManager().getPlayer(event.getPlayer().getName());
         player.getCraftPlayer().getInventory().clear();
-
-        for(ItemStack item : player.getDeathProtectedItems().items)
+        
+        PlayerStoreInventoryEvent event1 = new PlayerStoreInventoryEvent(player);
+        getServer().getPluginManager().callEvent(event1);
+        
+        if(!event1.isCancelled())
         {
-            player.getCraftPlayer().getInventory().addItem(item);
+            for(ItemStack item : player.getDeathProtectedItems().items)
+            {
+                event.getPlayer().getInventory().addItem(item);
+            }
+
+            for(ArmorType type :  player.getDeathProtectedItems().equiments.keySet())
+            {
+                ItemStack armor = player.getDeathProtectedItems().equiments.get(type);
+
+                if(type == ArmorType.Helmet)
+                {
+                    event.getPlayer().getInventory().setHelmet(armor);
+                }
+                else if(type == ArmorType.Chestplate)
+                {
+                    event.getPlayer().getInventory().setChestplate(armor);
+                }
+                else if(type == ArmorType.Leggings)
+                {
+                    event.getPlayer().getInventory().setLeggings(armor);
+                }
+                else if(type == ArmorType.Boots)
+                {
+                    event.getPlayer().getInventory().setBoots(armor);
+                }
+            }
         }
         
-        for(ArmorType type :  player.getDeathProtectedItems().equiments.keySet())
+        PlayerStoreExperienceEvent event2 = new PlayerStoreExperienceEvent(player);
+        getServer().getPluginManager().callEvent(event2);
+        
+        if(!event2.isCancelled())
         {
-            ItemStack armor = player.getDeathProtectedItems().equiments.get(type);
-
-            if(type == ArmorType.Helmet)
+            player.addDelayTask(new DelayTask(1,"Experience")
             {
-                player.getCraftPlayer().getInventory().setHelmet(armor);
-            }
-            else if(type == ArmorType.Chestplate)
-            {
-                player.getCraftPlayer().getInventory().setChestplate(armor);
-            }
-            else if(type == ArmorType.Leggings)
-            {
-                player.getCraftPlayer().getInventory().setLeggings(armor);
-            }
-            else if(type == ArmorType.Boots)
-            {
-                player.getCraftPlayer().getInventory().setBoots(armor);
-            }
+                @Override
+                public void run()
+                {
+                    if(!player.getCraftPlayer().isDead() && player.getCraftPlayer().isOnline())
+                    {
+                        ISystem.experience.setTotalExperience(player.getCraftPlayer(), player.getDeathProtectedExp());
+                    }
+                }
+            });
         }
     }
     
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event)
     {
-        final TribePlayer player = new TribePlayer(event.getPlayer());
-        TribeCraft.getPlayerManager().setPlayer(event.getPlayer().getName(), player);
+        if(!TribeCraft.getPlayerManager().hasPlayer(event.getPlayer().getName()))
+        {
+            final TribePlayer player = new TribePlayer(event.getPlayer());
+            TribeCraft.getPlayerManager().setPlayer(event.getPlayer().getName(), player);
+        }
     }
     
     @SuppressWarnings("deprecation")
@@ -239,8 +313,14 @@ public class Listeners implements Listener
                 {
                     if (event.getClickedBlock().getType() == Material.getMaterial(6))
                     {
-                      event.setCancelled(true);
-                      event.getPlayer().sendMessage("本服务器禁止使用骨粉对 " + Material.getMaterial(6).name() + " 进行催长!");
+                        PlayerIncSackEvent event1 = new PlayerIncSackEvent(TribeCraft.getPlayerManager().getPlayer(event.getPlayer().getName()));
+                        getServer().getPluginManager().callEvent(event1);
+                        
+                        if(event1.isCancelled())
+                        {
+                            event.setCancelled(true);
+                            event.getPlayer().sendMessage(ChatColor.RED + "本服务器禁止使用骨粉对 " + ChatColor.WHITE + Material.getMaterial(6).name() + ChatColor.RED + " 进行催长!");
+                        }
                     }
                 }
             }
@@ -269,7 +349,7 @@ public class Listeners implements Listener
     }
     
     @EventHandler
-    public void onPlayerPortal(PlayerPortalEvent event)
+    public void onPlayerPortal(final PlayerPortalEvent event)
     {
         if(event.getCause().equals(TeleportCause.NETHER_PORTAL))
         {
@@ -278,6 +358,14 @@ public class Listeners implements Listener
             if(TribeCraft.getPortalGateManager().getPortalGate(event.getFrom()) != null)
             {
                 PortalGate gate = TribeCraft.getPortalGateManager().getPortalGate(event.getFrom());
+                
+                PlayerUseGateEvent event1 = new PlayerUseGateEvent(TribeCraft.getPlayerManager().getPlayer(event.getPlayer().getName()),gate);
+                getServer().getPluginManager().callEvent(event1);
+                
+                if(event1.isCancelled())
+                {
+                    return;
+                }
                 
                 if(!gate.getMessage().equals(""))
                 {
@@ -311,7 +399,16 @@ public class Listeners implements Listener
                 else
                 {
                     TribeCraft.getPermissionManager().playerAdd(event.getPlayer(),"Tribe.user.survival");
-                    TribeCraft.getPlayerManager().getPlayer(event.getPlayer().getName()).setPermissionAppointment(new PermissionAppointment(10,"Tribe.user.survival"));
+                    
+                    TribeCraft.getPlayerManager().getPlayer(event.getPlayer().getName()).addDelayTask(new DelayTask(5) 
+                    {
+                        @Override
+                        public void run()
+                        {
+                            TribeCraft.getPermissionManager().playerRemove(event.getPlayer(), "Tribe.user.survival");
+                        }
+                    });
+                    
                     event.setCancelled(true);
                 }
 
@@ -327,12 +424,28 @@ public class Listeners implements Listener
     public void onPlayerMove(PlayerMoveEvent event)
     {
         TribePlayer player = TribeCraft.getPlayerManager().getPlayer(event.getPlayer().getName());
-        if(player.getTeleportingAppointment() != null)
+        
+        for(DelayTask task : player.getDelayTaskList())
         {
-            if((event.getFrom().getX() != event.getTo().getX()) || (event.getFrom().getZ() != event.getTo().getZ()))
+            if(task.getDescription() != null)
             {
-                player.setTeleportingAppointment(null);
-                player.getCraftPlayer().sendMessage(ChatColor.GOLD + "已取消传送!");
+                if(task.getDescription().equalsIgnoreCase("Teleport"))
+                {
+                    if((event.getFrom().getX() != event.getTo().getX()) || (event.getFrom().getZ() != event.getTo().getZ()))
+                    {
+                        PlayerTeleportingMoveEvent event1 = new PlayerTeleportingMoveEvent(player);
+                        getServer().getPluginManager().callEvent(event1);
+                        
+                        if(!event1.isCancelled())
+                        {
+                            return;
+                        }
+                        
+                        player.removeDelayTask(task);
+                        player.getCraftPlayer().sendMessage(ChatColor.GOLD + "已取消传送!");
+                        return;
+                    }
+                }
             }
         }
     }
@@ -340,36 +453,6 @@ public class Listeners implements Listener
     @EventHandler
     public void onPluginTimeChange(PluginTimeChangeEvent event)
     {
-        for(TribePlayer player : TribeCraft.getPlayerManager().getPlayers())
-        {
-            if(player.getTeleportingAppointment()!= null)
-            {
-                if(player.getTeleportingAppointment().getTime() > 0)
-                {
-                    player.getTeleportingAppointment().setTime(player.getTeleportingAppointment().getTime() - 1);
-                }
-                else
-                {
-                    player.getCraftPlayer().sendMessage(ChatColor.GOLD + "准备传送...");
-                    player.getCraftPlayer().teleport(player.getTeleportingAppointment().getLocation());
-                    player.setTeleportingAppointment(null);
-                }
-
-            }
-            
-            if(player.getPermissionAppointment() != null)
-            {
-                if(player.getPermissionAppointment().getTime() > 0)
-                {
-                    TribeCraft.getPermissionManager().playerAdd(player.getCraftPlayer(), player.getPermissionAppointment().getPermission());
-                    player.getPermissionAppointment().setTime(player.getPermissionAppointment().getTime() - 1);
-                }
-                else
-                {
-                    TribeCraft.getPermissionManager().playerRemove(player.getCraftPlayer(), player.getPermissionAppointment().getPermission());
-                    player.setPermissionAppointment(null);
-                }
-            }
-        }
+        
     }
 }

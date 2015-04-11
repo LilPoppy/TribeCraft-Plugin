@@ -1,5 +1,9 @@
 package com.HotFlow.TribeCraft.CommandExecutor;
 
+<<<<<<< HEAD
+=======
+import com.HotFlow.TribeCraft.Player.Extension.DelayTask;
+>>>>>>> master
 import com.HotFlow.TribeCraft.Player.TribePlayer;
 import com.HotFlow.TribeCraft.Player.Extension.TeleportAppointment;
 import com.HotFlow.TribeCraft.TribeCraft;
@@ -34,10 +38,16 @@ public class UserExecutor implements CommandExecutor
             {
                 if(args[0].equalsIgnoreCase("survival"))
                 {
-                    if(tribePlayer.getTeleportingAppointment() != null)
+                    for(DelayTask task : tribePlayer.getDelayTaskList())
                     {
-                        player.sendMessage("请勿重复使用此命令!");
-                        return false;
+                        if(task.getDescription() != null)
+                        {
+                            if(task.getDescription().equalsIgnoreCase("Teleport"))
+                            {
+                                player.sendMessage("请勿重复使用此命令!");
+                                return false;
+                            }
+                        }
                     }
                     
                     final Area area = new Area(
@@ -55,48 +65,66 @@ public class UserExecutor implements CommandExecutor
                                     Random random = new Random();
                                     int x = random.nextInt(TribeCraft.getPluginManager().getSurvivalProperties().maxX) + 1;
                                     int z = random.nextInt(TribeCraft.getPluginManager().getSurvivalProperties().maxZ) + 1;
-                                    int i = player.getWorld().getMaxHeight();
+                                    int h = player.getWorld().getMaxHeight();
 
-                                    for(int y = i;y > 0;y--)
+                                    for(int y = h;y > 0;y--)
                                     {
                                         Block block = new Location(player.getWorld(),(double)x,(double)y,(double)z).getBlock();
                                         
-                                        if(block != null)
+                                        if(!(block.getType().equals(Material.AIR)) && !(block.getType().equals(Material.BEDROCK)))
                                         {
-                                            if((!block.getType().equals(Material.AIR)) && (!block.getType().equals(Material.LAVA)) && (!block.getType().equals(Material.WATER)) && (!block.getType().equals(Material.BEDROCK)))
+                                            if((!block.getType().equals(Material.LAVA)) && (!block.getType().equals(Material.WATER)) &&
+                                            (!block.getType().equals(Material.STATIONARY_WATER)) && (!block.getType().equals(Material.STATIONARY_LAVA)))
                                             {
-                                                if((!block.getType().equals(Material.WOOD)) && (!block.getType().equals(Material.LEAVES)))
+                                                if(y > TribeCraft.getPluginManager().getSurvivalProperties().maxY)
                                                 {
-                                                    if(y > TribeCraft.getPluginManager().getSurvivalProperties().maxY)
-                                                    {
-                                                        break;
-                                                    }
+                                                    break;
+                                                }
 
-                                                    final Location location = new Location(player.getWorld(),x,y+1,z);
-
-                                                    if(!Area.isAreaContainLocation(area, location))
+                                                
+                                                final Location location = new Location(player.getWorld(),x,(y+1),z);
+                                                @SuppressWarnings("unused")
+												Block block1 = location.getBlock();
+                                                
+                                                if(!Area.isAreaContainLocation(area, location))
+                                                {
+                                                    if(TribeCraft.getResidenceManager().getByLoc(location) == null)
                                                     {
-                                                        if(TribeCraft.getResidenceManager().getByLoc(location) == null)
+                                                        if(TribeCraft.getPermissionManager().playerHas(player, "Tribe.user.survival"))
                                                         {
-                                                            if(TribeCraft.getPermissionManager().playerHas(player, "Tribe.user.survival"))
+                                                            player.sendMessage(ChatColor.GOLD + "正在传送...");
+                                                            player.teleport(location);
+                                                            return;
+                                                        }
+                                                        else
+                                                        {
+                                                            player.sendMessage(ChatColor.GOLD + "传送将在" + 10 + " 秒内开始.不要移动");
+                                                            
+                                                            tribePlayer.addDelayTask(new DelayTask(10,"Teleport")
                                                             {
-                                                                player.sendMessage(ChatColor.GOLD + "正在传送...");
-                                                                player.teleport(location);
-                                                                return;
-                                                            }
-                                                            else
-                                                            {
-                                                                player.sendMessage(ChatColor.GOLD + "传送将在" + 10 + " 秒内开始.不要移动");
-                                                                tribePlayer.setTeleportingAppointment(new TeleportAppointment(10,location));
-                                                                return;
-                                                            }
-                                                        } 
-                                                    }
+                                                                @Override
+                                                                public void run()
+                                                                {
+                                                                    tribePlayer.getCraftPlayer().sendMessage(ChatColor.GOLD + "准备传送...");
+                                                                    tribePlayer.getCraftPlayer().teleport(location);
+                                                                }
+                                                            });
+                                                            return;
+                                                        }
+                                                    } 
                                                     else
                                                     {
                                                         break;
                                                     }
                                                 }
+                                                else
+                                                {
+                                                    break;
+                                                }
+                                            }
+                                            else
+                                            {
+                                                break;
                                             }
                                         }
                                     }

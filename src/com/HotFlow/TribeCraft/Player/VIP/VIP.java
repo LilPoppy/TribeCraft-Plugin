@@ -12,14 +12,20 @@ public interface VIP
     public int getLevel();
     
     /**
-     * 是否可以飞翔
+     * 获取物品掉落机率
      * @return 
      */
-    public Boolean canFly();
+    public double getItemDropChance();
     
     /**
-     * 获取掉落机率
+     * 获取装备掉落机率
      * @return 
      */
-    public double getChanceOfDrops();
+    public double getArmorDropChance();
+    
+    /**
+     * 获取经验掉落机率
+     * @return 
+     */
+    public double getExpDropPercentage();
 }

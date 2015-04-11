@@ -7,11 +7,11 @@ import com.HotFlow.TribeCraft.TribeCraft;
  */
 public class PluginManager 
 {
-    private final SurvivalProperties survival;
+    private final SurvivalConfiguration survivalConfig;
     
     public PluginManager()
     {
-        this.survival = new SurvivalProperties(TribeCraft.config.getBoolean("全局配置.用户指令.Survival.开启"),
+        this.survivalConfig = new SurvivalConfiguration(TribeCraft.config.getBoolean("全局配置.用户指令.Survival.开启"),
                                                 TribeCraft.config.getString("全局配置.用户指令.Survival.主城领地"),
                                                 TribeCraft.config.getString("全局配置.用户指令.Survival.子领地"),
                                                 TribeCraft.config.getBoolean("全局配置.用户指令.Survival.目的地可为领地"),
@@ -24,12 +24,12 @@ public class PluginManager
      * 获取survival指令的信息
      * @return 
      */
-    public SurvivalProperties getSurvivalProperties()
+    public SurvivalConfiguration getSurvivalProperties()
     {
-        return this.survival;
+        return this.survivalConfig;
     }
     
-    public class SurvivalProperties
+    public class SurvivalConfiguration
     {
         public final Boolean enable;
         public final String mainTown;
@@ -39,7 +39,7 @@ public class PluginManager
         public final int maxY;
         public final int maxZ;
         
-        public SurvivalProperties(Boolean enable,String mainTown,String subArea,Boolean canInResidence,int maxX,int maxY,int maxZ)
+        public SurvivalConfiguration(Boolean enable,String mainTown,String subArea,Boolean canInResidence,int maxX,int maxY,int maxZ)
         {
             this.enable = enable;
             this.mainTown = mainTown;
