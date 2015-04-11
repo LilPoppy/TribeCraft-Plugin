@@ -9,16 +9,16 @@ import org.bukkit.event.HandlerList;
 public class BlockEvent extends org.bukkit.event.block.BlockEvent
 {
     private static final HandlerList handlers = new HandlerList();
-    
-    public BlockEvent(Block theBlock) 
+
+    public BlockEvent(Block theBlock)
     {
         super(theBlock);
     }
 
     @Override
-    public HandlerList getHandlers() 
+    public HandlerList getHandlers()
     {
         return handlers;
     }
-    
+
 }

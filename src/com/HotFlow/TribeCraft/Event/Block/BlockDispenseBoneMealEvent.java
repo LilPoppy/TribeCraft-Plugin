@@ -9,20 +9,20 @@ import org.bukkit.event.Cancellable;
 public class BlockDispenseBoneMealEvent extends BlockEvent implements Cancellable
 {
     private Boolean cancelled = true;
-    
-    public BlockDispenseBoneMealEvent(Block theBlock) 
+
+    public BlockDispenseBoneMealEvent(Block theBlock)
     {
         super(theBlock);
     }
-    
-    public boolean isCancelled() 
+
+    public boolean isCancelled()
     {
         return this.cancelled;
     }
 
-    public void setCancelled(boolean bln) 
+    public void setCancelled(boolean bln)
     {
         this.cancelled = bln;
     }
-    
+
 }

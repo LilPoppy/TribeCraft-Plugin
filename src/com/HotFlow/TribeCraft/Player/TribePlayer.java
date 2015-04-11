@@ -29,281 +29,304 @@ import org.bukkit.entity.Player;
 /**
  * @author HotFlow
  */
-public class TribePlayer {
-	private final Player player;
-	private Location gateLoc1;
-	private Location gateLoc2;
-	private final List<VIP> vips = new ArrayList<VIP>();
-	private DeathInventory deathInventory = new DeathInventory();
-	private int deathExp;
-	private final List<DelayTask> delayTaskList = new ArrayList<DelayTask>();
-	private int dollar;
+public class TribePlayer
+{
 
-	public TribePlayer(Player player) {
-		this.player = player;
-	}
+    private final Player player;
+    private Location gateLoc1;
+    private Location gateLoc2;
+    private final List<VIP> vips = new ArrayList<VIP>();
+    private DeathInventory deathInventory = new DeathInventory();
+    private int deathExp;
+    private final List<DelayTask> delayTaskList = new ArrayList<DelayTask>();
+    private int dollar;
 
-	/**
-	 * 获取玩家点卷数量
-	 * 
-	 * @return 玩家点卷数量
-	 */
-	public int getDollar() {
-		return dollar;
-	}
+    public TribePlayer(Player player)
+    {
+        this.player = player;
+    }
 
-	/**
-	 * 增加玩家点卷
-	 * 
-	 * @param 增加数量
-	 * @return 增加后的数量
-	 */
-	public int addDollar(int CountOfAdd) {
-		dollar = dollar + CountOfAdd;
-		return dollar;
-	}
+    /**
+     * 获取玩家点卷数量
+     *
+     * @return 玩家点卷数量
+     */
+    public int getDollar()
+    {
+        return dollar;
+    }
 
-	/**
-	 * 减少玩家点卷数量
-	 * 
-	 * @param 减少数量
-	 * @return 减少后的数量
-	 */
-	public int TakeDollar(int CountOfTake) {
-		dollar = dollar + CountOfTake;
-		return dollar;
-	}
+    /**
+     * 增加玩家点卷
+     *
+     * @param CountOfAdd
+     * @return 增加后的数量
+     */
+    public int addDollar(int CountOfAdd)
+    {
+        dollar = dollar + CountOfAdd;
+        return dollar;
+    }
 
-	/**
-	 * 设置玩家点卷数量
-	 * 
-	 * @param 需要设置的点卷数量
-	 */
-	public void setDollar(int dollar) {
-		this.dollar = dollar;
-	}
+    /**
+     * 减少玩家点卷数量
+     *
+     * @param CountOfTake
+     * @return 减少后的数量
+     */
+    public int TakeDollar(int CountOfTake)
+    {
+        dollar = dollar + CountOfTake;
+        return dollar;
+    }
 
-	/**
-	 * 获取 org.bukkit.craftbukkit.v1_7_R4.entity.CraftPlayer
-	 * 
-	 * @return
-	 */
-	public Player getCraftPlayer() {
-		return this.player;
-	}
+    /**
+     * 设置玩家点卷数量
+     *
+     * @param dollar
+     */
+    public void setDollar(int dollar)
+    {
+        this.dollar = dollar;
+    }
 
-	/**
-	 * 获取传送门选择点1
-	 * 
-	 * @return
-	 */
-	public Location getGateSelectedLocation1() {
-		return this.gateLoc1;
-	}
+    /**
+     * 获取 org.bukkit.craftbukkit.v1_7_R4.entity.CraftPlayer
+     *
+     * @return
+     */
+    public Player getCraftPlayer()
+    {
+        return this.player;
+    }
 
-	/**
-	 * 设置传送门选择点1
-	 * 
-	 * @param loc
-	 */
-	public void setGateSelectedLocation1(Location loc) {
-		this.gateLoc1 = loc;
-	}
+    /**
+     * 获取传送门选择点1
+     *
+     * @return
+     */
+    public Location getGateSelectedLocation1()
+    {
+        return this.gateLoc1;
+    }
 
-	/**
-	 * 获取传送门选择点2
-	 * 
-	 * @return
-	 */
-	public Location getGateSelectedLocation2() {
-		return this.gateLoc2;
-	}
+    /**
+     * 设置传送门选择点1
+     *
+     * @param loc
+     */
+    public void setGateSelectedLocation1(Location loc)
+    {
+        this.gateLoc1 = loc;
+    }
 
-	/**
-	 * 设置传送门选择点2
-	 * 
-	 * @param loc
-	 */
-	public void setGateSelectedLocation2(Location loc) {
-		this.gateLoc2 = loc;
-	}
+    /**
+     * 获取传送门选择点2
+     *
+     * @return
+     */
+    public Location getGateSelectedLocation2()
+    {
+        return this.gateLoc2;
+    }
 
-	/**
-	 * 获取VIP列表
-	 * 
-	 * @return
-	 */
-	public List<VIP> getVIPList() {
-		Collections.sort(this.vips, new Comparator<VIP>() {
-			@Override
-			public int compare(VIP vip1, VIP vip2) {
-				return vip2.getLevel() - vip1.getLevel();
-			}
-		});
+    /**
+     * 设置传送门选择点2
+     *
+     * @param loc
+     */
+    public void setGateSelectedLocation2(Location loc)
+    {
+        this.gateLoc2 = loc;
+    }
 
-		return this.vips;
-	}
+    /**
+     * 获取VIP列表
+     *
+     * @return
+     */
+    public List<VIP> getVIPList()
+    {
+        Collections.sort(this.vips, new Comparator<VIP>()
+        {
+            @Override
+            public int compare(VIP vip1, VIP vip2)
+            {
+                return vip2.getLevel() - vip1.getLevel();
+            }
 
-	/**
-	 * 设置死亡时保护物品
-	 * 
-	 * @param inventory
-	 */
-	public void setDeathProtectedItems(DeathInventory inventory) {
-		this.deathInventory = inventory;
-	}
+        });
 
-	/**
-	 * 获取死亡时保护物品
-	 * 
-	 * @return
-	 */
-	public DeathInventory getDeathProtectedItems() {
-		return this.deathInventory;
-	}
+        return this.vips;
+    }
 
-	/**
-	 * 设置死亡时保护经验
-	 * 
-	 * @param exp
-	 */
-	public void setDeathProtectedExp(int exp) {
-		this.deathExp = exp;
-	}
+    /**
+     * 设置死亡时保护物品
+     *
+     * @param inventory
+     */
+    public void setDeathProtectedItems(DeathInventory inventory)
+    {
+        this.deathInventory = inventory;
+    }
 
-	/**
-	 * 获取死亡时保护经验
-	 * 
-	 * @return
-	 */
-	public int getDeathProtectedExp() {
-		return this.deathExp;
-	}
+    /**
+     * 获取死亡时保护物品
+     *
+     * @return
+     */
+    public DeathInventory getDeathProtectedItems()
+    {
+        return this.deathInventory;
+    }
 
-	/**
-	 * 获取预约执行器列表
-	 * 
-	 * @return
-	 */
-	public List<DelayTask> getDelayTaskList() {
-		return this.delayTaskList;
-	}
+    /**
+     * 设置死亡时保护经验
+     *
+     * @param exp
+     */
+    public void setDeathProtectedExp(int exp)
+    {
+        this.deathExp = exp;
+    }
 
-	/**
-	 * 添加预约执行器
-	 * 
-	 * @param task
-	 */
-	public void addDelayTask(DelayTask task) {
-		this.delayTaskList.add(task);
-	}
+    /**
+     * 获取死亡时保护经验
+     *
+     * @return
+     */
+    public int getDeathProtectedExp()
+    {
+        return this.deathExp;
+    }
 
-	/**
-	 * 移除预约执行器
-	 * 
-	 * @param task
-	 */
-	public void removeDelayTask(DelayTask task) {
-		this.delayTaskList.remove(task);
-	}
+    /**
+     * 获取预约执行器列表
+     *
+     * @return
+     */
+    public List<DelayTask> getDelayTaskList()
+    {
+        return this.delayTaskList;
+    }
 
-	/**
-	 * 获取玩家击退抗性
-	 * 
-	 * @return
-	 */
-	public double getKnockbackResistant() {
-		try {
-			File playerFile = new File(System.getProperty("user.dir"),
-					"world\\playerdata\\"
-							+ this.getCraftPlayer().getUniqueId().toString()
-							+ ".dat");
+    /**
+     * 添加预约执行器
+     *
+     * @param task
+     */
+    public void addDelayTask(DelayTask task)
+    {
+        this.delayTaskList.add(task);
+    }
 
-			this.getCraftPlayer().saveData();
+    /**
+     * 移除预约执行器
+     *
+     * @param task
+     */
+    public void removeDelayTask(DelayTask task)
+    {
+        this.delayTaskList.remove(task);
+    }
 
-			NBTInputStream playerInputStream = new NBTInputStream(
-					new FileInputStream(playerFile));
-			CompoundTag playerTag = (CompoundTag) playerInputStream.readTag();
-			playerInputStream.close();
+    /**
+     * 获取玩家击退抗性
+     *
+     * @return
+     */
+    public double getKnockbackResistant()
+    {
+        try
+        {
+            File playerFile = new File(System.getProperty("user.dir"),
+                    "world\\playerdata\\"
+                    + this.getCraftPlayer().getUniqueId().toString()
+                    + ".dat");
 
-			Map<String, Tag> playerData = new LinkedHashMap<String, Tag>(
-					((CompoundTag) playerTag).getValue());
+            this.getCraftPlayer().saveData();
 
-			List<Tag> attributes = ((ListTag) playerData.get("Attributes"))
-					.getValue();
+            NBTInputStream playerInputStream = new NBTInputStream(new FileInputStream(playerFile));
+            CompoundTag playerTag = (CompoundTag) playerInputStream.readTag();
+            playerInputStream.close();
 
-			for (Tag attribute : attributes) {
-				if (((StringTag) ((CompoundTag) attribute).getValue().get(
-						"Name")).getValue().equalsIgnoreCase(
-						"generic.knockbackResistance")) {
-					Double base = ((DoubleTag) ((CompoundTag) attribute)
-							.getValue().get("Base")).getValue();
-					return base;
-				}
-			}
-		} catch (FileNotFoundException ex) {
-			Logger.getLogger(Player.class.getName())
-					.log(Level.SEVERE, null, ex);
-		} catch (IOException ex) {
-			Logger.getLogger(Player.class.getName())
-					.log(Level.SEVERE, null, ex);
-		}
+            Map<String, Tag> playerData = new LinkedHashMap<String, Tag>(((CompoundTag) playerTag).getValue());
 
-		return 0.0;
-	}
+            List<Tag> attributes = ((ListTag) playerData.get("Attributes")).getValue();
 
-	/**
-	 * 设置玩家击退抗性
-	 * 
-	 * @param value
-	 */
-	public void setKnockbackResistant(Double value) {
-		try {
-			File playerFile = new File(System.getProperty("user.dir"),
-					"world\\playerdata\\"
-							+ this.getCraftPlayer().getUniqueId().toString()
-							+ ".dat");
+            for (Tag attribute : attributes)
+            {
+                if (((StringTag) ((CompoundTag) attribute).getValue().get("Name")).getValue().equalsIgnoreCase("generic.knockbackResistance"))
+                {
+                    Double base = ((DoubleTag) ((CompoundTag) attribute).getValue().get("Base")).getValue();
+                    return base;
+                }
+            }
+        }
+        catch (FileNotFoundException ex)
+        {
+            Logger.getLogger(Player.class.getName())
+                    .log(Level.SEVERE, null, ex);
+        }
+        catch (IOException ex)
+        {
+            Logger.getLogger(Player.class.getName())
+                    .log(Level.SEVERE, null, ex);
+        }
 
-			this.getCraftPlayer().saveData();
+        return 0.0;
+    }
 
-			NBTInputStream playerInputStream = new NBTInputStream(
-					new FileInputStream(playerFile));
-			CompoundTag playerTag = (CompoundTag) playerInputStream.readTag();
-			playerInputStream.close();
+    /**
+     * 设置玩家击退抗性
+     *
+     * @param value
+     */
+    public void setKnockbackResistant(Double value)
+    {
+        try
+        {
+            File playerFile = new File(System.getProperty("user.dir"),
+                    "world\\playerdata\\"
+                    + this.getCraftPlayer().getUniqueId().toString()
+                    + ".dat");
 
-			Map<String, Tag> playerData = new LinkedHashMap<String, Tag>(
-					((CompoundTag) playerTag).getValue());
+            this.getCraftPlayer().saveData();
 
-			List<Tag> attributes = ((ListTag) playerData.get("Attributes"))
-					.getValue();
+            NBTInputStream playerInputStream = new NBTInputStream(new FileInputStream(playerFile));
+            CompoundTag playerTag = (CompoundTag) playerInputStream.readTag();
+            playerInputStream.close();
 
-			for (int i = 0; i < attributes.size(); i++) {
-				Tag attribute = attributes.get(i);
+            Map<String, Tag> playerData = new LinkedHashMap<String, Tag>(((CompoundTag) playerTag).getValue());
 
-				if (((StringTag) ((CompoundTag) attribute).getValue().get(
-						"Name")).getValue().equalsIgnoreCase(
-						"generic.knockbackResistance")) {
-					((CompoundTag) ((ListTag) playerData.get("Attributes"))
-							.getValue().get(i)).getValue().put("Base",
-							new DoubleTag("Base", value));
+            List<Tag> attributes = ((ListTag) playerData.get("Attributes")).getValue();
 
-					CompoundTag newTag = new CompoundTag("", playerData);
+            for (int i = 0; i < attributes.size(); i++)
+            {
+                Tag attribute = attributes.get(i);
 
-					NBTOutputStream playerOutputStream = new NBTOutputStream(
-							new FileOutputStream(playerFile));
-					playerOutputStream.writeTag(newTag);
-					playerOutputStream.close();
-					player.loadData();
-					return;
-				}
-			}
+                if (((StringTag) ((CompoundTag) attribute).getValue().get("Name")).getValue().equalsIgnoreCase("generic.knockbackResistance"))
+                {
+                    ((CompoundTag) ((ListTag) playerData.get("Attributes")).getValue().get(i)).getValue().put("Base", new DoubleTag("Base", value));
 
-		} catch (FileNotFoundException ex) {
-			Logger.getLogger(Player.class.getName())
-					.log(Level.SEVERE, null, ex);
-		} catch (IOException ex) {
-			Logger.getLogger(Player.class.getName())
-					.log(Level.SEVERE, null, ex);
-		}
-	}
+                    CompoundTag newTag = new CompoundTag("", playerData);
+
+                    NBTOutputStream playerOutputStream = new NBTOutputStream(new FileOutputStream(playerFile));
+                    playerOutputStream.writeTag(newTag);
+                    playerOutputStream.close();
+                    player.loadData();
+                    return;
+                }
+            }
+
+        }
+        catch (FileNotFoundException ex)
+        {
+            Logger.getLogger(Player.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        catch (IOException ex)
+        {
+            Logger.getLogger(Player.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 }

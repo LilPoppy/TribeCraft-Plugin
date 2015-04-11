@@ -7,29 +7,34 @@ import org.bukkit.event.Cancellable;
 /**
  * @author HotFlow
  */
-public class PlayerUseGateEvent extends PlayerEvent implements Cancellable {
-	private final PortalGate gate;
-	private Boolean cancelled = false;
+public class PlayerUseGateEvent extends PlayerEvent implements Cancellable
+{
+    private final PortalGate gate;
+    private Boolean cancelled = false;
 
-	public PlayerUseGateEvent(TribePlayer player, PortalGate gate) {
-		super(player);
-		this.gate = gate;
-	}
+    public PlayerUseGateEvent(TribePlayer player, PortalGate gate)
+    {
+        super(player);
+        this.gate = gate;
+    }
 
-	/**
-	 * 获取传送门
-	 * 
-	 * @return
-	 */
-	public PortalGate getPortalGate() {
-		return this.gate;
-	}
+    /**
+     * 获取传送门
+     *
+     * @return
+     */
+    public PortalGate getPortalGate()
+    {
+        return this.gate;
+    }
 
-	public boolean isCancelled() {
-		return this.cancelled;
-	}
+    public boolean isCancelled()
+    {
+        return this.cancelled;
+    }
 
-	public void setCancelled(boolean bln) {
-		this.cancelled = bln;
-	}
+    public void setCancelled(boolean bln)
+    {
+        this.cancelled = bln;
+    }
 }

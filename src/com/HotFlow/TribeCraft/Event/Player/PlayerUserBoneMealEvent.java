@@ -9,19 +9,20 @@ import org.bukkit.event.Cancellable;
 public class PlayerUserBoneMealEvent extends PlayerEvent implements Cancellable
 {
     private Boolean cancelled = true;
-    
-    public PlayerUserBoneMealEvent(TribePlayer player) 
+
+    public PlayerUserBoneMealEvent(TribePlayer player)
     {
         super(player);
     }
-    public boolean isCancelled() 
+
+    public boolean isCancelled()
     {
         return this.cancelled;
     }
 
-    public void setCancelled(boolean bln) 
+    public void setCancelled(boolean bln)
     {
         this.cancelled = bln;
     }
-    
+
 }

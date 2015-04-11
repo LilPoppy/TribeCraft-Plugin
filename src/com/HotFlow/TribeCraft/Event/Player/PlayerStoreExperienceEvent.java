@@ -6,19 +6,22 @@ import org.bukkit.event.Cancellable;
 /**
  * @author HotFlow
  */
-public class PlayerStoreExperienceEvent extends PlayerEvent implements
-		Cancellable {
-	private Boolean cancelled = false;
+public class PlayerStoreExperienceEvent extends PlayerEvent implements Cancellable
+{
+    private Boolean cancelled = false;
 
-	public PlayerStoreExperienceEvent(TribePlayer player) {
-		super(player);
-	}
+    public PlayerStoreExperienceEvent(TribePlayer player)
+    {
+        super(player);
+    }
 
-	public boolean isCancelled() {
-		return this.cancelled;
-	}
+    public boolean isCancelled()
+    {
+        return this.cancelled;
+    }
 
-	public void setCancelled(boolean bln) {
-		this.cancelled = bln;
-	}
+    public void setCancelled(boolean bln)
+    {
+        this.cancelled = bln;
+    }
 }

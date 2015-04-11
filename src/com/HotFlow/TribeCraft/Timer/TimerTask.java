@@ -11,40 +11,40 @@ import org.bukkit.plugin.Plugin;
 /**
  * @author HotFlow
  */
-public final class TimerTask 
+public final class TimerTask
 {
     private final int taskID;
     private TaskState taskState;
-    
-    public TimerTask(final Plugin plugin,final ServerTimer timer)
+
+    public TimerTask(final Plugin plugin, final ServerTimer timer)
     {
         this.taskState = TaskState.Suspending;
-        
+
         @SuppressWarnings("deprecation")
         int taskID = getServer().getScheduler().scheduleAsyncRepeatingTask(plugin, new Runnable()
         {
             @Override
             public void run()
             {
-                if(taskState.equals(TaskState.Running))
+                if (taskState.equals(TaskState.Running))
                 {
-                    PluginTimeChangeEvent event = new PluginTimeChangeEvent(plugin ,timer.getTime() + 1);
+                    PluginTimeChangeEvent event = new PluginTimeChangeEvent(plugin, timer.getTime() + 1);
                     getServer().getPluginManager().callEvent(event);
-                    
-                    if(event.isCancelled())
+
+                    if (event.isCancelled())
                     {
                         return;
                     }
-                    
+
                     timer.setTime(event.getTime());
-                    
-                    for(TribePlayer player : TribeCraft.getPlayerManager().getPlayers())
+
+                    for (TribePlayer player : TribeCraft.getPlayerManager().getPlayers())
                     {
-                        for(int i = 0; i < player.getDelayTaskList().size();i++)
+                        for (int i = 0; i < player.getDelayTaskList().size(); i++)
                         {
                             DelayTask task = player.getDelayTaskList().get(i);
-                            
-                            if(task.getTime() > 0)
+
+                            if (task.getTime() > 0)
                             {
                                 task.setTime(task.getTime() - 1);
                             }
@@ -54,7 +54,7 @@ public final class TimerTask
                                 player.removeDelayTask(task);
                             }
                         }
-                            
+
                     }
                 }
                 else
@@ -62,12 +62,12 @@ public final class TimerTask
                     return;
                 }
             }
-            
-        },0L,20L);
-        
+
+        }, 0L, 20L);
+
         this.taskID = taskID;
     }
-    
+
     /**
      * 开始计时
      */
@@ -75,7 +75,7 @@ public final class TimerTask
     {
         this.taskState = TaskState.Running;
     }
-    
+
     /**
      * 暂停计时
      */
@@ -83,28 +83,29 @@ public final class TimerTask
     {
         this.taskState = TaskState.Suspending;
     }
-    
+
     /**
-     * 停止计时
-     * 停止后不能再使用start恢复
+     * 停止计时 停止后不能再使用start恢复
      */
     public void stop()
     {
         getServer().getScheduler().cancelTask(this.taskID);
     }
-    
+
     /**
      * 获取执行器当前状态
-     * @return 
+     *
+     * @return
      */
     public TaskState getCurrentState()
     {
         return this.taskState;
     }
-    
+
     /**
      * 获取时间执行器ID
-     * @return 
+     *
+     * @return
      */
     public int getTaskID()
     {
