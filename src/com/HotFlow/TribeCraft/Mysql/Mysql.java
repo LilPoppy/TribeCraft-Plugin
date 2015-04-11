@@ -86,7 +86,7 @@ public class Mysql {
 		return false;
 	}
     
-	 public synchronized boolean isValueExist(String table.String key,String value)
+	 public synchronized boolean isValueExist(String table,String key,String value)
 	    {
 	        int size = 0;
 	        try
@@ -100,7 +100,7 @@ public class Mysql {
 	        }
 	        catch(SQLException ex)
 	        {
-	            Main.logger.log(Level.SEVERE, ex.toString());
+	            TribeCraft.logger.log(Level.SEVERE, ex.toString());
 	        }
 	        return size > 0;
 	    }

@@ -12,7 +12,7 @@ import com.HotFlow.TribeCraft.Mysql.Slot;
 import com.HotFlow.TribeCraft.Mysql.SlotRule;
 
 public class Dollar {
-	
+	public static String table;
 	public static double getPlayerDollar(String name) {
 		return 0;
 	}
@@ -44,7 +44,7 @@ public class Dollar {
 				e.printStackTrace();
 			}
 		}
-        String table=config.getString("table");
+        table=config.getString("table");
         boolean hasTable=TribeCraft.mysql.hasTable(table);
         if (!hasTable){
         	Slot[] slot=new Slot[1];
@@ -56,7 +56,16 @@ public class Dollar {
         }
 		return 1;
 	}
-	public boolean createAccount(String name){
-		
+	public int createAccount(String name){
+		if (TribeCraft.mysql.isValueExist(table, "name",name))){
+			return -1;
+		}else{
+			if (TribeCraft.mysql.isConnecting()==false){
+				return -2;
+			}else{
+				
+			}
+		}
+		return 1;
 	}
 }
