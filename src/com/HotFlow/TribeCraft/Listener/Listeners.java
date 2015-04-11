@@ -15,9 +15,7 @@ import com.HotFlow.TribeCraft.PortalGate.PortalGate;
 import com.HotFlow.TribeCraft.PortalGate.PortalGateType;
 import com.HotFlow.TribeCraft.TribeCraft;
 import com.HotFlow.TribeCraft.Utils.System.ISystem;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Random;
 import static org.bukkit.Bukkit.getServer;
 import org.bukkit.ChatColor;
@@ -292,8 +290,7 @@ public class Listeners implements Listener
         }
     }
     
-    @SuppressWarnings("deprecation")
-	@EventHandler
+    @EventHandler
     public void onPlayerInteract(PlayerInteractEvent event)
     {
         if ((event.getPlayer().getItemInHand() != null) && (!event.getPlayer().getItemInHand().getType().equals(Material.AIR)))

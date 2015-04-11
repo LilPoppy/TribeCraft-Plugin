@@ -8,7 +8,7 @@ import org.bukkit.event.Cancellable;
  */
 public class PlayerIncSackEvent extends PlayerEvent implements Cancellable
 {
-    private Boolean cancelled = false;
+    private Boolean cancelled = true;
     
     public PlayerIncSackEvent(TribePlayer player) 
     {
