@@ -1,6 +1,6 @@
 package com.HotFlow.TribeCraft.CommandExecutor;
 
-import com.HotFlow.TribeCraft.Player.Extension.TeleportAppointment;
+import com.HotFlow.TribeCraft.Player.Extension.DelayTask;
 import com.HotFlow.TribeCraft.Player.TribePlayer;
 import com.HotFlow.TribeCraft.TribeCraft;
 import com.HotFlow.TribeCraft.World.Area;
@@ -34,10 +34,16 @@ public class UserExecutor implements CommandExecutor
             {
                 if(args[0].equalsIgnoreCase("survival"))
                 {
-                    if(tribePlayer.getTeleportingAppointment() != null)
+                    for(DelayTask task : tribePlayer.getDelayTaskList())
                     {
-                        player.sendMessage("请勿重复使用此命令!");
-                        return false;
+                        if(task.getDescription() != null)
+                        {
+                            if(task.getDescription().equalsIgnoreCase("Teleport"))
+                            {
+                                player.sendMessage("请勿重复使用此命令!");
+                                return false;
+                            }
+                        }
                     }
                     
                     final Area area = new Area(
@@ -89,7 +95,16 @@ public class UserExecutor implements CommandExecutor
                                                         else
                                                         {
                                                             player.sendMessage(ChatColor.GOLD + "传送将在" + 10 + " 秒内开始.不要移动");
-                                                            tribePlayer.setTeleportingAppointment(new TeleportAppointment(10,location));
+                                                            
+                                                            tribePlayer.addDelayTask(new DelayTask(10,"Teleport")
+                                                            {
+                                                                @Override
+                                                                public void run()
+                                                                {
+                                                                    tribePlayer.getCraftPlayer().sendMessage(ChatColor.GOLD + "准备传送...");
+                                                                    tribePlayer.getCraftPlayer().teleport(location);
+                                                                }
+                                                            });
                                                             return;
                                                         }
                                                     } 

@@ -1,7 +1,9 @@
 package com.HotFlow.TribeCraft.Timer;
 
 import com.HotFlow.TribeCraft.Event.Plugin.PluginTimeChangeEvent;
-
+import com.HotFlow.TribeCraft.Player.Extension.DelayTask;
+import com.HotFlow.TribeCraft.Player.TribePlayer;
+import com.HotFlow.TribeCraft.TribeCraft;
 import static org.bukkit.Bukkit.getServer;
 
 import org.bukkit.plugin.Plugin;
@@ -35,6 +37,25 @@ public final class TimerTask
                     }
                     
                     timer.setTime(event.getTime());
+                    
+                    for(TribePlayer player : TribeCraft.getPlayerManager().getPlayers())
+                    {
+                        for(int i = 0; i < player.getDelayTaskList().size();i++)
+                        {
+                            DelayTask task = player.getDelayTaskList().get(i);
+                            
+                            if(task.getTime() > 0)
+                            {
+                                task.setTime(task.getTime() - 1);
+                            }
+                            else
+                            {
+                                task.run();
+                                player.removeDelayTask(task);
+                            }
+                        }
+                            
+                    }
                 }
                 else
                 {
