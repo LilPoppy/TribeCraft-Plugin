@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
-import org.bukkit.Bukkit.getServer;
+
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -71,7 +71,8 @@ public class Listeners implements Listener
         
         if(!player.getCraftPlayer().hasPermission(new Permissions().deathSaveAll))
         {
-            List<ItemStack> protectedItems = new ArrayList<ItemStack>();
+            @SuppressWarnings("unused")
+			List<ItemStack> protectedItems = new ArrayList<ItemStack>();
             
             if(player.getVIPList().size() > 0)
             {

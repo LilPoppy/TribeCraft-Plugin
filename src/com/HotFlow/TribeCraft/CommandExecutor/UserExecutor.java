@@ -23,8 +23,7 @@ import org.bukkit.entity.Player;
  */
 public class UserExecutor implements CommandExecutor
 {
-    @SuppressWarnings("deprecation")
-	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) 
+    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) 
     {
         if(sender instanceof Player)
         {
@@ -74,7 +73,8 @@ public class UserExecutor implements CommandExecutor
 
                                                 
                                                 final Location location = new Location(player.getWorld(),x,(y+1),z);
-                                                Block block1 = location.getBlock();
+                                                @SuppressWarnings("unused")
+												Block block1 = location.getBlock();
                                                 
                                                 if(!Area.isAreaContainLocation(area, location))
                                                 {
