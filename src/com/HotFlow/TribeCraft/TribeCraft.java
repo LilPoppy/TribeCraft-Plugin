@@ -2,7 +2,6 @@ package com.HotFlow.TribeCraft;
 
 import com.HotFlow.TribeCraft.Configuration.TribeConfiguration;
 import com.HotFlow.TribeCraft.Configuration.Writter;
-import com.HotFlow.TribeCraft.Dollar.Dollar;
 import com.HotFlow.TribeCraft.Manager.PlayerManager;
 import com.HotFlow.TribeCraft.Manager.PluginManager;
 import com.HotFlow.TribeCraft.Manager.PortalGateManager;
@@ -61,18 +60,13 @@ public class TribeCraft extends JavaPlugin {
 		TribeCraft.dataFile = new File(getDataFolder(), "data.yml");
 		TribeCraft.serverTimer = new ServerTimer();
 		TribeCraft.serverTimer.getTimerTask().start();
-		
+
 		this.loadData();
 		this.loadConfig();
-        if (setupMysql()==true){
-        	TribeCraft.logger.log(Level.INFO, prefix+"mysql连接成功");
-        }else{
-        	TribeCraft.logger.log(Level.SEVERE, prefix+"mysql连接失败");
-        }
-		if (Dollar.init() == 1) {
-			TribeCraft.logger.log(Level.INFO, prefix + "点卷系统安装成功");
-		}else{
-			TribeCraft.logger.log(Level.SEVERE, prefix+"mysql连接失败，点卷系统安装失败");
+		if (setupMysql() == true) {
+			TribeCraft.logger.log(Level.INFO, prefix + "mysql连接成功");
+		} else {
+			TribeCraft.logger.log(Level.SEVERE, prefix + "mysql连接失败");
 		}
 		if (TribeCraft.setupResidence()) {
 			TribeCraft.logger.log(Level.INFO, prefix + " 领地系统安装成功!");
@@ -106,21 +100,19 @@ public class TribeCraft extends JavaPlugin {
 				new com.HotFlow.TribeCraft.CommandExecutor.UserExecutor());
 		getCommand("TribeAdmin").setExecutor(
 				new com.HotFlow.TribeCraft.CommandExecutor.AdminExecutor());
-		getCommand("dollar").setExecutor(
-				new com.HotFlow.TribeCraft.Dollar.DollarCommandExecutor());
 		getServer().getPluginManager().registerEvents(
 				new com.HotFlow.TribeCraft.Listener.Listeners(), this);
 	}
 
-	public static boolean setupMysql() { 
-		TribeConfiguration config=new TribeConfiguration();
-		File file=new File(plugin.getDataFolder(),"mysql.yml");
-		if (!file.exists()){
-			config.set("ip","127.0.0.1");
-			config.set("username","user");
+	public static boolean setupMysql() {
+		TribeConfiguration config = new TribeConfiguration();
+		File file = new File(plugin.getDataFolder(), "mysql.yml");
+		if (!file.exists()) {
+			config.set("ip", "127.0.0.1");
+			config.set("username", "user");
 			config.set("port", 3306);
-			config.set("password","123456");
-			config.set("schema","minecraft");
+			config.set("password", "123456");
+			config.set("schema", "minecraft");
 			try {
 				config.save(file);
 			} catch (IOException e) {
@@ -136,13 +128,13 @@ public class TribeCraft extends JavaPlugin {
 		} catch (InvalidConfigurationException e) {
 			e.printStackTrace();
 		}
-		String ip=config.getString("ip");
-		String username=config.getString("username");
-		int port=config.getInt("port");
-		String password=config.getString("password");
-		String schema=config.getString("schema");
-		TribeCraft.mysql=new Mysql(ip, port, username, password, schema);
-		if(mysql.connect()){
+		String ip = config.getString("ip");
+		String username = config.getString("username");
+		int port = config.getInt("port");
+		String password = config.getString("password");
+		String schema = config.getString("schema");
+		TribeCraft.mysql = new Mysql(ip, port, username, password, schema);
+		if (mysql.connect()) {
 			return true;
 		}
 		return false;

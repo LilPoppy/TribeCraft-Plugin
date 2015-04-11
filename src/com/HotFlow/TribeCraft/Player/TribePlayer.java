@@ -37,9 +37,50 @@ public class TribePlayer {
 	private DeathInventory deathInventory = new DeathInventory();
 	private int deathExp;
 	private final List<DelayTask> delayTaskList = new ArrayList<DelayTask>();
+	private int dollar;
 
 	public TribePlayer(Player player) {
 		this.player = player;
+	}
+
+	/**
+	 * 获取玩家点卷数量
+	 * 
+	 * @return 玩家点卷数量
+	 */
+	public int getDollar() {
+		return dollar;
+	}
+
+	/**
+	 * 增加玩家点卷
+	 * 
+	 * @param 增加数量
+	 * @return 增加后的数量
+	 */
+	public int addDollar(int CountOfAdd) {
+		dollar = dollar + CountOfAdd;
+		return dollar;
+	}
+
+	/**
+	 * 减少玩家点卷数量
+	 * 
+	 * @param 减少数量
+	 * @return 减少后的数量
+	 */
+	public int TakeDollar(int CountOfTake) {
+		dollar = dollar + CountOfTake;
+		return dollar;
+	}
+
+	/**
+	 * 设置玩家点卷数量
+	 * 
+	 * @param 需要设置的点卷数量
+	 */
+	public void setDollar(int dollar) {
+		this.dollar = dollar;
 	}
 
 	/**

@@ -22,7 +22,7 @@ public class Mysql {
 	public int port;
 	public String schema;
 	private Connection conn;
-	private Timer ConnectingTime=new Timer();
+	private Timer ConnectingTime = new Timer();
 
 	public Mysql(String ip, int port, String username, String password,
 			String schema) {
@@ -77,33 +77,30 @@ public class Mysql {
 		}
 		try {
 			PreparedStatement sql = this.conn.prepareStatement("CREATE TABLE "
-					+ this.schema + "." + name + "(" + sb.toString()
-					+ ");");
+					+ this.schema + "." + name + "(" + sb.toString() + ");");
 			return sql.execute();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		return false;
 	}
-    
-	 public synchronized boolean isValueExist(String table,String key,String value)
-	    {
-	        int size = 0;
-	        try
-	        {
-	            PreparedStatement sql = this.conn.prepareStatement("SELECT " + key + " FROM " + this.schema + "." + table + " WHERE " + key + " ='" + value + "';");
-	            ResultSet result = sql.executeQuery();
-	            while(result.next())
-	            {
-	                size++;
-	            }
-	        }
-	        catch(SQLException ex)
-	        {
-	            TribeCraft.logger.log(Level.SEVERE, ex.toString());
-	        }
-	        return size > 0;
-	    }
+
+	public synchronized boolean isValueExist(String table, String key,
+			String value) {
+		int size = 0;
+		try {
+			PreparedStatement sql = this.conn.prepareStatement("SELECT " + key
+					+ " FROM " + this.schema + "." + table + " WHERE " + key
+					+ " ='" + value + "';");
+			ResultSet result = sql.executeQuery();
+			while (result.next()) {
+				size++;
+			}
+		} catch (SQLException ex) {
+			TribeCraft.logger.log(Level.SEVERE, ex.toString());
+		}
+		return size > 0;
+	}
 
 	/**
 	 * 添加数据
@@ -112,48 +109,48 @@ public class Mysql {
 	 * @param value
 	 * @return 添加数量
 	 */
-	public synchronized int insert(String table,String key, String value) {
+	public synchronized int insert(String table, String key, String value) {
 		try {
 			PreparedStatement sql = this.conn.prepareStatement("Insert into "
-					+ this.schema + " " + table + "(" + key + ")"
-					+ " vaule " + value + ");");
+					+ this.schema + " " + table + "(" + key + ")" + " vaule "
+					+ value + ");");
 			sql.executeUpdate();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		return 0;
 	}
+
 	/**
 	 * 获取mysql连接时间
+	 * 
 	 * @return mysql连接时间
 	 */
-    public long getConnectingTime(){
-    	return ConnectingTime.getTime();
-    }
-    public boolean isConnecting(){
-    	try {
+	public long getConnectingTime() {
+		return ConnectingTime.getTime();
+	}
+
+	public boolean isConnecting() {
+		try {
 			return !conn.isClosed();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-    	return false;
-    }
-    public synchronized boolean hasTable(String table)
-    {
-        int size = 0;
-        try
-        {
-            PreparedStatement sql = this.conn.prepareStatement("SHOW TABLES LIKE '" + table+ "';");
-            ResultSet result = sql.executeQuery();
-            while(result.next())
-            {
-                size++;
-            }
-        }
-        catch(SQLException ex)
-        {
-            TribeCraft.logger.log(Level.SEVERE, ex.toString());
-        }
-        return size > 0;
-    }
+		return false;
+	}
+
+	public synchronized boolean hasTable(String table) {
+		int size = 0;
+		try {
+			PreparedStatement sql = this.conn
+					.prepareStatement("SHOW TABLES LIKE '" + table + "';");
+			ResultSet result = sql.executeQuery();
+			while (result.next()) {
+				size++;
+			}
+		} catch (SQLException ex) {
+			TribeCraft.logger.log(Level.SEVERE, ex.toString());
+		}
+		return size > 0;
+	}
 }

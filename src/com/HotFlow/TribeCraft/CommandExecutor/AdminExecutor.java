@@ -19,31 +19,32 @@ public class AdminExecutor implements CommandExecutor {
 
 	public boolean onCommand(CommandSender sender, Command command,
 			String label, String[] args) {
-		if (args.length==0){
+		if (args.length == 0) {
 			return false;
 		}
-		if (args[0].equalsIgnoreCase("mysql")){
-			if (args[1].equalsIgnoreCase("reload")){
+		if (args[0].equalsIgnoreCase("mysql")) {
+			if (args[1].equalsIgnoreCase("reload")) {
 				sender.sendMessage("§a重载中。。。");
-				if (TribeCraft.setupMysql()==true){
+				if (TribeCraft.setupMysql() == true) {
 					sender.sendMessage("§a重载完成");
 					sender.sendMessage("§aMysql状态:成功连接");
-				}else{
+				} else {
 					sender.sendMessage("§a重载完成");
 					sender.sendMessage("§aMysql状态:错误连接");
 				}
 				return true;
 			}
-			if (args[1].equalsIgnoreCase("info")){
+			if (args[1].equalsIgnoreCase("info")) {
 				sender.sendMessage("§amysql信息:");
-				sender.sendMessage("§a运行时间:"+TribeCraft.mysql.getConnectingTime()+"秒");
-				sender.sendMessage("§aIP:"+TribeCraft.mysql.ip);
-				sender.sendMessage("§a端口:"+TribeCraft.mysql.port);
-				sender.sendMessage("§a用户名:"+TribeCraft.mysql.username);
-				sender.sendMessage("§a库:"+TribeCraft.mysql.schema);
-				if (TribeCraft.mysql.isConnecting()==true){
+				sender.sendMessage("§a运行时间:"
+						+ TribeCraft.mysql.getConnectingTime() + "秒");
+				sender.sendMessage("§aIP:" + TribeCraft.mysql.ip);
+				sender.sendMessage("§a端口:" + TribeCraft.mysql.port);
+				sender.sendMessage("§a用户名:" + TribeCraft.mysql.username);
+				sender.sendMessage("§a库:" + TribeCraft.mysql.schema);
+				if (TribeCraft.mysql.isConnecting() == true) {
 					sender.sendMessage("§a连接状态:正常连接");
-				}else{
+				} else {
 					sender.sendMessage("§a连接错误:连接错误");
 				}
 				return true;
