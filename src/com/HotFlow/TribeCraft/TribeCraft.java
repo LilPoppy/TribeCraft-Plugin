@@ -15,6 +15,7 @@ import com.bekvon.bukkit.residence.Residence;
 import com.bekvon.bukkit.residence.protection.ResidenceManager;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Set;
 import java.util.logging.Level;
@@ -64,7 +65,9 @@ public class TribeCraft extends JavaPlugin {
 		this.loadData();
 		this.loadConfig();
         if (setupMysql()==true){
-        	
+        	TribeCraft.logger.log(Level.INFO, prefix+"mysql连接成功");
+        }else{
+        	TribeCraft.logger.log(Level.SEVERE, prefix+"mysql连接失败");
         }
 		if (Dollar.init() == 1) {
 			TribeCraft.logger.log(Level.INFO, prefix + "点卷系统安装成功");
@@ -107,9 +110,39 @@ public class TribeCraft extends JavaPlugin {
 				new com.HotFlow.TribeCraft.Listener.Listeners(), this);
 	}
 
-	private boolean setupMysql() { 
+	public static boolean setupMysql() { 
 		TribeConfiguration config=new TribeConfiguration();
-		
+		File file=new File(plugin.getDataFolder(),"mysql.yml");
+		if (!file.exists()){
+			config.set("ip","127.0.0.1");
+			config.set("username","user");
+			config.set("port", 3306);
+			config.set("password","123456");
+			config.set("schema","minecraft");
+			try {
+				config.save(file);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		try {
+			config.load(file);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (InvalidConfigurationException e) {
+			e.printStackTrace();
+		}
+		String ip=config.getString("ip");
+		String username=config.getString("username");
+		int port=config.getInt("port");
+		String password=config.getString("password");
+		String schema=config.getString("schema");
+		TribeCraft.mysql=new Mysql(ip, port, username, password, schema);
+		if(mysql.connect()){
+			return true;
+		}
 		return false;
 	}
 

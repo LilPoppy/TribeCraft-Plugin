@@ -5,6 +5,10 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
+import com.HotFlow.TribeCraft.TribeCraft;
+import com.HotFlow.TribeCraft.Timer.TimerTask;
+import com.HotFlow.TribeCraft.Timer.ServerTimer;
+
 /**
  * 
  * @author a404510
@@ -17,6 +21,8 @@ public class Mysql {
 	public int port;
 	public String schema;
 	private Connection conn;
+	public boolean isConnection;
+	private TimerTask ConnectionTime=new TimerTask(TribeCraft.plugin, ServerTimer);
 
 	public Mysql(String ip, int port, String username, String password,
 			String schema) {
@@ -33,20 +39,23 @@ public class Mysql {
 	 * @return ÊÇ·ñ³É¹¦
 	 * 
 	 */
-	public Boolean connect() {
+	public synchronized Boolean connect() {
 		String driver = "com.mysql.jdbc.Driver";
 		try {
 			Class.forName(driver);
 			conn = DriverManager.getConnection("jdbc:mysql://" + ip + port
 					+ "/" + schema, username, password);
 			if (conn.isClosed()) {
+				isConnection=false;
 				return false;
 			} else {
+				isConnection=true;
 				return true;
 			}
 		} catch (SQLException | ClassNotFoundException e) {
 			e.printStackTrace();
 		}
+		isConnection=false;
 		return false;
 	}
 

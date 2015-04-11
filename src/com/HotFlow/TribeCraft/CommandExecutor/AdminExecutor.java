@@ -19,6 +19,24 @@ public class AdminExecutor implements CommandExecutor {
 
 	public boolean onCommand(CommandSender sender, Command command,
 			String label, String[] args) {
+		if (args.length==0){
+			return false;
+		}
+		if (args[0].equalsIgnoreCase("mysql")){
+			if (args[1].equalsIgnoreCase("reload")){
+				sender.sendMessage("§a重载中。。。");
+				if (TribeCraft.setupMysql()==true){
+					sender.sendMessage("§a重载完成");
+					sender.sendMessage("§aMysql状态:成功连接");
+				}else{
+					sender.sendMessage("§a重载完成");
+					sender.sendMessage("§aMysql状态:错误连接");
+				}
+			}
+			if (args[1].equalsIgnoreCase("info")){
+				sender.sendMessage("");
+			}
+		}
 		if (sender instanceof Player) {
 			Player player = (Player) sender;
 
