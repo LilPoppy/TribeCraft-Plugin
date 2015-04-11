@@ -14,19 +14,12 @@ import com.HotFlow.TribeCraft.Player.TribePlayer;
 import com.HotFlow.TribeCraft.PortalGate.PortalGate;
 import com.HotFlow.TribeCraft.PortalGate.PortalGateType;
 import com.HotFlow.TribeCraft.TribeCraft;
-<<<<<<< HEAD
-
-import java.util.ArrayList;
-=======
 import com.HotFlow.TribeCraft.Utils.System.ISystem;
->>>>>>> 70f5672aa5a3675b5400a3746053c358ab4061f3
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Random;
-<<<<<<< HEAD
-
-=======
 import static org.bukkit.Bukkit.getServer;
->>>>>>> 70f5672aa5a3675b5400a3746053c358ab4061f3
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -90,9 +83,7 @@ public class Listeners implements Listener
         }
         
         if(!player.getCraftPlayer().hasPermission(new Permissions().deathSaveAll))
-        {
-            @SuppressWarnings("unused")
-			List<ItemStack> protectedItems = new ArrayList<ItemStack>();
+        {            
             if(player.getVIPList().size() > 0)
             {
                 player.getCraftPlayer().sendMessage("您的VIP等级为: " + player.getVIPList().get(0).getLevel());

@@ -21,7 +21,7 @@ public final class TimerTask
         this.taskState = TaskState.Suspending;
         
         @SuppressWarnings("deprecation")
-		int taskID = getServer().getScheduler().scheduleAsyncRepeatingTask(plugin, new Runnable()
+        int taskID = getServer().getScheduler().scheduleAsyncRepeatingTask(plugin, new Runnable()
         {
             @Override
             public void run()
