@@ -1,17 +1,17 @@
-package com.HotFlow.TribeCraft.Manager;
+package com.HotFlow.TribeCraft;
 
 import com.HotFlow.TribeCraft.TribeCraft;
 
 /**
  * @author HotFlow
  */
-public class PluginManager
+public class PluginConfig
 {
-    private final SurvivalConfiguration survivalConfig;
+    private final SurvivalConfiguration survival;
 
-    public PluginManager()
+    public PluginConfig()
     {
-        this.survivalConfig = new SurvivalConfiguration(
+        this.survival = new SurvivalConfiguration(
                 TribeCraft.config.getBoolean("全局配置.用户指令.Survival.开启"),
                 TribeCraft.config.getString("全局配置.用户指令.Survival.主城领地"),
                 TribeCraft.config.getString("全局配置.用户指令.Survival.子领地"),
@@ -26,9 +26,9 @@ public class PluginManager
      *
      * @return
      */
-    public SurvivalConfiguration getSurvivalProperties()
+    public SurvivalConfiguration getSurvival()
     {
-        return this.survivalConfig;
+        return this.survival;
     }
 
     public class SurvivalConfiguration

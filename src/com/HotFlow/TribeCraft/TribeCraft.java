@@ -3,7 +3,6 @@ package com.HotFlow.TribeCraft;
 import com.HotFlow.TribeCraft.Configuration.TribeConfiguration;
 import com.HotFlow.TribeCraft.Configuration.Writter;
 import com.HotFlow.TribeCraft.Manager.PlayerManager;
-import com.HotFlow.TribeCraft.Manager.PluginManager;
 import com.HotFlow.TribeCraft.Manager.PortalGateManager;
 import com.HotFlow.TribeCraft.PortalGate.PortalGate;
 import com.HotFlow.TribeCraft.PortalGate.PortalGateType;
@@ -11,17 +10,14 @@ import com.HotFlow.TribeCraft.Timer.ServerTimer;
 import com.HotFlow.TribeCraft.World.Area;
 import com.bekvon.bukkit.residence.Residence;
 import com.bekvon.bukkit.residence.protection.ResidenceManager;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import net.milkbowl.vault.chat.Chat;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
@@ -41,7 +37,7 @@ public class TribeCraft extends JavaPlugin
     public final static TribeConfiguration data = new TribeConfiguration();
     private static final PlayerManager playerManager = new PlayerManager();
     private static final PortalGateManager portalGateManager = new PortalGateManager();
-    private static PluginManager pluginManager;
+    private static PluginConfig pluginConfig;
     public static final Logger logger = Logger.getLogger("HotFlow");
     public static final String prefix = "[蛮族部落]";
     public static Residence residence;
@@ -137,13 +133,13 @@ public class TribeCraft extends JavaPlugin
     }
 
     /**
-     * 获取插件信息管理中心
+     * 获取插件配置信息
      *
      * @return
      */
-    public static PluginManager getPluginManager()
+    public static PluginConfig getPluginConfig()
     {
-        return TribeCraft.pluginManager;
+        return TribeCraft.pluginConfig;
     }
 
     /**
@@ -352,7 +348,7 @@ public class TribeCraft extends JavaPlugin
             Logger.getLogger(TribeCraft.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        TribeCraft.pluginManager = new PluginManager();
+        TribeCraft.pluginConfig = new PluginConfig();
     }
 
     /**

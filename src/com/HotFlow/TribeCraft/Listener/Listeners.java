@@ -16,12 +16,9 @@ import com.HotFlow.TribeCraft.PortalGate.PortalGate;
 import com.HotFlow.TribeCraft.PortalGate.PortalGateType;
 import com.HotFlow.TribeCraft.TribeCraft;
 import com.HotFlow.TribeCraft.Utils.System.ISystem;
-
 import java.util.HashMap;
 import java.util.Random;
-
 import static org.bukkit.Bukkit.getServer;
-
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -30,6 +27,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockDispenseEvent;
+import org.bukkit.event.entity.EntityPortalEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -294,7 +292,6 @@ public class Listeners implements Listener
         }
     }
 
-    @SuppressWarnings("deprecation")
     @EventHandler
     public void onPlayerInteract(PlayerInteractEvent event)
     {
@@ -349,12 +346,9 @@ public class Listeners implements Listener
     @EventHandler
     public void onBlockDispense(BlockDispenseEvent event)
     {
-        if (event.getItem().getType() == Material.INK_SACK)
+        for(int id : TribeCraft.config.getIntegerList(""))
         {
-            BlockDispenseBoneMealEvent event1 = new BlockDispenseBoneMealEvent(event.getBlock());
-            getServer().getPluginManager().callEvent(event1);
-
-            if (event1.isCancelled())
+            if(event.getItem().getType().equals(Material.getMaterial(id)))
             {
                 event.setCancelled(true);
             }
@@ -466,6 +460,12 @@ public class Listeners implements Listener
 
     @EventHandler
     public void onPluginTimeChange(PluginTimeChangeEvent event)
+    {
+
+    }
+    
+    @EventHandler
+    public void onEntityPortal(EntityPortalEvent event)
     {
 
     }
