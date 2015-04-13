@@ -99,6 +99,7 @@ public class TribeCraft extends JavaPlugin
         getServer().getPluginManager().addPermission(new com.HotFlow.TribeCraft.Permissions.Permissions().user);
         getCommand("Tribe").setExecutor(new com.HotFlow.TribeCraft.CommandExecutor.UserExecutor());
         getCommand("TribeAdmin").setExecutor(new com.HotFlow.TribeCraft.CommandExecutor.AdminExecutor());
+        getCommand("ec").setExecutor(new com.HotFlow.TribeCraft.EnhanciveCommand.CECommandExecute());
         getServer().getPluginManager().registerEvents(new com.HotFlow.TribeCraft.Listener.Listeners(), this);
     }
 
