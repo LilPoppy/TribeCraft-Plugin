@@ -261,6 +261,8 @@ public class Listeners implements Listener
                 }
             }
         }
+        
+        player.setDeathProtectedItems(null);
 
         PlayerStoreExperienceEvent event2 = new PlayerStoreExperienceEvent(player);
         getServer().getPluginManager().callEvent(event2);
@@ -275,11 +277,14 @@ public class Listeners implements Listener
                     if (!player.getCraftPlayer().isDead() && player.getCraftPlayer().isOnline())
                     {
                         ISystem.experience.setTotalExperience(player.getCraftPlayer(), player.getDeathProtectedExp());
+                        player.setDeathProtectedExp(0);
                     }
                 }
 
             });
         }
+        
+        
     }
 
     @EventHandler
