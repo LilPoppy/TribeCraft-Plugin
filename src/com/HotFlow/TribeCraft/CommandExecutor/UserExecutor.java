@@ -47,8 +47,8 @@ public class UserExecutor implements CommandExecutor
                     }
 
                     final Area area = new Area(
-                            TribeCraft.getResidenceManager().getByName(TribeCraft.getPluginConfig().getSurvival().mainTown).getArea(TribeCraft.getPluginConfig().getSurvival().subArea).getHighLoc(),
-                            TribeCraft.getResidenceManager().getByName(TribeCraft.getPluginConfig().getSurvival().mainTown).getArea(TribeCraft.getPluginConfig().getSurvival().subArea).getLowLoc());
+                            TribeCraft.getResidenceManager().getByName(TribeCraft.getPluginConfig().getCommandsInfo().getSurvival().mainTown).getArea(TribeCraft.getPluginConfig().getCommandsInfo().getSurvival().subArea).getHighLoc(),
+                            TribeCraft.getResidenceManager().getByName(TribeCraft.getPluginConfig().getCommandsInfo().getSurvival().mainTown).getArea(TribeCraft.getPluginConfig().getCommandsInfo().getSurvival().subArea).getLowLoc());
 
                     if ((player.getWorld().equals(getServer().getWorld("world"))) && (Area.isAreaContainLocation(area, player.getLocation())))
                     {
@@ -60,8 +60,8 @@ public class UserExecutor implements CommandExecutor
                                 while (true)
                                 {
                                     Random random = new Random();
-                                    int x = random.nextInt(TribeCraft.getPluginConfig().getSurvival().maxX) + 1;
-                                    int z = random.nextInt(TribeCraft.getPluginConfig().getSurvival().maxZ) + 1;
+                                    int x = random.nextInt(TribeCraft.getPluginConfig().getCommandsInfo().getSurvival().maxX) + 1;
+                                    int z = random.nextInt(TribeCraft.getPluginConfig().getCommandsInfo().getSurvival().maxZ) + 1;
                                     int h = player.getWorld().getMaxHeight();
 
                                     for (int y = h; y > 0; y--)
@@ -75,7 +75,7 @@ public class UserExecutor implements CommandExecutor
                                                     && (!block.getType().equals(Material.STATIONARY_WATER))
                                                     && (!block.getType().equals(Material.STATIONARY_LAVA)))
                                             {
-                                                if (y > TribeCraft.getPluginConfig().getSurvival().maxY)
+                                                if (y > TribeCraft.getPluginConfig().getCommandsInfo().getSurvival().maxY)
                                                 {
                                                     break;
                                                 }
@@ -106,6 +106,7 @@ public class UserExecutor implements CommandExecutor
                                                                     tribePlayer.getCraftPlayer().sendMessage(ChatColor.GOLD + "×¼±¸´«ËÍ...");
                                                                     tribePlayer.getCraftPlayer().teleport(location);
                                                                 }
+
                                                             });
                                                             return;
                                                         }

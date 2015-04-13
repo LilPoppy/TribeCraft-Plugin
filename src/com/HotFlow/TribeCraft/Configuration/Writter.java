@@ -111,12 +111,12 @@ public class Writter
     {
         this.write("全局配置:");
         this.write("  服务器设置:");
-        this.write("    发射器禁止发射列表:");
+        this.write("    禁止发射器物品列表:");
         this.write("    - 351");
         this.write("    - 391");
         this.write("    - 373");
         this.write("    - 383");
-        this.write("    禁止物体通过地狱门:");
+        this.write("    禁止物体通过地狱门列表:");
         this.write("    - MINECART");
         this.write("    禁止浮空方块:");
         this.write("      开启: true");
@@ -125,11 +125,11 @@ public class Writter
         this.write("    清理高空流水:");
         this.write("      开启: true");
         this.write("      源环境高度: 120");
-        this.write("      水流往下方块: 10");
+        this.write("      流水向下流动长度: 10");
         this.write("    清理高空岩浆:");
         this.write("      开启: true");
         this.write("      源环境高度: 120");
-        this.write("      水流往下方块: 10");
+        this.write("      岩浆向下流动长度: 10");
         this.write("    清理区块:");
         this.write("      开启: true");
         this.write("      周期: 360");
