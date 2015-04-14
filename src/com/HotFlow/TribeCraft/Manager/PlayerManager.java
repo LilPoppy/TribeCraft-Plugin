@@ -4,6 +4,7 @@ import com.HotFlow.TribeCraft.Player.TribePlayer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import org.bukkit.entity.Player;
 
 /**
  * @author HotFlow
@@ -20,7 +21,34 @@ public class PlayerManager
      */
     public TribePlayer getPlayer(String name)
     {
-        return this.players.get(name);
+        for (TribePlayer player : this.getPlayers())
+        {
+            if (player.getCraftPlayer().getName().equals(name))
+            {
+                return player;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * 获取玩家
+     *
+     * @param player
+     * @return
+     */
+    public TribePlayer getPlayer(Player player)
+    {
+        for (TribePlayer p : this.getPlayers())
+        {
+            if (p.getCraftPlayer().getUniqueId().equals(player.getUniqueId()))
+            {
+                return p;
+            }
+        }
+
+        return null;
     }
 
     /**
@@ -50,11 +78,17 @@ public class PlayerManager
         return playerList;
     }
 
+    /**
+     * 拥有玩家
+     *
+     * @param name
+     * @return
+     */
     public Boolean hasPlayer(String name)
     {
         for (TribePlayer player : this.getPlayers())
         {
-            if (player.getCraftPlayer().getName().equalsIgnoreCase(name))
+            if (player.getCraftPlayer().getName().equals(name))
             {
                 return true;
             }

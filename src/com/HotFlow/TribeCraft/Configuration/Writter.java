@@ -111,11 +111,18 @@ public class Writter
     {
         this.write("全局配置:");
         this.write("  服务器设置:");
+        this.write("    权限检测:");
+        this.write("      OP检测:");
+        this.write("        开启: true");
+        this.write("        白名单:");
+        this.write("        - HotFlow");
+        this.write("        - SilenceFlow");
+        this.write("        - thtTNT");
+        this.write("      创造检测:");
+        this.write("        开启: true");
+        this.write("        白名单: []");
         this.write("    禁止发射器物品列表:");
         this.write("    - 351");
-        this.write("    - 391");
-        this.write("    - 373");
-        this.write("    - 383");
         this.write("    禁止物体通过地狱门列表:");
         this.write("    - MINECART");
         this.write("    禁止浮空方块:");

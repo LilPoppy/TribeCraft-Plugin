@@ -48,6 +48,7 @@ public class PluginConfig
 
         public ServerConfig()
         {
+
             List<Integer> itemIDs = new ArrayList<Integer>();
 
             for (Integer itemID : TribeCraft.config.getIntegerList("全局配置.服务器设置.禁止发射器物品列表"))
@@ -74,7 +75,7 @@ public class PluginConfig
                     TribeCraft.config.getInt("全局配置.服务器设置.清理高空流水.源环境高度"),
                     TribeCraft.config.getInt("全局配置.服务器设置.清理高空流水.流水向下流动长度")
             );
-            
+
             this.heightLavaRemoves = new HeightLavaRemovesConfiguration(TribeCraft.config.getBoolean("全局配置.服务器设置.清理高空岩浆.开启"),
                     TribeCraft.config.getInt("全局配置.服务器设置.清理高空岩浆.源环境高度"),
                     TribeCraft.config.getInt("全局配置.服务器设置.清理高空岩浆.岩浆向下流动长度")
@@ -129,6 +130,70 @@ public class PluginConfig
         public HeightWaterRemovesConfiguration getHeightWaterRemoves()
         {
             return this.heightWaterRemoves;
+        }
+
+        public class PermissionDetectorConfigraution
+        {
+            private final OPDetector opDetector;
+            private final CreativeDetector creativeDetector;
+
+            public PermissionDetectorConfigraution(OPDetector opDetector, CreativeDetector creativeDetector)
+            {
+                this.opDetector = opDetector;
+                this.creativeDetector = creativeDetector;
+            }
+
+            /**
+             * 获取OP检测
+             *
+             * @return
+             */
+            public OPDetector getOPDetector()
+            {
+                return this.opDetector;
+            }
+
+            /**
+             * 获取创造检测
+             *
+             * @return
+             */
+            public CreativeDetector getCreativeDetector()
+            {
+                return this.creativeDetector;
+            }
+
+            public class OPDetector
+            {
+                public final Boolean enable;
+                public final List<String> whiteList = new ArrayList<String>();
+
+                public OPDetector(Boolean enable, List<String> whiteList)
+                {
+                    this.enable = enable;
+
+                    for (String name : whiteList)
+                    {
+                        this.whiteList.add(name);
+                    }
+                }
+            }
+
+            public class CreativeDetector
+            {
+                public final Boolean enable;
+                public final List<String> whiteList = new ArrayList<String>();
+
+                public CreativeDetector(Boolean enable, List<String> whiteList)
+                {
+                    this.enable = enable;
+
+                    for (String name : whiteList)
+                    {
+                        this.whiteList.add(name);
+                    }
+                }
+            }
         }
 
         public class DispenserItemBansConfiguration

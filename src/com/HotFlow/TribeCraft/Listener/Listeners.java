@@ -92,8 +92,8 @@ public class Listeners implements Listener
                 player.getCraftPlayer().sendMessage("装备掉落机率: " + (player.getVIPList().get(0).getArmorDropChance() * 100) + "%");
                 player.getCraftPlayer().sendMessage("经验掉落百分比: " + (player.getVIPList().get(0).getExpDropPercentage() * 100) + "%");
 
-                player.setDeathProtectedExp((int) (player.getCraftPlayer().getTotalExperience() * player.getVIPList().get(0).getExpDropPercentage()));
-                event.setDroppedExp((int) (player.getCraftPlayer().getTotalExperience() * player.getVIPList().get(0).getExpDropPercentage()));
+                player.setDeathProtectedExp((int) (ISystem.experience.getTotalExperience(player.getCraftPlayer()) * player.getVIPList().get(0).getExpDropPercentage()));
+                event.setDroppedExp((int) (ISystem.experience.getTotalExperience(player.getCraftPlayer()) * player.getVIPList().get(0).getExpDropPercentage()));
 
                 for (ItemStack item : items.keySet())
                 {
@@ -149,8 +149,8 @@ public class Listeners implements Listener
                 player.getCraftPlayer().sendMessage("装备掉落机率: " + (TribeCraft.config.getDouble("全局配置.死亡保护.普通用户.装备掉落机率") * 100) + "%");
                 player.getCraftPlayer().sendMessage("经验掉落百分比: " + (TribeCraft.config.getDouble("全局配置.死亡保护.普通用户.经验掉落百分比") * 100) + "%");
 
-                player.setDeathProtectedExp((int) (player.getCraftPlayer().getTotalExperience() * (TribeCraft.config.getDouble("全局配置.死亡保护.普通用户.经验掉落百分比"))));
-                event.setDroppedExp((int) (player.getCraftPlayer().getTotalExperience() * (TribeCraft.config.getDouble("全局配置.死亡保护.普通用户.经验掉落百分比"))));
+                player.setDeathProtectedExp((int) (ISystem.experience.getTotalExperience(player.getCraftPlayer()) * (TribeCraft.config.getDouble("全局配置.死亡保护.普通用户.经验掉落百分比"))));
+                event.setDroppedExp((int) (ISystem.experience.getTotalExperience(player.getCraftPlayer()) * (TribeCraft.config.getDouble("全局配置.死亡保护.普通用户.经验掉落百分比"))));
 
                 for (ItemStack item : items.keySet())
                 {
@@ -438,13 +438,13 @@ public class Listeners implements Listener
     {
         TribePlayer player = TribeCraft.getPlayerManager().getPlayer(event.getPlayer().getName());
 
-        for (DelayTask task : player.getDelayTaskList())
+        if ((event.getFrom().getX() != event.getTo().getX()) || (event.getFrom().getZ() != event.getTo().getZ()))
         {
-            if (task.getDescription() != null)
+            for (DelayTask task : player.getDelayTaskList())
             {
-                if (task.getDescription().equalsIgnoreCase("Teleport"))
+                if (task.getDescription() != null)
                 {
-                    if ((event.getFrom().getX() != event.getTo().getX()) || (event.getFrom().getZ() != event.getTo().getZ()))
+                    if (task.getDescription().equalsIgnoreCase("Teleport"))
                     {
                         PlayerTeleportingMoveEvent event1 = new PlayerTeleportingMoveEvent(player);
                         getServer().getPluginManager().callEvent(event1);
@@ -456,7 +456,7 @@ public class Listeners implements Listener
 
                         player.removeDelayTask(task);
                         player.getCraftPlayer().sendMessage(ChatColor.GOLD + "已取消传送!");
-                        return;
+                        return; 
                     }
                 }
             }
