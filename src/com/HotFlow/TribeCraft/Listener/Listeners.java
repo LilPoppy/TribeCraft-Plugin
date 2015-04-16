@@ -1,6 +1,5 @@
 package com.HotFlow.TribeCraft.Listener;
 
-import com.HotFlow.TribeCraft.Event.Block.BlockDispenseBoneMealEvent;
 import com.HotFlow.TribeCraft.Event.Player.PlayerStoreExperienceEvent;
 import com.HotFlow.TribeCraft.Event.Player.PlayerStoreInventoryEvent;
 import com.HotFlow.TribeCraft.Event.Player.PlayerTeleportingMoveEvent;
@@ -23,12 +22,15 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockDispenseEvent;
 import org.bukkit.event.entity.EntityPortalEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryMoveItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
@@ -261,7 +263,7 @@ public class Listeners implements Listener
                 }
             }
         }
-        
+
         player.setDeathProtectedItems(null);
 
         PlayerStoreExperienceEvent event2 = new PlayerStoreExperienceEvent(player);
@@ -283,8 +285,7 @@ public class Listeners implements Listener
 
             });
         }
-        
-        
+
     }
 
     @EventHandler
@@ -302,6 +303,12 @@ public class Listeners implements Listener
     {
         if ((event.getPlayer().getItemInHand() != null) && (!event.getPlayer().getItemInHand().getType().equals(Material.AIR)))
         {
+            if (event.getPlayer().getItemInHand().getAmount() <= -1)
+            {
+                event.getPlayer().sendMessage("已清理无限物品" + event.getPlayer().getItemInHand().getType().name() + "!");
+                event.setCancelled(true);
+            }
+
             if (event.getPlayer().getItemInHand().getType().equals(Material.INK_SACK))
             {
                 if (event.getPlayer().hasPermission(new com.HotFlow.TribeCraft.Permissions.Permissions().admin))
@@ -351,9 +358,9 @@ public class Listeners implements Listener
     @EventHandler
     public void onBlockDispense(BlockDispenseEvent event)
     {
-        for(int id : TribeCraft.config.getIntegerList(""))
+        for (int id : TribeCraft.config.getIntegerList(""))
         {
-            if(event.getItem().getType().equals(Material.getMaterial(id)))
+            if (event.getItem().getType().equals(Material.getMaterial(id)) || event.getItem().getAmount() <= -1)
             {
                 event.setCancelled(true);
             }
@@ -456,7 +463,7 @@ public class Listeners implements Listener
 
                         player.removeDelayTask(task);
                         player.getCraftPlayer().sendMessage(ChatColor.GOLD + "已取消传送!");
-                        return; 
+                        return;
                     }
                 }
             }
@@ -468,10 +475,41 @@ public class Listeners implements Listener
     {
 
     }
-    
+
     @EventHandler
     public void onEntityPortal(EntityPortalEvent event)
     {
 
+    }
+
+    @EventHandler
+    public void onInventoryClick(InventoryClickEvent event)
+    {
+        if (event.getWhoClicked() instanceof Player)
+        {
+            Player player = (Player) event.getWhoClicked();
+
+            for (int i = 0; i < event.getInventory().getSize(); i++)
+            {
+                if (event.getInventory().getItem(i) != null)
+                {
+                    if (event.getInventory().getItem(i).getAmount() <= -1)
+                    {
+                        player.sendMessage("已清理无限物品" + event.getInventory().getItem(i).getType().name() + "!");
+                    }
+                }
+            }
+
+            for (int i = 0; i < player.getInventory().getSize(); i++)
+            {
+                if (player.getInventory().getItem(i) != null)
+                {
+                    if (player.getInventory().getItem(i).getAmount() <= -1)
+                    {
+                        player.sendMessage("已清理无限物品" + player.getInventory().getItem(i).getType().name() + "!");
+                    }
+                }
+            }
+        }
     }
 }

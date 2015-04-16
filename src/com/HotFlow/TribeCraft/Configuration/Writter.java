@@ -146,6 +146,7 @@ public class Writter
         this.write("        CHICKEN: 60");
         this.write("        COW: 60");
         this.write("        SHEEP: 60");
+        this.write("    清理无限物品: true");
         this.write("    清理掉落物:");
         this.write("      开启: true");
         this.write("      周期: 300");
@@ -230,7 +231,10 @@ public class Writter
         this.write("      随机最大Y: 100");
         this.write("      随机最大Z: 3000");
         this.write("  插件兼容:");
+        this.write("    Vault:");
+        this.write("      Permission: true");
+        this.write("      Economy: true");
+        this.write("      Chat: true");
         this.write("    Residence: true");
-        this.write("    SignShop: true");
     }
 }
