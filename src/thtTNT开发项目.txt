@@ -1,0 +1,7 @@
+正在开发：
+1、增强指令功能(com.hotFlow.TribeCraft.EnhanciveCommand)
+2、后台报错统计器(暂未创建包)
+开发完成：
+1、dollar基本框架
+要求开发：
+1、pluginConfig获取

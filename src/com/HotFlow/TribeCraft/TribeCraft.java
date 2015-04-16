@@ -2,6 +2,7 @@ package com.HotFlow.TribeCraft;
 
 import com.HotFlow.TribeCraft.Configuration.TribeConfiguration;
 import com.HotFlow.TribeCraft.Configuration.Writter;
+import com.HotFlow.TribeCraft.EnhanciveCommand.EnhanciveCommand;
 import com.HotFlow.TribeCraft.Manager.PlayerManager;
 import com.HotFlow.TribeCraft.Manager.PortalGateManager;
 import com.HotFlow.TribeCraft.PortalGate.PortalGate;
@@ -99,6 +100,8 @@ public class TribeCraft extends JavaPlugin
         getServer().getPluginManager().addPermission(new com.HotFlow.TribeCraft.Permissions.Permissions().user);
         getCommand("Tribe").setExecutor(new com.HotFlow.TribeCraft.CommandExecutor.UserExecutor());
         getCommand("TribeAdmin").setExecutor(new com.HotFlow.TribeCraft.CommandExecutor.AdminExecutor());
+        getCommand("ec").setExecutor(new com.HotFlow.TribeCraft.EnhanciveCommand.ECCommandExecute());
+        EnhanciveCommand.init();
         getServer().getPluginManager().registerEvents(new com.HotFlow.TribeCraft.Listener.Listeners(), this);
     }
 
