@@ -26,7 +26,11 @@ public class ECCommandExecute implements CommandExecutor {
         }
         if (args[0].equalsIgnoreCase("add")) {
             if (args.length == 2) {
-                if (!isFollowRule(args[1]).equalsIgnoreCase("pass")) {
+                if (!sender.hasPermission("ec.command.add")){
+                    sender.sendMessage("§4您没有添加指令的权力");
+                    return true;
+                }
+                if (!isFollowRule(args[1]).equalsIgnoreCase("pass") || args[1].equalsIgnoreCase("pass")) {
                     sender.sendMessage("§4请不要使用保留关键字 " + args[1] + " 来作为指令的列表标识符");
                     return true;
                 }
@@ -39,9 +43,7 @@ public class ECCommandExecute implements CommandExecutor {
                 TribeConfiguration config = new TribeConfiguration();
                 try {
                     config.load(file);
-                } catch (IOException ex) {
-                    TribeCraft.logger.warning(ex.toString());
-                } catch (InvalidConfigurationException ex) {
+                } catch (IOException | InvalidConfigurationException ex) {
                     TribeCraft.logger.warning(ex.toString());
                 }
                 config.set("NumOfCommands", 0);
@@ -60,6 +62,10 @@ public class ECCommandExecute implements CommandExecutor {
         }
         if (args[1].equalsIgnoreCase("remove")) {
             if (args.length == 2) {
+                if (!sender.hasPermission("ec.command.remove")){
+                    sender.sendMessage("§4您没有删除的权力");
+                    return true;
+                }
                 File file = new File(DataFolder, "/EnhanciveCommand/" + args[1] + ".yml");
                 if (!file.exists()) {
                     sender.sendMessage("§4指令标识符不存在");
@@ -74,9 +80,66 @@ public class ECCommandExecute implements CommandExecutor {
         }
         if (args[0].equalsIgnoreCase("enable")) {
             if (args.length == 2) {
-                
-                
+                if (!sender.hasPermission("ec.command.config")){
+                   if (!sender.hasPermission("ec.command."+args[1]+".config")){
+                      if(!sender.hasPermission("ec.command"+args[1]+".config.enable")){ 
+                       sender.sendMessage("§4您没有修改的权力");
+                      return true;
+                    }
+                }
+                }
+                if (editCommandConfig(args[1],"isEnable",true,sender)){
+                    sender.sendMessage("§a本指令已经启用");
+                    return true;
+                } 
+            }else{
+                sender.sendMessage("§a/ec enable <指令> 启动增强指令");
             }
+        }
+        if (args[0].equalsIgnoreCase("disalble")){
+            if (args.length==2){
+                if (!sender.hasPermission("ec.command.config")){
+                    if(!sender.hasPermission("ec.command"+args[1]+"config")){
+                        if (sender.hasPermission("ec.command"+args[1]+"config.disable")){
+                            sender.sendMessage("§4您没有停用本指令的权力");
+                            return true;
+                        }
+                    }
+                }
+                if (editCommandConfig(args[1],"isEnable",false,sender)){
+                    sender.sendMessage("§a已经停用指令");
+                    return true;
+                }
+            }else{
+            sender.sendMessage("§a/ec disable <指令> 删除增强指令");
+            return true;
+            }
+        }
+        if (args[0].equalsIgnoreCase("permission")){
+            if (args.length==3){
+             if (!sender.hasPermission("ec.command.config")){
+                    if(!sender.hasPermission("ec.command"+args[1]+"config")){
+                        if (sender.hasPermission("ec.command"+args[1]+"config.permission")){
+                            sender.sendMessage("§4您没有停用本指令的权力");
+                            return true;
+                        }
+                    }
+                }
+             if (editCommandConfig(args[1],"permission",args[2],sender)){
+                 sender.sendMessage("§a成功把指令的权限设置为:"+args[2]);
+                 return true;
+             }
+            }else{
+             sender.sendMessage("§a/ec permission <指令> <权限> 设置指令执行的权限");
+            }
+        }
+        try {
+            TribeConfiguration config=getCommandConfig(args[0]);
+        } catch (IOException ex) {
+            sender.sendMessage("§4指令不存在");
+        } catch (InvalidConfigurationException ex) {
+            sender.sendMessage("§4读取文件错误，已经上报后台");
+            
         }
         return false;
     }
@@ -85,6 +148,8 @@ public class ECCommandExecute implements CommandExecutor {
         sender.sendMessage("§a/ec add <指令> 添加增加强指令");
         sender.sendMessage("§a/ec remove <指令> 删除增强指令");
         sender.sendMessage("§a/ec enable <指令> 启动增强指令");
+        sender.sendMessage("§a/ec disable <指令> 删除增强指令");
+        sender.sendMessage("§a/ec permission <指令> <权限> 设置指令执行的权限");
     }
 
     private String isFollowRule(String st) {
@@ -96,6 +161,15 @@ public class ECCommandExecute implements CommandExecutor {
         }
         if (st.equalsIgnoreCase("remove")) {
             return "remove";
+        }
+        if (st.equalsIgnoreCase("permission")){
+            return "permission";
+        }
+        if (st.equalsIgnoreCase("enable")){
+            return "enable";
+        }
+        if (st.equalsIgnoreCase("disable")){
+            return "disable";
         }
         return "pass";
     }
