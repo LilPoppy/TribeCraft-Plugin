@@ -1,7 +1,6 @@
 package com.HotFlow.TribeCraft;
 
 import com.HotFlow.TribeCraft.Player.VIP.VIP;
-import com.HotFlow.TribeCraft.Player.VIP.VIP0;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -61,9 +60,10 @@ public class PluginConfig
         private final DispenserItemBansConfiguration dispenserItemBans;
         private final NetherPortalEntityBansConfiguration netherPortalEntityBans;
         private final Boolean blockCantFloating;
-        private final Boolean cleanRedstoneClock;
+        private final Boolean clearRedstoneClock;
         private final HeightWaterRemovesConfiguration heightWaterRemoves;
         private final HeightLavaRemovesConfiguration heightLavaRemoves;
+        private final Boolean clearInfinityItems;
 
         public ServerConfig()
         {
@@ -88,7 +88,7 @@ public class PluginConfig
 
             this.blockCantFloating = Main.config.getBoolean("全局配置.服务器设置.禁止浮空方块.开启");
 
-            this.cleanRedstoneClock = Main.config.getBoolean("全局配置.服务器设置.清理高频红石.开启");
+            this.clearRedstoneClock = Main.config.getBoolean("全局配置.服务器设置.清理高频红石.开启");
 
             this.heightWaterRemoves = new HeightWaterRemovesConfiguration(Main.config.getBoolean("全局配置.服务器设置.清理高空流水.开启"),
                     Main.config.getInt("全局配置.服务器设置.清理高空流水.源环境高度"),
@@ -100,6 +100,7 @@ public class PluginConfig
                     Main.config.getInt("全局配置.服务器设置.清理高空岩浆.岩浆向下流动长度")
             );
 
+            this.clearInfinityItems = Main.config.getBoolean("全局配置.服务器设置.清理无限物品");
         }
 
         /**
@@ -137,9 +138,9 @@ public class PluginConfig
          *
          * @return
          */
-        public Boolean isCleanRedstoneClock()
+        public Boolean isClearRedstoneClock()
         {
-            return this.cleanRedstoneClock;
+            return this.clearRedstoneClock;
         }
 
         /**
@@ -150,6 +151,16 @@ public class PluginConfig
         public HeightWaterRemovesConfiguration getHeightWaterRemoves()
         {
             return this.heightWaterRemoves;
+        }
+
+        /**
+         * 是否清理无限物品
+         *
+         * @return
+         */
+        public Boolean isClearInfinityItems()
+        {
+            return this.clearInfinityItems;
         }
 
         public class PermissionDetectorConfigraution
@@ -353,18 +364,18 @@ public class PluginConfig
             {
                 try
                 {
-                    if(key.equals("普通用户"))
+                    if (key.equals("普通用户"))
                     {
                         key = "VIP0";
                     }
-                    
+
                     VIP vip = (VIP) Class.forName("com.HotFlow.TribeCraft.Player.VIP." + key).newInstance();
-                    
-                    if(key.equals("VIP0"))
+
+                    if (key.equals("VIP0"))
                     {
                         key = "普通用户";
                     }
-                    
+
                     vip.setItemDropChance(Main.config.getDouble("全局配置.死亡保护." + key + ".物品掉落机率"));
                     vip.setArmorDropChance(Main.config.getDouble("全局配置.死亡保护." + key + ".装备掉落机率"));
                     vip.setExpDropPercentage(Main.config.getDouble("全局配置.死亡保护." + key + ".经验掉落百分比"));

@@ -87,59 +87,59 @@ public class Listeners implements Listener
 
         if (!player.getCraftPlayer().hasPermission(new Permissions().deathSaveAll))
         {
-                player.getCraftPlayer().sendMessage("您的VIP等级为: " + player.getVIPLevel());
-                player.getCraftPlayer().sendMessage("物品掉落机率: " + (Main.getPluginConfig().getVIPInfo().getVIP(player.getVIPLevel()).getItemDropChance() * 100) + "%");
-                player.getCraftPlayer().sendMessage("装备掉落机率: " + (Main.getPluginConfig().getVIPInfo().getVIP(player.getVIPLevel()).getArmorDropChance() * 100) + "%");
-                player.getCraftPlayer().sendMessage("经验掉落百分比: " + (Main.getPluginConfig().getVIPInfo().getVIP(player.getVIPLevel()).getExpDropPercentage() * 100) + "%");
+            player.getCraftPlayer().sendMessage("您的VIP等级为: " + player.getVIPLevel());
+            player.getCraftPlayer().sendMessage("物品掉落机率: " + (Main.getPluginConfig().getVIPInfo().getVIP(player.getVIPLevel()).getItemDropChance() * 100) + "%");
+            player.getCraftPlayer().sendMessage("装备掉落机率: " + (Main.getPluginConfig().getVIPInfo().getVIP(player.getVIPLevel()).getArmorDropChance() * 100) + "%");
+            player.getCraftPlayer().sendMessage("经验掉落百分比: " + (Main.getPluginConfig().getVIPInfo().getVIP(player.getVIPLevel()).getExpDropPercentage() * 100) + "%");
 
-                player.setDeathProtectedExp((int) (ISystem.experience.getTotalExperience(player.getCraftPlayer()) * Main.getPluginConfig().getVIPInfo().getVIP(player.getVIPLevel()).getExpDropPercentage()));
-                event.setDroppedExp((int) (ISystem.experience.getTotalExperience(player.getCraftPlayer()) * Main.getPluginConfig().getVIPInfo().getVIP(player.getVIPLevel()).getExpDropPercentage()));
+            player.setDeathProtectedExp((int) (ISystem.experience.getTotalExperience(player.getCraftPlayer()) * Main.getPluginConfig().getVIPInfo().getVIP(player.getVIPLevel()).getExpDropPercentage()));
+            event.setDroppedExp((int) (ISystem.experience.getTotalExperience(player.getCraftPlayer()) * Main.getPluginConfig().getVIPInfo().getVIP(player.getVIPLevel()).getExpDropPercentage()));
 
-                for (ItemStack item : items.keySet())
+            for (ItemStack item : items.keySet())
+            {
+                ItemStack newItem = item.clone();
+
+                for (int i = 0; i <= item.getAmount(); i++)
                 {
-                    ItemStack newItem = item.clone();
-
-                    for (int i = 0; i <= item.getAmount(); i++)
+                    if (Math.random() <= Main.getPluginConfig().getVIPInfo().getVIP(player.getVIPLevel()).getItemDropChance())
                     {
-                        if (Math.random() <= Main.getPluginConfig().getVIPInfo().getVIP(player.getVIPLevel()).getItemDropChance())
-                        {
-                            newItem.setAmount(newItem.getAmount() - 1);
-                        }
-                    }
-
-                    items.put(item, newItem);
-                    inventory.items.add(newItem);
-                }
-
-                for (HashMap<ArmorType, ItemStack> map : equiements.values())
-                {
-                    for (ArmorType type : map.keySet())
-                    {
-                        ItemStack armor = map.get(type);
-
-                        if (Math.random() > Main.getPluginConfig().getVIPInfo().getVIP(player.getVIPLevel()).getArmorDropChance())
-                        {
-                            equiements.put(armor, null);
-                            inventory.equiments.put(type, armor);
-                        }
+                        newItem.setAmount(newItem.getAmount() - 1);
                     }
                 }
 
-                for (ItemStack armor : equiements.keySet())
+                items.put(item, newItem);
+                inventory.items.add(newItem);
+            }
+
+            for (HashMap<ArmorType, ItemStack> map : equiements.values())
+            {
+                for (ArmorType type : map.keySet())
                 {
-                    if (equiements.get(armor) == null)
+                    ItemStack armor = map.get(type);
+
+                    if (Math.random() > Main.getPluginConfig().getVIPInfo().getVIP(player.getVIPLevel()).getArmorDropChance())
                     {
-                        event.getDrops().remove(armor);
+                        equiements.put(armor, null);
+                        inventory.equiments.put(type, armor);
                     }
                 }
+            }
 
-                for (ItemStack item : items.keySet())
+            for (ItemStack armor : equiements.keySet())
+            {
+                if (equiements.get(armor) == null)
                 {
-                    event.getDrops().remove(item);
-                    ItemStack newItem = item.clone();
-                    newItem.setAmount(item.getAmount() - items.get(item).getAmount());
-                    event.getDrops().add(newItem);
+                    event.getDrops().remove(armor);
                 }
+            }
+
+            for (ItemStack item : items.keySet())
+            {
+                event.getDrops().remove(item);
+                ItemStack newItem = item.clone();
+                newItem.setAmount(item.getAmount() - items.get(item).getAmount());
+                event.getDrops().add(newItem);
+            }
         }
         else
         {
@@ -243,10 +243,13 @@ public class Listeners implements Listener
     {
         if ((event.getPlayer().getItemInHand() != null) && (!event.getPlayer().getItemInHand().getType().equals(Material.AIR)))
         {
-            if (event.getPlayer().getItemInHand().getAmount() <= -1)
+            if(Main.getPluginConfig().getServerConfig().isClearInfinityItems())
             {
-                event.getPlayer().sendMessage("已清理无限物品" + event.getPlayer().getItemInHand().getType().name() + "!");
-                event.setCancelled(true);
+                if (event.getPlayer().getItemInHand().getAmount() <= -1)
+                {
+                    event.getPlayer().setItemInHand(null);
+                    event.setCancelled(true);
+                }
             }
 
             if (event.getPlayer().getItemInHand().getType().equals(Material.INK_SACK))
@@ -429,24 +432,28 @@ public class Listeners implements Listener
         {
             Player player = (Player) event.getWhoClicked();
 
-            for (int i = 0; i < event.getInventory().getSize(); i++)
+            if(Main.getPluginConfig().getServerConfig().isClearInfinityItems())
             {
-                if (event.getInventory().getItem(i) != null)
+                for (int i = 0; i < event.getInventory().getSize(); i++)
                 {
-                    if (event.getInventory().getItem(i).getAmount() <= -1)
+                    if (event.getInventory().getItem(i) != null)
                     {
-                        player.sendMessage("已清理无限物品" + event.getInventory().getItem(i).getType().name() + "!");
+                        if (event.getInventory().getItem(i).getAmount() <= -1)
+                        {
+                            event.getInventory().setItem(i, null);
+                        }
                     }
                 }
-            }
 
-            for (int i = 0; i < player.getInventory().getSize(); i++)
-            {
-                if (player.getInventory().getItem(i) != null)
+
+                for (int i = 0; i < player.getInventory().getSize(); i++)
                 {
-                    if (player.getInventory().getItem(i).getAmount() <= -1)
+                    if (player.getInventory().getItem(i) != null)
                     {
-                        player.sendMessage("已清理无限物品" + player.getInventory().getItem(i).getType().name() + "!");
+                        if (player.getInventory().getItem(i).getAmount() <= -1)
+                        {
+                            event.getInventory().setItem(i, null);
+                        }
                     }
                 }
             }
