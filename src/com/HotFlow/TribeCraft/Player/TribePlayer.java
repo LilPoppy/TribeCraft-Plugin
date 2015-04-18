@@ -1,7 +1,6 @@
 package com.HotFlow.TribeCraft.Player;
 
 import com.HotFlow.TribeCraft.Inventory.DeathInventory;
-import com.HotFlow.TribeCraft.Main;
 import com.HotFlow.TribeCraft.NBT.CompoundTag;
 import com.HotFlow.TribeCraft.NBT.DoubleTag;
 import com.HotFlow.TribeCraft.NBT.ListTag;
@@ -38,7 +37,7 @@ public class TribePlayer
     private final UUID uuid;
     private Location gateLoc1;
     private Location gateLoc2;
-    private final List<VIP> vips = new ArrayList<VIP>();
+    private final VIP vip;
     private DeathInventory deathInventory = new DeathInventory();
     private int deathExp;
     private final List<DelayTask> delayTaskList = new ArrayList<DelayTask>();
@@ -47,6 +46,7 @@ public class TribePlayer
     public TribePlayer(UUID uuid)
     {
         this.uuid = uuid;
+        this.vip = null;
     }
 
     /**
@@ -112,19 +112,9 @@ public class TribePlayer
      *
      * @return
      */
-    public List<VIP> getVIPList()
+    public VIP getVIP()
     {
-        Collections.sort(this.vips, new Comparator<VIP>()
-        {
-            @Override
-            public int compare(VIP vip1, VIP vip2)
-            {
-                return vip2.getLevel() - vip1.getLevel();
-            }
-
-        });
-
-        return this.vips;
+        return this.vip;
     }
 
     /**

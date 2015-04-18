@@ -87,15 +87,15 @@ public class Listeners implements Listener
 
         if (!player.getCraftPlayer().hasPermission(new Permissions().deathSaveAll))
         {
-            if (player.getVIPList().size() > 0)
+            if (player.getVIP() != null)
             {
-                player.getCraftPlayer().sendMessage("您的VIP等级为: " + player.getVIPList().get(0).getLevel());
-                player.getCraftPlayer().sendMessage("物品掉落机率: " + (player.getVIPList().get(0).getItemDropChance() * 100) + "%");
-                player.getCraftPlayer().sendMessage("装备掉落机率: " + (player.getVIPList().get(0).getArmorDropChance() * 100) + "%");
-                player.getCraftPlayer().sendMessage("经验掉落百分比: " + (player.getVIPList().get(0).getExpDropPercentage() * 100) + "%");
+                player.getCraftPlayer().sendMessage("您的VIP等级为: " + player.getVIP().getLevel());
+                player.getCraftPlayer().sendMessage("物品掉落机率: " + (player.getVIP().getItemDropChance() * 100) + "%");
+                player.getCraftPlayer().sendMessage("装备掉落机率: " + (player.getVIP().getArmorDropChance() * 100) + "%");
+                player.getCraftPlayer().sendMessage("经验掉落百分比: " + (player.getVIP().getExpDropPercentage() * 100) + "%");
 
-                player.setDeathProtectedExp((int) (ISystem.experience.getTotalExperience(player.getCraftPlayer()) * player.getVIPList().get(0).getExpDropPercentage()));
-                event.setDroppedExp((int) (ISystem.experience.getTotalExperience(player.getCraftPlayer()) * player.getVIPList().get(0).getExpDropPercentage()));
+                player.setDeathProtectedExp((int) (ISystem.experience.getTotalExperience(player.getCraftPlayer()) * player.getVIP().getExpDropPercentage()));
+                event.setDroppedExp((int) (ISystem.experience.getTotalExperience(player.getCraftPlayer()) * player.getVIP().getExpDropPercentage()));
 
                 for (ItemStack item : items.keySet())
                 {
@@ -103,7 +103,7 @@ public class Listeners implements Listener
 
                     for (int i = 0; i <= item.getAmount(); i++)
                     {
-                        if (Math.random() <= player.getVIPList().get(0).getItemDropChance())
+                        if (Math.random() <= player.getVIP().getItemDropChance())
                         {
                             newItem.setAmount(newItem.getAmount() - 1);
                         }
@@ -119,7 +119,7 @@ public class Listeners implements Listener
                     {
                         ItemStack armor = map.get(type);
 
-                        if (Math.random() > player.getVIPList().get(0).getArmorDropChance())
+                        if (Math.random() > player.getVIP().getArmorDropChance())
                         {
                             equiements.put(armor, null);
                             inventory.equiments.put(type, armor);
