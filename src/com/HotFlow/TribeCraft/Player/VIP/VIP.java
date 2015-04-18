@@ -32,4 +32,25 @@ public interface VIP
      * @return
      */
     public double getExpDropPercentage();
+
+    /**
+     * 设置物品掉落机率
+     *
+     * @param chance
+     */
+    public void setItemDropChance(double chance);
+
+    /**
+     * 设置装备掉落机率
+     *
+     * @param chance
+     */
+    public void setArmorDropChance(double chance);
+
+    /**
+     * 设置经验掉落机率
+     *
+     * @param chance
+     */
+    public void setExpDropPercentage(double chance);
 }

@@ -3,7 +3,7 @@ package com.HotFlow.TribeCraft.Player.VIP;
 /**
  * @author HotFlow
  */
-public class VIP1 extends VIP0
+public class VIP0 implements VIP
 {
     private double itemDropChance;
     private double armorDropChance;
@@ -11,7 +11,7 @@ public class VIP1 extends VIP0
     
     public int getLevel()
     {
-        return 1;
+        return 0;
     }
 
     public double getItemDropChance()

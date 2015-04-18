@@ -37,7 +37,7 @@ public class TribePlayer
     private final UUID uuid;
     private Location gateLoc1;
     private Location gateLoc2;
-    private final VIP vip;
+    private final int vipLevel;
     private DeathInventory deathInventory = new DeathInventory();
     private int deathExp;
     private final List<DelayTask> delayTaskList = new ArrayList<DelayTask>();
@@ -46,7 +46,7 @@ public class TribePlayer
     public TribePlayer(UUID uuid)
     {
         this.uuid = uuid;
-        this.vip = null;
+        this.vipLevel = 0;
     }
 
     /**
@@ -112,9 +112,9 @@ public class TribePlayer
      *
      * @return
      */
-    public VIP getVIP()
+    public int getVIPLevel()
     {
-        return this.vip;
+        return this.vipLevel;
     }
 
     /**

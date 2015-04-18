@@ -87,15 +87,13 @@ public class Listeners implements Listener
 
         if (!player.getCraftPlayer().hasPermission(new Permissions().deathSaveAll))
         {
-            if (player.getVIP() != null)
-            {
-                player.getCraftPlayer().sendMessage("您的VIP等级为: " + player.getVIP().getLevel());
-                player.getCraftPlayer().sendMessage("物品掉落机率: " + (player.getVIP().getItemDropChance() * 100) + "%");
-                player.getCraftPlayer().sendMessage("装备掉落机率: " + (player.getVIP().getArmorDropChance() * 100) + "%");
-                player.getCraftPlayer().sendMessage("经验掉落百分比: " + (player.getVIP().getExpDropPercentage() * 100) + "%");
+                player.getCraftPlayer().sendMessage("您的VIP等级为: " + player.getVIPLevel());
+                player.getCraftPlayer().sendMessage("物品掉落机率: " + (Main.getPluginConfig().getVIPInfo().getVIP(player.getVIPLevel()).getItemDropChance() * 100) + "%");
+                player.getCraftPlayer().sendMessage("装备掉落机率: " + (Main.getPluginConfig().getVIPInfo().getVIP(player.getVIPLevel()).getArmorDropChance() * 100) + "%");
+                player.getCraftPlayer().sendMessage("经验掉落百分比: " + (Main.getPluginConfig().getVIPInfo().getVIP(player.getVIPLevel()).getExpDropPercentage() * 100) + "%");
 
-                player.setDeathProtectedExp((int) (ISystem.experience.getTotalExperience(player.getCraftPlayer()) * player.getVIP().getExpDropPercentage()));
-                event.setDroppedExp((int) (ISystem.experience.getTotalExperience(player.getCraftPlayer()) * player.getVIP().getExpDropPercentage()));
+                player.setDeathProtectedExp((int) (ISystem.experience.getTotalExperience(player.getCraftPlayer()) * Main.getPluginConfig().getVIPInfo().getVIP(player.getVIPLevel()).getExpDropPercentage()));
+                event.setDroppedExp((int) (ISystem.experience.getTotalExperience(player.getCraftPlayer()) * Main.getPluginConfig().getVIPInfo().getVIP(player.getVIPLevel()).getExpDropPercentage()));
 
                 for (ItemStack item : items.keySet())
                 {
@@ -103,7 +101,7 @@ public class Listeners implements Listener
 
                     for (int i = 0; i <= item.getAmount(); i++)
                     {
-                        if (Math.random() <= player.getVIP().getItemDropChance())
+                        if (Math.random() <= Main.getPluginConfig().getVIPInfo().getVIP(player.getVIPLevel()).getItemDropChance())
                         {
                             newItem.setAmount(newItem.getAmount() - 1);
                         }
@@ -119,7 +117,7 @@ public class Listeners implements Listener
                     {
                         ItemStack armor = map.get(type);
 
-                        if (Math.random() > player.getVIP().getArmorDropChance())
+                        if (Math.random() > Main.getPluginConfig().getVIPInfo().getVIP(player.getVIPLevel()).getArmorDropChance())
                         {
                             equiements.put(armor, null);
                             inventory.equiments.put(type, armor);
@@ -142,65 +140,6 @@ public class Listeners implements Listener
                     newItem.setAmount(item.getAmount() - items.get(item).getAmount());
                     event.getDrops().add(newItem);
                 }
-
-            }
-            else
-            {
-                player.getCraftPlayer().sendMessage("您的VIP等级为: 0");
-                player.getCraftPlayer().sendMessage("物品掉落机率: " + (Main.config.getDouble("全局配置.死亡保护.普通用户.物品掉落机率") * 100) + "%");
-                player.getCraftPlayer().sendMessage("装备掉落机率: " + (Main.config.getDouble("全局配置.死亡保护.普通用户.装备掉落机率") * 100) + "%");
-                player.getCraftPlayer().sendMessage("经验掉落百分比: " + (Main.config.getDouble("全局配置.死亡保护.普通用户.经验掉落百分比") * 100) + "%");
-
-                player.setDeathProtectedExp((int) (ISystem.experience.getTotalExperience(player.getCraftPlayer()) * (Main.config.getDouble("全局配置.死亡保护.普通用户.经验掉落百分比"))));
-                event.setDroppedExp((int) (ISystem.experience.getTotalExperience(player.getCraftPlayer()) * (Main.config.getDouble("全局配置.死亡保护.普通用户.经验掉落百分比"))));
-
-                for (ItemStack item : items.keySet())
-                {
-                    ItemStack newItem = item.clone();
-
-                    for (int i = 0; i <= item.getAmount(); i++)
-                    {
-                        if (Math.random() <= Main.config.getDouble("全局配置.死亡保护.普通用户.物品掉落机率"))
-                        {
-                            newItem.setAmount(newItem.getAmount() - 1);
-                        }
-                    }
-
-                    items.put(item, newItem);
-                    inventory.items.add(newItem);
-                }
-
-                for (HashMap<ArmorType, ItemStack> map : equiements.values())
-                {
-                    for (ArmorType type : map.keySet())
-                    {
-                        ItemStack armor = map.get(type);
-
-                        if (Math.random() > Main.config.getDouble("全局配置.死亡保护.普通用户.装备掉落机率"))
-                        {
-                            equiements.put(armor, null);
-                            inventory.equiments.put(type, armor);
-                        }
-                    }
-                }
-
-                for (ItemStack armor : equiements.keySet())
-                {
-                    if (equiements.get(armor) == null)
-                    {
-                        event.getDrops().remove(armor);
-                    }
-                }
-
-                for (ItemStack item : items.keySet())
-                {
-                    event.getDrops().remove(item);
-                    ItemStack newItem = item.clone();
-                    newItem.setAmount(item.getAmount() - items.get(item).getAmount());
-                    event.getDrops().add(newItem);
-                }
-
-            }
         }
         else
         {

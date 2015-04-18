@@ -1,7 +1,13 @@
 package com.HotFlow.TribeCraft;
 
+import com.HotFlow.TribeCraft.Player.VIP.VIP;
+import com.HotFlow.TribeCraft.Player.VIP.VIP0;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.bukkit.configuration.ConfigurationSection;
 
 /**
  * @author HotFlow
@@ -325,53 +331,71 @@ public class PluginConfig
 
     public class VIPInfo
     {
-        private RateOfDrop dropInfo;
+        private List<VIP> vips = new ArrayList<VIP>();
 
         public VIPInfo()
         {
-            this.dropInfo = new RateOfDrop();
-        }
+            ConfigurationSection sections = Main.config.getConfigurationSection("全局配置.死亡保护");
 
-        public RateOfDrop getRateOfDrop()
-        {
-            return this.dropInfo;
-        }
-
-        public class RateOfDrop
-        {
-            private VIP[] VipInfolist = new VIP[10];
-
-            public RateOfDrop()
+            if (sections == null)
             {
-                VipInfolist[0].RateOfItem = Main.config.getDouble("全局配置.死亡保护.普通用户.物品掉落几率");
-                VipInfolist[0].RateOfEquipment = Main.config.getDouble("全局配置.死亡保护.普通用户.装备掉落几率");
-                VipInfolist[0].RateofExp = Main.config.getDouble("全局配置.死亡保护.普通用户.经验掉落百分比");
+                return;
+            }
 
-                for (int i = 1; i <= 10; i++)
+            Set<String> keys = sections.getKeys(false);
+
+            if (keys == null)
+            {
+                return;
+            }
+
+            for (String key : keys)
+            {
+                try
                 {
-                    VipInfolist[i].RateOfItem = Main.config.getDouble("全局配置.死亡保护.VIP" + i + ".物品掉落几率");
-                    VipInfolist[i].RateOfEquipment = Main.config.getDouble("全局配置.死亡保护.VIP" + i + ".装备掉落几率");
-                    VipInfolist[i].RateofExp = Main.config.getDouble("全局配置.死亡保护.VIP" + i + ".经验掉落百分比");
+                    if(key.equals("普通用户"))
+                    {
+                        key = "VIP0";
+                    }
+                    
+                    VIP vip = (VIP) Class.forName("com.HotFlow.TribeCraft.Player.VIP." + key).newInstance();
+                    
+                    if(key.equals("VIP0"))
+                    {
+                        key = "普通用户";
+                    }
+                    
+                    vip.setItemDropChance(Main.config.getDouble("全局配置.死亡保护." + key + ".物品掉落机率"));
+                    vip.setArmorDropChance(Main.config.getDouble("全局配置.死亡保护." + key + ".装备掉落机率"));
+                    vip.setExpDropPercentage(Main.config.getDouble("全局配置.死亡保护." + key + ".经验掉落百分比"));
+                    vips.add(vip);
+                }
+                catch (ClassNotFoundException ex)
+                {
+                    Logger.getLogger(PluginConfig.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                catch (InstantiationException ex)
+                {
+                    Logger.getLogger(PluginConfig.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                catch (IllegalAccessException ex)
+                {
+                    Logger.getLogger(PluginConfig.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        }
+
+        public VIP getVIP(int level)
+        {
+            for (VIP vip : this.vips)
+            {
+                if (vip.getLevel() == level)
+                {
+                    return vip;
                 }
             }
 
-            /**
-             * 获取掉落几率的信息
-             *
-             * @param level
-             * @return
-             */
-            public VIP getVIP(int level)
-            {
-                return VipInfolist[level];
-            }
-
-            public class VIP
-            {
-                public double RateOfItem;
-                public double RateOfEquipment;
-                public double RateofExp;
-            }
+            return null;
         }
     }
 }
