@@ -6,13 +6,12 @@ import java.util.List;
 /**
  * @author HotFlow
  */
-public class PluginConfig
-{
+public class PluginConfig {
+
     private final ServerConfig serverConfig;
     private final CommandsInfo commandsInfo;
 
-    public PluginConfig()
-    {
+    public PluginConfig() {
         this.serverConfig = new ServerConfig();
         this.commandsInfo = new CommandsInfo();
     }
@@ -22,8 +21,7 @@ public class PluginConfig
      *
      * @return
      */
-    public ServerConfig getServerConfig()
-    {
+    public ServerConfig getServerConfig() {
         return this.serverConfig;
     }
 
@@ -32,13 +30,12 @@ public class PluginConfig
      *
      * @return
      */
-    public CommandsInfo getCommandsInfo()
-    {
+    public CommandsInfo getCommandsInfo() {
         return this.commandsInfo;
     }
 
-    private class ServerConfig
-    {
+    private class ServerConfig {
+
         private final DispenserItemBansConfiguration dispenserItemBans;
         private final NetherPortalEntityBansConfiguration netherPortalEntityBans;
         private final Boolean blockCantFloating;
@@ -46,13 +43,11 @@ public class PluginConfig
         private final HeightWaterRemovesConfiguration heightWaterRemoves;
         private final HeightLavaRemovesConfiguration heightLavaRemoves;
 
-        public ServerConfig()
-        {
+        public ServerConfig() {
 
             List<Integer> itemIDs = new ArrayList<Integer>();
 
-            for (Integer itemID : TribeCraft.config.getIntegerList("全局配置.服务器设置.禁止发射器物品列表"))
-            {
+            for (Integer itemID : TribeCraft.config.getIntegerList("全局配置.服务器设置.禁止发射器物品列表")) {
                 itemIDs.add(itemID);
             }
 
@@ -60,8 +55,7 @@ public class PluginConfig
 
             List<String> entityNames = new ArrayList<String>();
 
-            for (String entityName : TribeCraft.config.getStringList("全局配置.服务器设置.禁止物体通过地狱门列表"))
-            {
+            for (String entityName : TribeCraft.config.getStringList("全局配置.服务器设置.禁止物体通过地狱门列表")) {
                 entityNames.add(entityName);
             }
 
@@ -87,8 +81,7 @@ public class PluginConfig
          *
          * @return
          */
-        public DispenserItemBansConfiguration getDispenserItemBans()
-        {
+        public DispenserItemBansConfiguration getDispenserItemBans() {
             return this.dispenserItemBans;
         }
 
@@ -97,8 +90,7 @@ public class PluginConfig
          *
          * @return
          */
-        public NetherPortalEntityBansConfiguration getNetherPortalEntityBans()
-        {
+        public NetherPortalEntityBansConfiguration getNetherPortalEntityBans() {
             return this.netherPortalEntityBans;
         }
 
@@ -107,8 +99,7 @@ public class PluginConfig
          *
          * @return
          */
-        public Boolean isBlockCantFloating()
-        {
+        public Boolean isBlockCantFloating() {
             return this.blockCantFloating;
         }
 
@@ -117,8 +108,7 @@ public class PluginConfig
          *
          * @return
          */
-        public Boolean isCleanRedstoneClock()
-        {
+        public Boolean isCleanRedstoneClock() {
             return this.cleanRedstoneClock;
         }
 
@@ -127,18 +117,16 @@ public class PluginConfig
          *
          * @return
          */
-        public HeightWaterRemovesConfiguration getHeightWaterRemoves()
-        {
+        public HeightWaterRemovesConfiguration getHeightWaterRemoves() {
             return this.heightWaterRemoves;
         }
 
-        public class PermissionDetectorConfigraution
-        {
+        public class PermissionDetectorConfigraution {
+
             private final OPDetector opDetector;
             private final CreativeDetector creativeDetector;
 
-            public PermissionDetectorConfigraution(OPDetector opDetector, CreativeDetector creativeDetector)
-            {
+            public PermissionDetectorConfigraution(OPDetector opDetector, CreativeDetector creativeDetector) {
                 this.opDetector = opDetector;
                 this.creativeDetector = creativeDetector;
             }
@@ -148,8 +136,7 @@ public class PluginConfig
              *
              * @return
              */
-            public OPDetector getOPDetector()
-            {
+            public OPDetector getOPDetector() {
                 return this.opDetector;
             }
 
@@ -158,92 +145,81 @@ public class PluginConfig
              *
              * @return
              */
-            public CreativeDetector getCreativeDetector()
-            {
+            public CreativeDetector getCreativeDetector() {
                 return this.creativeDetector;
             }
 
-            public class OPDetector
-            {
+            public class OPDetector {
+
                 public final Boolean enable;
                 public final List<String> whiteList = new ArrayList<String>();
 
-                public OPDetector(Boolean enable, List<String> whiteList)
-                {
+                public OPDetector(Boolean enable, List<String> whiteList) {
                     this.enable = enable;
 
-                    for (String name : whiteList)
-                    {
+                    for (String name : whiteList) {
                         this.whiteList.add(name);
                     }
                 }
             }
 
-            public class CreativeDetector
-            {
+            public class CreativeDetector {
+
                 public final Boolean enable;
                 public final List<String> whiteList = new ArrayList<String>();
 
-                public CreativeDetector(Boolean enable, List<String> whiteList)
-                {
+                public CreativeDetector(Boolean enable, List<String> whiteList) {
                     this.enable = enable;
 
-                    for (String name : whiteList)
-                    {
+                    for (String name : whiteList) {
                         this.whiteList.add(name);
                     }
                 }
             }
         }
 
-        public class DispenserItemBansConfiguration
-        {
+        public class DispenserItemBansConfiguration {
+
             public final List<Integer> itemIDs = new ArrayList<Integer>();
 
-            public DispenserItemBansConfiguration(List<Integer> itemIDs)
-            {
-                for (Integer itemID : itemIDs)
-                {
+            public DispenserItemBansConfiguration(List<Integer> itemIDs) {
+                for (Integer itemID : itemIDs) {
                     this.itemIDs.add(itemID);
                 }
             }
         }
 
-        public class NetherPortalEntityBansConfiguration
-        {
+        public class NetherPortalEntityBansConfiguration {
+
             public final List<String> entityNames = new ArrayList<String>();
 
-            public NetherPortalEntityBansConfiguration(List<String> entityNames)
-            {
-                for (String entityName : entityNames)
-                {
+            public NetherPortalEntityBansConfiguration(List<String> entityNames) {
+                for (String entityName : entityNames) {
                     this.entityNames.add(entityName);
                 }
             }
         }
 
-        public class HeightWaterRemovesConfiguration
-        {
+        public class HeightWaterRemovesConfiguration {
+
             public final Boolean enable;
             public final int height;
             public final int flowRange;
 
-            public HeightWaterRemovesConfiguration(Boolean enable, int height, int flowRange)
-            {
+            public HeightWaterRemovesConfiguration(Boolean enable, int height, int flowRange) {
                 this.enable = enable;
                 this.height = height;
                 this.flowRange = flowRange;
             }
         }
 
-        public class HeightLavaRemovesConfiguration
-        {
+        public class HeightLavaRemovesConfiguration {
+
             public final Boolean enable;
             public final int height;
             public final int flowRange;
 
-            public HeightLavaRemovesConfiguration(Boolean enable, int height, int flowRange)
-            {
+            public HeightLavaRemovesConfiguration(Boolean enable, int height, int flowRange) {
                 this.enable = enable;
                 this.height = height;
                 this.flowRange = flowRange;
@@ -252,12 +228,11 @@ public class PluginConfig
 
     }
 
-    public class CommandsInfo
-    {
+    public class CommandsInfo {
+
         private final SurvivalConfiguration survival;
 
-        public CommandsInfo()
-        {
+        public CommandsInfo() {
             this.survival = new SurvivalConfiguration(
                     TribeCraft.config.getBoolean("全局配置.用户指令.Survival.开启"),
                     TribeCraft.config.getString("全局配置.用户指令.Survival.主城领地"),
@@ -273,13 +248,12 @@ public class PluginConfig
          *
          * @return
          */
-        public SurvivalConfiguration getSurvival()
-        {
+        public SurvivalConfiguration getSurvival() {
             return this.survival;
         }
 
-        public class SurvivalConfiguration
-        {
+        public class SurvivalConfiguration {
+
             public final Boolean enable;
             public final String mainTown;
             public final String subArea;
@@ -288,8 +262,7 @@ public class PluginConfig
             public final int maxY;
             public final int maxZ;
 
-            public SurvivalConfiguration(Boolean enable, String mainTown, String subArea, Boolean canInResidence, int maxX, int maxY, int maxZ)
-            {
+            public SurvivalConfiguration(Boolean enable, String mainTown, String subArea, Boolean canInResidence, int maxX, int maxY, int maxZ) {
                 this.enable = enable;
                 this.mainTown = mainTown;
                 this.subArea = subArea;
@@ -298,6 +271,35 @@ public class PluginConfig
                 this.maxY = maxY;
                 this.maxZ = maxZ;
             }
+        }
+    }
+
+    public class RateOfDrop {
+
+        private RateOfDropConfig[] VipInfolist = new RateOfDropConfig[10];
+
+        public RateOfDrop() {
+            VipInfolist[0].RateOfItem = TribeCraft.config.getDouble("全局配置.死亡保护.普通用户.物品掉落几率");
+            VipInfolist[0].RateOfClothes = TribeCraft.config.getDouble("全局配置.死亡保护.普通用户.装备掉落几率");
+            VipInfolist[0].RateofExp = TribeCraft.config.getDouble("全局配置.死亡保护.普通用户.经验掉落百分比");
+            for (int i = 1; i < 10; i++) {
+                VipInfolist[i].RateOfItem = TribeCraft.config.getDouble("全局配置.死亡保护.VIP" + i + ".物品掉落几率");
+                VipInfolist[i].RateOfClothes = TribeCraft.config.getDouble("全局配置.死亡保护.VIP" + i + ".装备掉落几率");
+                VipInfolist[i].RateofExp = TribeCraft.config.getDouble("全局配置.死亡保护.VIP" + i + ".经验掉落百分比");
+            }
+        }
+        /**
+         * 获取掉落几率的信息
+         * @param VIPlevel 需要获取掉落几率的等级
+         * @return 掉落几率的信息
+         */
+        public RateOfDropConfig getRateOfDrop(int VIPlevel){
+            return VipInfolist[VIPlevel];
+        }
+        public class RateOfDropConfig {
+            public double RateOfItem;
+            public double RateOfClothes;
+            public double RateofExp;
         }
     }
 }
