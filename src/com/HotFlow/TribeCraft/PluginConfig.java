@@ -8,6 +8,7 @@ import java.util.List;
  */
 public class PluginConfig
 {
+
     private final ServerConfig serverConfig;
     private final CommandsInfo commandsInfo;
 
@@ -39,6 +40,7 @@ public class PluginConfig
 
     private class ServerConfig
     {
+
         private final DispenserItemBansConfiguration dispenserItemBans;
         private final NetherPortalEntityBansConfiguration netherPortalEntityBans;
         private final Boolean blockCantFloating;
@@ -53,7 +55,7 @@ public class PluginConfig
 
             for (Integer itemID : Main.config.getIntegerList("全局配置.服务器设置.禁止发射器物品列表"))
             {
-                itemIDs.add(itemID);
+                    itemIDs.add(itemID);
             }
 
             this.dispenserItemBans = new DispenserItemBansConfiguration(itemIDs);
@@ -80,8 +82,9 @@ public class PluginConfig
                     Main.config.getInt("全局配置.服务器设置.清理高空岩浆.源环境高度"),
                     Main.config.getInt("全局配置.服务器设置.清理高空岩浆.岩浆向下流动长度")
             );
+            
         }
-
+        
         /**
          * 获取禁止发射器物品列表
          *
@@ -134,6 +137,7 @@ public class PluginConfig
 
         public class PermissionDetectorConfigraution
         {
+
             private final OPDetector opDetector;
             private final CreativeDetector creativeDetector;
 
@@ -165,6 +169,7 @@ public class PluginConfig
 
             public class OPDetector
             {
+
                 public final Boolean enable;
                 public final List<String> whiteList = new ArrayList<String>();
 
@@ -181,6 +186,7 @@ public class PluginConfig
 
             public class CreativeDetector
             {
+
                 public final Boolean enable;
                 public final List<String> whiteList = new ArrayList<String>();
 
@@ -198,6 +204,7 @@ public class PluginConfig
 
         public class DispenserItemBansConfiguration
         {
+
             public final List<Integer> itemIDs = new ArrayList<Integer>();
 
             public DispenserItemBansConfiguration(List<Integer> itemIDs)
@@ -211,6 +218,7 @@ public class PluginConfig
 
         public class NetherPortalEntityBansConfiguration
         {
+
             public final List<String> entityNames = new ArrayList<String>();
 
             public NetherPortalEntityBansConfiguration(List<String> entityNames)
@@ -224,6 +232,7 @@ public class PluginConfig
 
         public class HeightWaterRemovesConfiguration
         {
+
             public final Boolean enable;
             public final int height;
             public final int flowRange;
@@ -238,6 +247,7 @@ public class PluginConfig
 
         public class HeightLavaRemovesConfiguration
         {
+
             public final Boolean enable;
             public final int height;
             public final int flowRange;
@@ -254,6 +264,7 @@ public class PluginConfig
 
     public class CommandsInfo
     {
+
         private final SurvivalConfiguration survival;
 
         public CommandsInfo()
@@ -280,6 +291,7 @@ public class PluginConfig
 
         public class SurvivalConfiguration
         {
+
             public final Boolean enable;
             public final String mainTown;
             public final String subArea;
@@ -298,6 +310,43 @@ public class PluginConfig
                 this.maxY = maxY;
                 this.maxZ = maxZ;
             }
+        }
+    }
+
+    public class RateOfDrop
+    {
+
+        private RateOfDropConfig[] VipInfolist = new RateOfDropConfig[10];
+
+        public RateOfDrop()
+        {
+            VipInfolist[0].RateOfItem = Main.config.getDouble("全局配置.死亡保护.普通用户.物品掉落几率");
+            VipInfolist[0].RateOfClothes = Main.config.getDouble("全局配置.死亡保护.普通用户.装备掉落几率");
+            VipInfolist[0].RateofExp = Main.config.getDouble("全局配置.死亡保护.普通用户.经验掉落百分比");
+            for (int i = 1; i < 10; i++)
+            {
+                VipInfolist[i].RateOfItem = Main.config.getDouble("全局配置.死亡保护.VIP" + i + ".物品掉落几率");
+                VipInfolist[i].RateOfClothes = Main.config.getDouble("全局配置.死亡保护.VIP" + i + ".装备掉落几率");
+                VipInfolist[i].RateofExp = Main.config.getDouble("全局配置.死亡保护.VIP" + i + ".经验掉落百分比");
+            }
+        }
+
+        /**
+         * 获取掉落几率的信息
+         *
+         * @param VIPlevel 需要获取掉落几率的等级
+         * @return 掉落几率的信息
+         */
+        public RateOfDropConfig getRateOfDrop(int VIPlevel)
+        {
+            return VipInfolist[VIPlevel];
+        }
+
+        public class RateOfDropConfig
+        {
+            public double RateOfItem;
+            public double RateOfClothes;
+            public double RateofExp;
         }
     }
 }
