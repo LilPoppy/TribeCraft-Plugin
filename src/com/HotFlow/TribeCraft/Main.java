@@ -65,7 +65,7 @@ public class Main extends JavaPlugin
         }
         else
         {
-            Main.logger.log(Level.SEVERE, prefix + " 领地系统安装失败成功!");
+            Main.logger.log(Level.SEVERE, prefix + " 领地系统安装失败!");
         }
 
         if (Main.setupEconomy())
@@ -74,7 +74,7 @@ public class Main extends JavaPlugin
         }
         else
         {
-            Main.logger.log(Level.SEVERE, prefix + " 经济系统安装失败成功!");
+            Main.logger.log(Level.SEVERE, prefix + " 经济系统安装失败!");
         }
 
         if (Main.setupPermission())
@@ -83,7 +83,7 @@ public class Main extends JavaPlugin
         }
         else
         {
-            Main.logger.log(Level.SEVERE, prefix + " 权限系统安装失败成功!");
+            Main.logger.log(Level.SEVERE, prefix + " 权限系统安装失败!");
         }
 
         if (Main.setupChat())
@@ -92,7 +92,7 @@ public class Main extends JavaPlugin
         }
         else
         {
-            Main.logger.log(Level.SEVERE, prefix + " 频道系统安装失败成功!");
+            Main.logger.log(Level.SEVERE, prefix + " 频道系统安装失败!");
         }
 
         getServer().getPluginManager().addPermission(new com.HotFlow.TribeCraft.Permissions.Permissions().admin);
