@@ -1,6 +1,7 @@
 package com.HotFlow.TribeCraft.Player;
 
 import com.HotFlow.TribeCraft.Inventory.DeathInventory;
+import com.HotFlow.TribeCraft.Main;
 import com.HotFlow.TribeCraft.NBT.CompoundTag;
 import com.HotFlow.TribeCraft.NBT.DoubleTag;
 import com.HotFlow.TribeCraft.NBT.ListTag;
@@ -21,8 +22,10 @@ import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import static org.bukkit.Bukkit.getServer;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -32,7 +35,7 @@ import org.bukkit.entity.Player;
 public class TribePlayer
 {
 
-    private final Player player;
+    private final UUID uuid;
     private Location gateLoc1;
     private Location gateLoc2;
     private final List<VIP> vips = new ArrayList<VIP>();
@@ -41,53 +44,9 @@ public class TribePlayer
     private final List<DelayTask> delayTaskList = new ArrayList<DelayTask>();
     private int dollar;
 
-    public TribePlayer(Player player)
+    public TribePlayer(UUID uuid)
     {
-        this.player = player;
-    }
-
-    /**
-     * 获取玩家点卷数量
-     *
-     * @return 玩家点卷数量
-     */
-    public int getDollar()
-    {
-        return dollar;
-    }
-
-    /**
-     * 增加玩家点卷
-     *
-     * @param CountOfAdd
-     * @return 增加后的数量
-     */
-    public int addDollar(int CountOfAdd)
-    {
-        dollar = dollar + CountOfAdd;
-        return dollar;
-    }
-
-    /**
-     * 减少玩家点卷数量
-     *
-     * @param CountOfTake
-     * @return 减少后的数量
-     */
-    public int TakeDollar(int CountOfTake)
-    {
-        dollar = dollar + CountOfTake;
-        return dollar;
-    }
-
-    /**
-     * 设置玩家点卷数量
-     *
-     * @param dollar
-     */
-    public void setDollar(int dollar)
-    {
-        this.dollar = dollar;
+        this.uuid = uuid;
     }
 
     /**
@@ -97,7 +56,15 @@ public class TribePlayer
      */
     public Player getCraftPlayer()
     {
-        return this.player;
+        for(Player player : getServer().getOnlinePlayers())
+        {
+            if(player.getUniqueId().equals(uuid))
+            {
+                return player;
+            }
+        }
+        
+        return null;
     }
 
     /**
@@ -314,7 +281,7 @@ public class TribePlayer
                     NBTOutputStream playerOutputStream = new NBTOutputStream(new FileOutputStream(playerFile));
                     playerOutputStream.writeTag(newTag);
                     playerOutputStream.close();
-                    player.loadData();
+                    getServer().getPlayer(uuid).loadData();
                     return;
                 }
             }
@@ -328,5 +295,49 @@ public class TribePlayer
         {
             Logger.getLogger(Player.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+    
+    /**
+     * 获取玩家点卷数量
+     *
+     * @return 玩家点卷数量
+     */
+    public int getDollar()
+    {
+        return dollar;
+    }
+
+    /**
+     * 增加玩家点卷
+     *
+     * @param CountOfAdd
+     * @return 增加后的数量
+     */
+    public int addDollar(int CountOfAdd)
+    {
+        dollar = dollar + CountOfAdd;
+        return dollar;
+    }
+
+    /**
+     * 减少玩家点卷数量
+     *
+     * @param CountOfTake
+     * @return 减少后的数量
+     */
+    public int TakeDollar(int CountOfTake)
+    {
+        dollar = dollar + CountOfTake;
+        return dollar;
+    }
+
+    /**
+     * 设置玩家点卷数量
+     *
+     * @param dollar
+     */
+    public void setDollar(int dollar)
+    {
+        this.dollar = dollar;
     }
 }

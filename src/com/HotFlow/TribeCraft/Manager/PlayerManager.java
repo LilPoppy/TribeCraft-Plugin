@@ -4,62 +4,42 @@ import com.HotFlow.TribeCraft.Player.TribePlayer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import org.bukkit.entity.Player;
+import java.util.UUID;
 
 /**
  * @author HotFlow
  */
 public class PlayerManager
 {
-    private final HashMap<String, TribePlayer> players = new HashMap<String, TribePlayer>();
+    private final HashMap<UUID, TribePlayer> players = new HashMap<UUID, TribePlayer>();
 
     /**
      * 获取玩家
      *
-     * @param name
+     * @param uuid
      * @return
      */
-    public TribePlayer getPlayer(String name)
+    public TribePlayer getPlayer(UUID uuid)
     {
-        for (TribePlayer player : this.getPlayers())
+        for (UUID id : this.players.keySet())
         {
-            if (player.getCraftPlayer().getName().equals(name))
+            if(id.equals(uuid))
             {
-                return player;
+                return this.players.get(id);
             }
         }
-
-        return null;
-    }
-
-    /**
-     * 获取玩家
-     *
-     * @param player
-     * @return
-     */
-    public TribePlayer getPlayer(Player player)
-    {
-        for (TribePlayer p : this.getPlayers())
-        {
-            if (p.getCraftPlayer().getUniqueId().equals(player.getUniqueId()))
-            {
-                return p;
-            }
-        }
-
         return null;
     }
 
     /**
      * 设置玩家
      *
-     * @param name
+     * @param uuid
      * @param player
      */
-    public void setPlayer(String name, TribePlayer player)
+    public void setPlayer(UUID uuid, TribePlayer player)
     {
-        this.players.put(name, player);
+        this.players.put(uuid, player);
     }
 
     /**
@@ -75,20 +55,21 @@ public class PlayerManager
         {
             playerList.add(player);
         }
+        
         return playerList;
     }
 
     /**
-     * 拥有玩家
+     * 是否拥有玩家
      *
-     * @param name
+     * @param uuid
      * @return
      */
-    public Boolean hasPlayer(String name)
+    public Boolean hasPlayer(UUID uuid)
     {
-        for (TribePlayer player : this.getPlayers())
+        for (UUID id : this.players.keySet())
         {
-            if (player.getCraftPlayer().getName().equals(name))
+            if(id.equals(uuid))
             {
                 return true;
             }

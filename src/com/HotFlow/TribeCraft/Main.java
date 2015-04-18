@@ -28,9 +28,9 @@ import org.bukkit.plugin.java.JavaPlugin;
 /**
  * @author HotFlow
  */
-public class TribeCraft extends JavaPlugin
+public class Main extends JavaPlugin
 {
-    public static TribeCraft plugin;
+    public static Main plugin;
     public static File configFile;
     public static File dataFile;
     public final static TribeConfiguration config = new TribeConfiguration();
@@ -50,49 +50,49 @@ public class TribeCraft extends JavaPlugin
     @Override
     public void onEnable()
     {
-        TribeCraft.plugin = this;
-        TribeCraft.configFile = new File(getDataFolder(), "config.yml");
-        TribeCraft.dataFile = new File(getDataFolder(), "data.yml");
-        TribeCraft.serverTimer = new ServerTimer();
-        TribeCraft.serverTimer.getTimerTask().start();
+        Main.plugin = this;
+        Main.configFile = new File(getDataFolder(), "config.yml");
+        Main.dataFile = new File(getDataFolder(), "data.yml");
+        Main.serverTimer = new ServerTimer();
+        Main.serverTimer.getTimerTask().start();
 
         this.loadData();
         this.loadConfig();
 
-        if (TribeCraft.setupResidence())
+        if (Main.setupResidence())
         {
-            TribeCraft.logger.log(Level.INFO, prefix + " 领地系统安装成功!");
+            Main.logger.log(Level.INFO, prefix + " 领地系统安装成功!");
         }
         else
         {
-            TribeCraft.logger.log(Level.SEVERE, prefix + " 领地系统安装失败成功!");
+            Main.logger.log(Level.SEVERE, prefix + " 领地系统安装失败成功!");
         }
 
-        if (TribeCraft.setupEconomy())
+        if (Main.setupEconomy())
         {
-            TribeCraft.logger.log(Level.INFO, prefix + " 经济系统安装成功!");
+            Main.logger.log(Level.INFO, prefix + " 经济系统安装成功!");
         }
         else
         {
-            TribeCraft.logger.log(Level.SEVERE, prefix + " 经济系统安装失败成功!");
+            Main.logger.log(Level.SEVERE, prefix + " 经济系统安装失败成功!");
         }
 
-        if (TribeCraft.setupPermission())
+        if (Main.setupPermission())
         {
-            TribeCraft.logger.log(Level.INFO, prefix + " 权限系统安装成功!");
+            Main.logger.log(Level.INFO, prefix + " 权限系统安装成功!");
         }
         else
         {
-            TribeCraft.logger.log(Level.SEVERE, prefix + " 权限系统安装失败成功!");
+            Main.logger.log(Level.SEVERE, prefix + " 权限系统安装失败成功!");
         }
 
-        if (TribeCraft.setupChat())
+        if (Main.setupChat())
         {
-            TribeCraft.logger.log(Level.INFO, prefix + " 频道系统安装成功!");
+            Main.logger.log(Level.INFO, prefix + " 频道系统安装成功!");
         }
         else
         {
-            TribeCraft.logger.log(Level.SEVERE, prefix + " 频道系统安装失败成功!");
+            Main.logger.log(Level.SEVERE, prefix + " 频道系统安装失败成功!");
         }
 
         getServer().getPluginManager().addPermission(new com.HotFlow.TribeCraft.Permissions.Permissions().admin);
@@ -119,7 +119,7 @@ public class TribeCraft extends JavaPlugin
      */
     public static PlayerManager getPlayerManager()
     {
-        return TribeCraft.playerManager;
+        return Main.playerManager;
     }
 
     /**
@@ -129,7 +129,7 @@ public class TribeCraft extends JavaPlugin
      */
     public static PortalGateManager getPortalGateManager()
     {
-        return TribeCraft.portalGateManager;
+        return Main.portalGateManager;
     }
 
     /**
@@ -139,7 +139,7 @@ public class TribeCraft extends JavaPlugin
      */
     public static PluginConfig getPluginConfig()
     {
-        return TribeCraft.pluginConfig;
+        return Main.pluginConfig;
     }
 
     /**
@@ -149,7 +149,7 @@ public class TribeCraft extends JavaPlugin
      */
     public static ResidenceManager getResidenceManager()
     {
-        return TribeCraft.residenceManager;
+        return Main.residenceManager;
     }
 
     /**
@@ -159,7 +159,7 @@ public class TribeCraft extends JavaPlugin
      */
     public static Economy getEconomyManager()
     {
-        return TribeCraft.economyManager;
+        return Main.economyManager;
     }
 
     /**
@@ -169,7 +169,7 @@ public class TribeCraft extends JavaPlugin
      */
     public static Permission getPermissionManager()
     {
-        return TribeCraft.permissionManager;
+        return Main.permissionManager;
     }
 
     /**
@@ -179,7 +179,7 @@ public class TribeCraft extends JavaPlugin
      */
     public static Chat getChatManager()
     {
-        return TribeCraft.chatManager;
+        return Main.chatManager;
     }
 
     /**
@@ -187,32 +187,32 @@ public class TribeCraft extends JavaPlugin
      */
     private void loadData()
     {
-        if (!TribeCraft.dataFile.exists())
+        if (!Main.dataFile.exists())
         {
             try
             {
-                TribeCraft.dataFile.getParentFile().mkdir();
-                TribeCraft.dataFile.createNewFile();
-                Writter writter = new Writter(TribeCraft.dataFile);
+                Main.dataFile.getParentFile().mkdir();
+                Main.dataFile.createNewFile();
+                Writter writter = new Writter(Main.dataFile);
                 writter.genData();
             }
             catch (IOException ex)
             {
-                TribeCraft.logger.info(ex.toString());
+                Main.logger.info(ex.toString());
             }
         }
 
         try
         {
-            TribeCraft.data.load(TribeCraft.dataFile);
+            Main.data.load(Main.dataFile);
         }
         catch (IOException ex)
         {
-            TribeCraft.logger.info(ex.toString());
+            Main.logger.info(ex.toString());
         }
         catch (InvalidConfigurationException ex)
         {
-            Logger.getLogger(TribeCraft.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         ConfigurationSection gateSections = data.getConfigurationSection("传送门列表");
@@ -227,27 +227,27 @@ public class TribeCraft extends JavaPlugin
                 {
                     PortalGate gate = new PortalGate(key);
 
-                    String message = TribeCraft.data.getString("传送门列表." + key + ".提示信息");
+                    String message = Main.data.getString("传送门列表." + key + ".提示信息");
 
                     gate.setMessage(message);
-                    gate.setCommands(TribeCraft.data.getStringList("传送门列表." + key + ".触发命令"));
+                    gate.setCommands(Main.data.getStringList("传送门列表." + key + ".触发命令"));
 
-                    Area area = new Area(new Location(getServer().getWorld(TribeCraft.data.getString("传送门列表." + key + ".传送出发点.世界")),
-                            Double.parseDouble(TribeCraft.data.getString("传送门列表." + key + ".传送出发点.坐标点1").split(",")[0]),
-                            Double.parseDouble(TribeCraft.data.getString("传送门列表." + key + ".传送出发点.坐标点1").split(",")[1]),
-                            Double.parseDouble(TribeCraft.data.getString("传送门列表." + key + ".传送出发点.坐标点1").split(",")[2])),
-                            new Location(getServer().getWorld(TribeCraft.data.getString("传送门列表." + key + ".传送出发点.世界")),
-                                    Double.parseDouble(TribeCraft.data.getString("传送门列表." + key + ".传送出发点.坐标点2").split(",")[0]),
-                                    Double.parseDouble(TribeCraft.data.getString("传送门列表." + key + ".传送出发点.坐标点2").split(",")[1]),
-                                    Double.parseDouble(TribeCraft.data.getString("传送门列表." + key + ".传送出发点.坐标点2").split(",")[2])));
+                    Area area = new Area(new Location(getServer().getWorld(Main.data.getString("传送门列表." + key + ".传送出发点.世界")),
+                            Double.parseDouble(Main.data.getString("传送门列表." + key + ".传送出发点.坐标点1").split(",")[0]),
+                            Double.parseDouble(Main.data.getString("传送门列表." + key + ".传送出发点.坐标点1").split(",")[1]),
+                            Double.parseDouble(Main.data.getString("传送门列表." + key + ".传送出发点.坐标点1").split(",")[2])),
+                            new Location(getServer().getWorld(Main.data.getString("传送门列表." + key + ".传送出发点.世界")),
+                                    Double.parseDouble(Main.data.getString("传送门列表." + key + ".传送出发点.坐标点2").split(",")[0]),
+                                    Double.parseDouble(Main.data.getString("传送门列表." + key + ".传送出发点.坐标点2").split(",")[1]),
+                                    Double.parseDouble(Main.data.getString("传送门列表." + key + ".传送出发点.坐标点2").split(",")[2])));
 
                     gate.setFrom(area);
 
-                    if (TribeCraft.data.getString("传送门列表." + key + ".传送类型").equalsIgnoreCase("传送点"))
+                    if (Main.data.getString("传送门列表." + key + ".传送类型").equalsIgnoreCase("传送点"))
                     {
                         gate.setType(PortalGateType.Location);
                     }
-                    else if (TribeCraft.data.getString("传送门列表." + key + ".传送类型").equalsIgnoreCase("随机点"))
+                    else if (Main.data.getString("传送门列表." + key + ".传送类型").equalsIgnoreCase("随机点"))
                     {
                         gate.setType(PortalGateType.Random);
                     }
@@ -256,14 +256,14 @@ public class TribeCraft extends JavaPlugin
                         gate.setType(PortalGateType.Command);
                     }
 
-                    Location location = new Location(getServer().getWorld(TribeCraft.data.getString("传送门列表." + key + ".传送到达点.世界")),
-                            Double.parseDouble(TribeCraft.data.getString("传送门列表." + key + ".传送到达点.坐标点").split(",")[0]),
-                            Double.parseDouble(TribeCraft.data.getString("传送门列表." + key + ".传送到达点.坐标点").split(",")[1]),
-                            Double.parseDouble(TribeCraft.data.getString("传送门列表." + key + ".传送到达点.坐标点").split(",")[2]));
+                    Location location = new Location(getServer().getWorld(Main.data.getString("传送门列表." + key + ".传送到达点.世界")),
+                            Double.parseDouble(Main.data.getString("传送门列表." + key + ".传送到达点.坐标点").split(",")[0]),
+                            Double.parseDouble(Main.data.getString("传送门列表." + key + ".传送到达点.坐标点").split(",")[1]),
+                            Double.parseDouble(Main.data.getString("传送门列表." + key + ".传送到达点.坐标点").split(",")[2]));
 
                     gate.setTo(location);
 
-                    TribeCraft.portalGateManager.addPortalGate(gate);
+                    Main.portalGateManager.addPortalGate(gate);
                 }
             }
         }
@@ -274,44 +274,44 @@ public class TribeCraft extends JavaPlugin
      */
     private void saveData()
     {
-        for (PortalGate gate : TribeCraft.getPortalGateManager().getPortalGates())
+        for (PortalGate gate : Main.getPortalGateManager().getPortalGates())
         {
             if (gate.getTo() != null)
             {
-                TribeCraft.data.set("传送门列表." + gate.getName() + ".提示信息", gate.getMessage());
-                TribeCraft.data.set("传送门列表." + gate.getName() + ".触发命令", gate.getCommands());
-                TribeCraft.data.set("传送门列表." + gate.getName() + ".传送出发点.世界", gate.getFrom().getLocation1().getWorld().getName());
-                TribeCraft.data.set("传送门列表." + gate.getName() + ".传送出发点.坐标点1", gate.getFrom().getLocation1().getX() + "," + gate.getFrom().getLocation1().getY() + "," + gate.getFrom().getLocation1().getZ());
-                TribeCraft.data.set("传送门列表." + gate.getName() + ".传送出发点.坐标点2", gate.getFrom().getLocation2().getX() + "," + gate.getFrom().getLocation2().getY() + "," + gate.getFrom().getLocation2().getZ());
-                TribeCraft.data.set("传送门列表." + gate.getName() + ".传送到达点.世界", gate.getTo().getWorld().getName());
-                TribeCraft.data.set("传送门列表." + gate.getName() + ".传送到达点.坐标点", gate.getTo().getX() + "," + gate.getTo().getY() + "," + gate.getTo().getZ());
+                Main.data.set("传送门列表." + gate.getName() + ".提示信息", gate.getMessage());
+                Main.data.set("传送门列表." + gate.getName() + ".触发命令", gate.getCommands());
+                Main.data.set("传送门列表." + gate.getName() + ".传送出发点.世界", gate.getFrom().getLocation1().getWorld().getName());
+                Main.data.set("传送门列表." + gate.getName() + ".传送出发点.坐标点1", gate.getFrom().getLocation1().getX() + "," + gate.getFrom().getLocation1().getY() + "," + gate.getFrom().getLocation1().getZ());
+                Main.data.set("传送门列表." + gate.getName() + ".传送出发点.坐标点2", gate.getFrom().getLocation2().getX() + "," + gate.getFrom().getLocation2().getY() + "," + gate.getFrom().getLocation2().getZ());
+                Main.data.set("传送门列表." + gate.getName() + ".传送到达点.世界", gate.getTo().getWorld().getName());
+                Main.data.set("传送门列表." + gate.getName() + ".传送到达点.坐标点", gate.getTo().getX() + "," + gate.getTo().getY() + "," + gate.getTo().getZ());
 
                 if (gate.getType().equals(PortalGateType.Location))
                 {
-                    TribeCraft.data.set("传送门列表." + gate.getName() + ".传送类型", "传送点");
+                    Main.data.set("传送门列表." + gate.getName() + ".传送类型", "传送点");
                 }
                 else if (gate.getType().equals(PortalGateType.Random))
                 {
-                    TribeCraft.data.set("传送门列表." + gate.getName() + ".传送类型", "随机点");
+                    Main.data.set("传送门列表." + gate.getName() + ".传送类型", "随机点");
                 }
                 else
                 {
-                    TribeCraft.data.set("传送门列表." + gate.getName() + ".传送类型", "命令点");
+                    Main.data.set("传送门列表." + gate.getName() + ".传送类型", "命令点");
                 }
             }
             else
             {
-                TribeCraft.logger.log(Level.SEVERE, TribeCraft.prefix + "传送门" + gate.getName() + "没有传送点，不保存。");
+                Main.logger.log(Level.SEVERE, Main.prefix + "传送门" + gate.getName() + "没有传送点，不保存。");
             }
         }
 
         try
         {
-            TribeCraft.data.save(dataFile);
+            Main.data.save(dataFile);
         }
         catch (IOException ex)
         {
-            TribeCraft.logger.info(ex.toString());
+            Main.logger.info(ex.toString());
         }
     }
 
@@ -320,35 +320,35 @@ public class TribeCraft extends JavaPlugin
      */
     private void loadConfig()
     {
-        if (!TribeCraft.configFile.exists())
+        if (!Main.configFile.exists())
         {
             try
             {
-                TribeCraft.configFile.getParentFile().mkdir();
-                TribeCraft.configFile.createNewFile();
-                Writter writter = new Writter(TribeCraft.configFile);
+                Main.configFile.getParentFile().mkdir();
+                Main.configFile.createNewFile();
+                Writter writter = new Writter(Main.configFile);
                 writter.genConfig();
             }
             catch (IOException ex)
             {
-                TribeCraft.logger.info(ex.toString());
+                Main.logger.info(ex.toString());
             }
         }
 
         try
         {
-            TribeCraft.config.load(TribeCraft.configFile);
+            Main.config.load(Main.configFile);
         }
         catch (IOException ex)
         {
-            TribeCraft.logger.info(ex.toString());
+            Main.logger.info(ex.toString());
         }
         catch (InvalidConfigurationException ex)
         {
-            Logger.getLogger(TribeCraft.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        TribeCraft.pluginConfig = new PluginConfig();
+        Main.pluginConfig = new PluginConfig();
     }
 
     /**
@@ -361,21 +361,21 @@ public class TribeCraft extends JavaPlugin
             return false;
         }
 
-        TribeCraft.residence = (Residence) Bukkit.getPluginManager().getPlugin("Residence");
+        Main.residence = (Residence) Bukkit.getPluginManager().getPlugin("Residence");
 
-        TribeCraft.residenceManager = Residence.getResidenceManager();
+        Main.residenceManager = Residence.getResidenceManager();
 
-        if (TribeCraft.residenceManager == null)
+        if (Main.residenceManager == null)
         {
             return false;
         }
 
-        if (!TribeCraft.residence.isEnabled())
+        if (!Main.residence.isEnabled())
         {
             return false;
         }
 
-        return (TribeCraft.residence != null);
+        return (Main.residence != null);
     }
 
     /**
@@ -394,10 +394,10 @@ public class TribeCraft extends JavaPlugin
 
         if (economyProvider != null)
         {
-            TribeCraft.economyManager = (Economy) economyProvider.getProvider();
+            Main.economyManager = (Economy) economyProvider.getProvider();
         }
 
-        return TribeCraft.economyManager != null;
+        return Main.economyManager != null;
     }
 
     /**
@@ -416,10 +416,10 @@ public class TribeCraft extends JavaPlugin
 
         if (permissionProvider != null)
         {
-            TribeCraft.permissionManager = (Permission) permissionProvider.getProvider();
+            Main.permissionManager = (Permission) permissionProvider.getProvider();
         }
 
-        return TribeCraft.permissionManager != null;
+        return Main.permissionManager != null;
     }
 
     /**
@@ -438,9 +438,9 @@ public class TribeCraft extends JavaPlugin
 
         if (chatProvider != null)
         {
-            TribeCraft.chatManager = (Chat) chatProvider.getProvider();
+            Main.chatManager = (Chat) chatProvider.getProvider();
         }
 
-        return TribeCraft.chatManager != null;
+        return Main.chatManager != null;
     }
 }

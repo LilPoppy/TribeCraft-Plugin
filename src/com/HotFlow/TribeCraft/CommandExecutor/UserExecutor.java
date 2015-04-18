@@ -2,7 +2,7 @@ package com.HotFlow.TribeCraft.CommandExecutor;
 
 import com.HotFlow.TribeCraft.Player.Extension.DelayTask;
 import com.HotFlow.TribeCraft.Player.TribePlayer;
-import com.HotFlow.TribeCraft.TribeCraft;
+import com.HotFlow.TribeCraft.Main;
 import com.HotFlow.TribeCraft.World.Area;
 
 import java.util.Random;
@@ -28,7 +28,7 @@ public class UserExecutor implements CommandExecutor
         if (sender instanceof Player)
         {
             final Player player = (Player) sender;
-            final TribePlayer tribePlayer = TribeCraft.getPlayerManager().getPlayer(player.getName());
+            final TribePlayer tribePlayer = Main.getPlayerManager().getPlayer(player.getUniqueId());
 
             if (args.length > 0)
             {
@@ -47,12 +47,12 @@ public class UserExecutor implements CommandExecutor
                     }
 
                     final Area area = new Area(
-                            TribeCraft.getResidenceManager().getByName(TribeCraft.getPluginConfig().getCommandsInfo().getSurvival().mainTown).getArea(TribeCraft.getPluginConfig().getCommandsInfo().getSurvival().subArea).getHighLoc(),
-                            TribeCraft.getResidenceManager().getByName(TribeCraft.getPluginConfig().getCommandsInfo().getSurvival().mainTown).getArea(TribeCraft.getPluginConfig().getCommandsInfo().getSurvival().subArea).getLowLoc());
+                            Main.getResidenceManager().getByName(Main.getPluginConfig().getCommandsInfo().getSurvival().mainTown).getArea(Main.getPluginConfig().getCommandsInfo().getSurvival().subArea).getHighLoc(),
+                            Main.getResidenceManager().getByName(Main.getPluginConfig().getCommandsInfo().getSurvival().mainTown).getArea(Main.getPluginConfig().getCommandsInfo().getSurvival().subArea).getLowLoc());
 
                     if ((player.getWorld().equals(getServer().getWorld("world"))) && (Area.isAreaContainLocation(area, player.getLocation())))
                     {
-                        getServer().getScheduler().runTask(TribeCraft.plugin, new Runnable()
+                        getServer().getScheduler().runTask(Main.plugin, new Runnable()
                         {
                             @Override
                             public void run()
@@ -60,8 +60,8 @@ public class UserExecutor implements CommandExecutor
                                 while (true)
                                 {
                                     Random random = new Random();
-                                    int x = random.nextInt(TribeCraft.getPluginConfig().getCommandsInfo().getSurvival().maxX) + 1;
-                                    int z = random.nextInt(TribeCraft.getPluginConfig().getCommandsInfo().getSurvival().maxZ) + 1;
+                                    int x = random.nextInt(Main.getPluginConfig().getCommandsInfo().getSurvival().maxX) + 1;
+                                    int z = random.nextInt(Main.getPluginConfig().getCommandsInfo().getSurvival().maxZ) + 1;
                                     int h = player.getWorld().getMaxHeight();
 
                                     for (int y = h; y > 0; y--)
@@ -75,7 +75,7 @@ public class UserExecutor implements CommandExecutor
                                                     && (!block.getType().equals(Material.STATIONARY_WATER))
                                                     && (!block.getType().equals(Material.STATIONARY_LAVA)))
                                             {
-                                                if (y > TribeCraft.getPluginConfig().getCommandsInfo().getSurvival().maxY)
+                                                if (y > Main.getPluginConfig().getCommandsInfo().getSurvival().maxY)
                                                 {
                                                     break;
                                                 }
@@ -86,9 +86,9 @@ public class UserExecutor implements CommandExecutor
 
                                                 if (!Area.isAreaContainLocation(area, location))
                                                 {
-                                                    if (TribeCraft.getResidenceManager().getByLoc(location) == null)
+                                                    if (Main.getResidenceManager().getByLoc(location) == null)
                                                     {
-                                                        if (TribeCraft.getPermissionManager().playerHas(player, "Tribe.user.survival"))
+                                                        if (Main.getPermissionManager().playerHas(player, "Tribe.user.survival"))
                                                         {
                                                             player.sendMessage(ChatColor.GOLD + "正在传送...");
                                                             player.teleport(location);
@@ -152,7 +152,7 @@ public class UserExecutor implements CommandExecutor
         }
         else
         {
-            TribeCraft.logger.info("该命令只能由玩家发出!");
+            Main.logger.info("该命令只能由玩家发出!");
             return false;
         }
         return false;

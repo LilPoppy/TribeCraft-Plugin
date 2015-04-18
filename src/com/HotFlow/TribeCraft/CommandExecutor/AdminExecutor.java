@@ -2,7 +2,7 @@ package com.HotFlow.TribeCraft.CommandExecutor;
 
 import com.HotFlow.TribeCraft.PortalGate.PortalGate;
 import com.HotFlow.TribeCraft.PortalGate.PortalGateType;
-import com.HotFlow.TribeCraft.TribeCraft;
+import com.HotFlow.TribeCraft.Main;
 import com.HotFlow.TribeCraft.World.Area;
 import com.HotFlow.TribeCraft.Utils.System.ISystem;
 import java.util.List;
@@ -38,17 +38,17 @@ public class AdminExecutor implements CommandExecutor
                     {
                         if (args[1].equalsIgnoreCase("create"))
                         {
-                            if ((TribeCraft.getPlayerManager().getPlayer(player.getName()).getGateSelectedLocation1() == null) || (TribeCraft.getPlayerManager().getPlayer(player.getName()).getGateSelectedLocation2() == null))
+                            if ((Main.getPlayerManager().getPlayer(player.getUniqueId()).getGateSelectedLocation1() == null) || (Main.getPlayerManager().getPlayer(player.getUniqueId()).getGateSelectedLocation2() == null))
                             {
                                 player.sendMessage("必须用木铲选择两个点!");
                                 return false;
                             }
 
-                            for (PortalGate gate : TribeCraft.getPortalGateManager().getPortalGates())
+                            for (PortalGate gate : Main.getPortalGateManager().getPortalGates())
                             {
                                 if (Area.isAreaOverlappingArea(new Area(
-                                        TribeCraft.getPlayerManager().getPlayer(player.getName()).getGateSelectedLocation1(),
-                                        TribeCraft.getPlayerManager().getPlayer(player.getName()).getGateSelectedLocation1()),
+                                        Main.getPlayerManager().getPlayer(player.getUniqueId()).getGateSelectedLocation1(),
+                                        Main.getPlayerManager().getPlayer(player.getUniqueId()).getGateSelectedLocation1()),
                                         gate.getFrom()))
                                 {
                                     player.sendMessage("该区域已有传送门!");
@@ -58,7 +58,7 @@ public class AdminExecutor implements CommandExecutor
 
                             if (args.length > 3)
                             {
-                                if (TribeCraft.getPortalGateManager().getPortalGate(args[2]) != null)
+                                if (Main.getPortalGateManager().getPortalGate(args[2]) != null)
                                 {
                                     player.sendMessage("传送门已存在!");
                                     return false;
@@ -68,8 +68,8 @@ public class AdminExecutor implements CommandExecutor
                                 {
                                     PortalGate gate = new PortalGate(args[2]);
 
-                                    gate.setFrom(new Area(TribeCraft.getPlayerManager().getPlayer(player.getName()).getGateSelectedLocation1(),
-                                            TribeCraft.getPlayerManager().getPlayer(player.getName()).getGateSelectedLocation2()));
+                                    gate.setFrom(new Area(Main.getPlayerManager().getPlayer(player.getUniqueId()).getGateSelectedLocation1(),
+                                            Main.getPlayerManager().getPlayer(player.getUniqueId()).getGateSelectedLocation2()));
 
                                     if (Integer.parseInt(args[3]) == 0)
                                     {
@@ -84,7 +84,7 @@ public class AdminExecutor implements CommandExecutor
                                         gate.setType(PortalGateType.Command);
                                     }
 
-                                    TribeCraft.getPortalGateManager().addPortalGate(gate);
+                                    Main.getPortalGateManager().addPortalGate(gate);
                                     player.sendMessage("成功创建传送门!");
                                     return true;
                                 }
@@ -92,27 +92,27 @@ public class AdminExecutor implements CommandExecutor
                                 {
                                     PortalGate gate = new PortalGate(args[2]);
 
-                                    gate.setFrom(new Area(TribeCraft.getPlayerManager().getPlayer(player.getName()).getGateSelectedLocation1(),
-                                            TribeCraft.getPlayerManager().getPlayer(player.getName()).getGateSelectedLocation2()));
+                                    gate.setFrom(new Area(Main.getPlayerManager().getPlayer(player.getUniqueId()).getGateSelectedLocation1(),
+                                            Main.getPlayerManager().getPlayer(player.getUniqueId()).getGateSelectedLocation2()));
 
-                                    TribeCraft.getPortalGateManager().addPortalGate(gate);
+                                    Main.getPortalGateManager().addPortalGate(gate);
                                     player.sendMessage("成功创建传送门!");
                                     return true;
                                 }
                             }
                             else if (args.length > 2)
                             {
-                                if (TribeCraft.getPortalGateManager().getPortalGate(args[2]) != null)
+                                if (Main.getPortalGateManager().getPortalGate(args[2]) != null)
                                 {
                                     player.sendMessage("传送门已存在!");
                                     return false;
                                 }
                                 PortalGate gate = new PortalGate(args[2]);
 
-                                gate.setFrom(new Area(TribeCraft.getPlayerManager().getPlayer(player.getName()).getGateSelectedLocation1(),
-                                        TribeCraft.getPlayerManager().getPlayer(player.getName()).getGateSelectedLocation2()));
+                                gate.setFrom(new Area(Main.getPlayerManager().getPlayer(player.getUniqueId()).getGateSelectedLocation1(),
+                                        Main.getPlayerManager().getPlayer(player.getUniqueId()).getGateSelectedLocation2()));
 
-                                TribeCraft.getPortalGateManager().addPortalGate(gate);
+                                Main.getPortalGateManager().addPortalGate(gate);
                                 player.sendMessage("成功创建传送门!");
                                 return true;
                             }
@@ -126,7 +126,7 @@ public class AdminExecutor implements CommandExecutor
                         {
                             if (args.length > 2)
                             {
-                                if (TribeCraft.getPortalGateManager().removePortalGate(TribeCraft.getPortalGateManager().getPortalGate(args[2])))
+                                if (Main.getPortalGateManager().removePortalGate(Main.getPortalGateManager().getPortalGate(args[2])))
                                 {
                                     player.sendMessage("成功删除传送门!");
                                     return true;
@@ -147,7 +147,7 @@ public class AdminExecutor implements CommandExecutor
                         {
                             StringBuilder sb = new StringBuilder();
 
-                            for (PortalGate gate : TribeCraft.getPortalGateManager().getPortalGates())
+                            for (PortalGate gate : Main.getPortalGateManager().getPortalGates())
                             {
                                 sb.append("[").append(gate.getName()).append("]").append(",");
                             }
@@ -168,9 +168,9 @@ public class AdminExecutor implements CommandExecutor
                         {
                             if (args.length > 2)
                             {
-                                if (TribeCraft.getPortalGateManager().getPortalGate(args[2]) != null)
+                                if (Main.getPortalGateManager().getPortalGate(args[2]) != null)
                                 {
-                                    PortalGate gate = TribeCraft.getPortalGateManager().getPortalGate(args[2]);
+                                    PortalGate gate = Main.getPortalGateManager().getPortalGate(args[2]);
 
                                     player.sendMessage("=====================================");
                                     player.sendMessage("传送门名称: " + gate.getName());
@@ -205,7 +205,7 @@ public class AdminExecutor implements CommandExecutor
                             }
                             else
                             {
-                                for (PortalGate gate : TribeCraft.getPortalGateManager().getPortalGates())
+                                for (PortalGate gate : Main.getPortalGateManager().getPortalGates())
                                 {
                                     if (Area.isAreaContainLocation(gate.getFrom(), player.getLocation()))
                                     {
@@ -246,9 +246,9 @@ public class AdminExecutor implements CommandExecutor
                         {
                             if (args.length > 3)
                             {
-                                if (TribeCraft.getPortalGateManager().getPortalGate(args[2]) != null)
+                                if (Main.getPortalGateManager().getPortalGate(args[2]) != null)
                                 {
-                                    TribeCraft.getPortalGateManager().getPortalGate(args[2]).setMessage(args[3]);
+                                    Main.getPortalGateManager().getPortalGate(args[2]).setMessage(args[3]);
                                     player.sendMessage("提示信息设置成功!");
                                     return true;
                                 }
@@ -268,11 +268,11 @@ public class AdminExecutor implements CommandExecutor
                         {
                             if (args.length > 4)
                             {
-                                if (TribeCraft.getPortalGateManager().getPortalGate(args[2]) != null)
+                                if (Main.getPortalGateManager().getPortalGate(args[2]) != null)
                                 {
                                     if (args[3].equalsIgnoreCase("add"))
                                     {
-                                        List<String> commands = TribeCraft.getPortalGateManager().getPortalGate(args[2]).getCommands();
+                                        List<String> commands = Main.getPortalGateManager().getPortalGate(args[2]).getCommands();
                                         StringBuilder sb = new StringBuilder();
 
                                         for (int i = 4; i < args.length; i++)
@@ -287,13 +287,13 @@ public class AdminExecutor implements CommandExecutor
 
                                         commands.add(sb.toString());
 
-                                        TribeCraft.getPortalGateManager().getPortalGate(args[2]).setCommands(commands);
+                                        Main.getPortalGateManager().getPortalGate(args[2]).setCommands(commands);
                                         player.sendMessage("成功添加命令!");
                                         return true;
                                     }
                                     else if (args[3].equalsIgnoreCase("remove"))
                                     {
-                                        List<String> commands = TribeCraft.getPortalGateManager().getPortalGate(args[2]).getCommands();
+                                        List<String> commands = Main.getPortalGateManager().getPortalGate(args[2]).getCommands();
 
                                         StringBuilder sb = new StringBuilder();
 
@@ -316,7 +316,7 @@ public class AdminExecutor implements CommandExecutor
                                             player.sendMessage("命令不存在!");
                                         }
 
-                                        TribeCraft.getPortalGateManager().getPortalGate(args[2]).setCommands(commands);
+                                        Main.getPortalGateManager().getPortalGate(args[2]).setCommands(commands);
                                         return true;
                                     }
                                     else
@@ -341,9 +341,9 @@ public class AdminExecutor implements CommandExecutor
                         {
                             if (args.length > 2)
                             {
-                                if (TribeCraft.getPortalGateManager().getPortalGate(args[2]) != null)
+                                if (Main.getPortalGateManager().getPortalGate(args[2]) != null)
                                 {
-                                    TribeCraft.getPortalGateManager().getPortalGate(args[2]).setTo(player.getLocation());
+                                    Main.getPortalGateManager().getPortalGate(args[2]).setTo(player.getLocation());
                                     player.sendMessage("成功设置传送点!");
                                     return true;
                                 }
@@ -397,7 +397,7 @@ public class AdminExecutor implements CommandExecutor
         }
         else
         {
-            TribeCraft.logger.info("该命令只能由玩家发出!");
+            Main.logger.info("该命令只能由玩家发出!");
             return false;
         }
     }

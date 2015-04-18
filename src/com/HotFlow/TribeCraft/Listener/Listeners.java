@@ -13,7 +13,7 @@ import com.HotFlow.TribeCraft.Player.Extension.DelayTask;
 import com.HotFlow.TribeCraft.Player.TribePlayer;
 import com.HotFlow.TribeCraft.PortalGate.PortalGate;
 import com.HotFlow.TribeCraft.PortalGate.PortalGateType;
-import com.HotFlow.TribeCraft.TribeCraft;
+import com.HotFlow.TribeCraft.Main;
 import com.HotFlow.TribeCraft.Utils.System.ISystem;
 import java.util.HashMap;
 import java.util.Random;
@@ -30,7 +30,6 @@ import org.bukkit.event.block.BlockDispenseEvent;
 import org.bukkit.event.entity.EntityPortalEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryMoveItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
@@ -47,7 +46,8 @@ public class Listeners implements Listener
     @EventHandler
     public void onPlayerDeath(PlayerDeathEvent event)
     {
-        final TribePlayer player = TribeCraft.getPlayerManager().getPlayer(event.getEntity().getPlayer().getName());
+        final TribePlayer player = Main.getPlayerManager().getPlayer(event.getEntity().getPlayer().getUniqueId());
+        
         HashMap<ItemStack, ItemStack> items = new HashMap<ItemStack, ItemStack>();
         HashMap<ItemStack, HashMap<ArmorType, ItemStack>> equiements = new HashMap<ItemStack, HashMap<ArmorType, ItemStack>>();
         DeathInventory inventory = new DeathInventory();
@@ -147,12 +147,12 @@ public class Listeners implements Listener
             else
             {
                 player.getCraftPlayer().sendMessage("您的VIP等级为: 0");
-                player.getCraftPlayer().sendMessage("物品掉落机率: " + (TribeCraft.config.getDouble("全局配置.死亡保护.普通用户.物品掉落机率") * 100) + "%");
-                player.getCraftPlayer().sendMessage("装备掉落机率: " + (TribeCraft.config.getDouble("全局配置.死亡保护.普通用户.装备掉落机率") * 100) + "%");
-                player.getCraftPlayer().sendMessage("经验掉落百分比: " + (TribeCraft.config.getDouble("全局配置.死亡保护.普通用户.经验掉落百分比") * 100) + "%");
+                player.getCraftPlayer().sendMessage("物品掉落机率: " + (Main.config.getDouble("全局配置.死亡保护.普通用户.物品掉落机率") * 100) + "%");
+                player.getCraftPlayer().sendMessage("装备掉落机率: " + (Main.config.getDouble("全局配置.死亡保护.普通用户.装备掉落机率") * 100) + "%");
+                player.getCraftPlayer().sendMessage("经验掉落百分比: " + (Main.config.getDouble("全局配置.死亡保护.普通用户.经验掉落百分比") * 100) + "%");
 
-                player.setDeathProtectedExp((int) (ISystem.experience.getTotalExperience(player.getCraftPlayer()) * (TribeCraft.config.getDouble("全局配置.死亡保护.普通用户.经验掉落百分比"))));
-                event.setDroppedExp((int) (ISystem.experience.getTotalExperience(player.getCraftPlayer()) * (TribeCraft.config.getDouble("全局配置.死亡保护.普通用户.经验掉落百分比"))));
+                player.setDeathProtectedExp((int) (ISystem.experience.getTotalExperience(player.getCraftPlayer()) * (Main.config.getDouble("全局配置.死亡保护.普通用户.经验掉落百分比"))));
+                event.setDroppedExp((int) (ISystem.experience.getTotalExperience(player.getCraftPlayer()) * (Main.config.getDouble("全局配置.死亡保护.普通用户.经验掉落百分比"))));
 
                 for (ItemStack item : items.keySet())
                 {
@@ -160,7 +160,7 @@ public class Listeners implements Listener
 
                     for (int i = 0; i <= item.getAmount(); i++)
                     {
-                        if (Math.random() <= TribeCraft.config.getDouble("全局配置.死亡保护.普通用户.物品掉落机率"))
+                        if (Math.random() <= Main.config.getDouble("全局配置.死亡保护.普通用户.物品掉落机率"))
                         {
                             newItem.setAmount(newItem.getAmount() - 1);
                         }
@@ -176,7 +176,7 @@ public class Listeners implements Listener
                     {
                         ItemStack armor = map.get(type);
 
-                        if (Math.random() > TribeCraft.config.getDouble("全局配置.死亡保护.普通用户.装备掉落机率"))
+                        if (Math.random() > Main.config.getDouble("全局配置.死亡保护.普通用户.装备掉落机率"))
                         {
                             equiements.put(armor, null);
                             inventory.equiments.put(type, armor);
@@ -226,10 +226,11 @@ public class Listeners implements Listener
     }
 
     @EventHandler
-    public void onPlayerRespawn(PlayerRespawnEvent event)
+    public void onPlayerRespawn(final PlayerRespawnEvent event)
     {
-        final TribePlayer player = TribeCraft.getPlayerManager().getPlayer(event.getPlayer().getName());
-        player.getCraftPlayer().getInventory().clear();
+        final TribePlayer player = Main.getPlayerManager().getPlayer(event.getPlayer().getUniqueId());
+        
+        event.getPlayer().getInventory().clear();
 
         PlayerStoreInventoryEvent event1 = new PlayerStoreInventoryEvent(player);
         getServer().getPluginManager().callEvent(event1);
@@ -276,9 +277,9 @@ public class Listeners implements Listener
                 @Override
                 public void run()
                 {
-                    if (!player.getCraftPlayer().isDead() && player.getCraftPlayer().isOnline())
+                    if (!event.getPlayer().isDead() && event.getPlayer().isOnline())
                     {
-                        ISystem.experience.setTotalExperience(player.getCraftPlayer(), player.getDeathProtectedExp());
+                        ISystem.experience.setTotalExperience(event.getPlayer(), player.getDeathProtectedExp());
                         player.setDeathProtectedExp(0);
                     }
                 }
@@ -291,10 +292,10 @@ public class Listeners implements Listener
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event)
     {
-        if (!TribeCraft.getPlayerManager().hasPlayer(event.getPlayer().getName()))
+        if (!Main.getPlayerManager().hasPlayer(event.getPlayer().getUniqueId()))
         {
-            final TribePlayer player = new TribePlayer(event.getPlayer());
-            TribeCraft.getPlayerManager().setPlayer(event.getPlayer().getName(), player);
+            final TribePlayer player = new TribePlayer(event.getPlayer().getUniqueId());
+            Main.getPlayerManager().setPlayer(event.getPlayer().getUniqueId(), player);
         }
     }
 
@@ -320,7 +321,7 @@ public class Listeners implements Listener
                 {
                     if (event.getClickedBlock().getType() == Material.getMaterial(6) || event.getClickedBlock().getType() == Material.RED_MUSHROOM || event.getClickedBlock().getType() == Material.BROWN_MUSHROOM)
                     {
-                        PlayerUserBoneMealEvent event1 = new PlayerUserBoneMealEvent(TribeCraft.getPlayerManager().getPlayer(event.getPlayer().getName()));
+                        PlayerUserBoneMealEvent event1 = new PlayerUserBoneMealEvent(Main.getPlayerManager().getPlayer(event.getPlayer().getUniqueId()));
                         getServer().getPluginManager().callEvent(event1);
 
                         if (event1.isCancelled())
@@ -335,7 +336,7 @@ public class Listeners implements Listener
             {
                 if (event.getPlayer().hasPermission(new com.HotFlow.TribeCraft.Permissions.Permissions().admin))
                 {
-                    TribePlayer tribePlayer = TribeCraft.getPlayerManager().getPlayer(event.getPlayer().getName());
+                    TribePlayer tribePlayer = Main.getPlayerManager().getPlayer(event.getPlayer().getUniqueId());
                     Block block = event.getClickedBlock();
 
                     if (event.getAction() == Action.LEFT_CLICK_BLOCK)
@@ -358,7 +359,7 @@ public class Listeners implements Listener
     @EventHandler
     public void onBlockDispense(BlockDispenseEvent event)
     {
-        for (int id : TribeCraft.config.getIntegerList(""))
+        for (int id : Main.config.getIntegerList(""))
         {
             if (event.getItem().getType().equals(Material.getMaterial(id)) || event.getItem().getAmount() <= -1)
             {
@@ -374,11 +375,11 @@ public class Listeners implements Listener
         {
             event.useTravelAgent(false);
 
-            if (TribeCraft.getPortalGateManager().getPortalGate(event.getFrom()) != null)
+            if (Main.getPortalGateManager().getPortalGate(event.getFrom()) != null)
             {
-                PortalGate gate = TribeCraft.getPortalGateManager().getPortalGate(event.getFrom());
+                PortalGate gate = Main.getPortalGateManager().getPortalGate(event.getFrom());
 
-                PlayerUseGateEvent event1 = new PlayerUseGateEvent(TribeCraft.getPlayerManager().getPlayer(event.getPlayer().getName()), gate);
+                PlayerUseGateEvent event1 = new PlayerUseGateEvent(Main.getPlayerManager().getPlayer(event.getPlayer().getUniqueId()), gate);
                 getServer().getPluginManager().callEvent(event1);
 
                 if (event1.isCancelled())
@@ -417,14 +418,14 @@ public class Listeners implements Listener
                 }
                 else
                 {
-                    TribeCraft.getPermissionManager().playerAdd(event.getPlayer(), "Tribe.user.survival");
+                    Main.getPermissionManager().playerAdd(event.getPlayer(), "Tribe.user.survival");
 
-                    TribeCraft.getPlayerManager().getPlayer(event.getPlayer().getName()).addDelayTask(new DelayTask(5)
+                    Main.getPlayerManager().getPlayer(event.getPlayer().getUniqueId()).addDelayTask(new DelayTask(5)
                     {
                         @Override
                         public void run()
                         {
-                            TribeCraft.getPermissionManager().playerRemove(event.getPlayer(), "Tribe.user.survival");
+                            Main.getPermissionManager().playerRemove(event.getPlayer(), "Tribe.user.survival");
                         }
 
                     });
@@ -443,7 +444,7 @@ public class Listeners implements Listener
     @EventHandler
     public void onPlayerMove(PlayerMoveEvent event)
     {
-        TribePlayer player = TribeCraft.getPlayerManager().getPlayer(event.getPlayer().getName());
+        TribePlayer player = Main.getPlayerManager().getPlayer(event.getPlayer().getUniqueId());
 
         if ((event.getFrom().getX() != event.getTo().getX()) || (event.getFrom().getZ() != event.getTo().getZ()))
         {
@@ -455,8 +456,8 @@ public class Listeners implements Listener
                     {
                         PlayerTeleportingMoveEvent event1 = new PlayerTeleportingMoveEvent(player);
                         getServer().getPluginManager().callEvent(event1);
-
-                        if (!event1.isCancelled())
+                        
+                        if(event1.isCancelled())
                         {
                             return;
                         }

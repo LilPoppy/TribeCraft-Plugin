@@ -1,6 +1,6 @@
 package com.HotFlow.TribeCraft.Configuration;
 
-import com.HotFlow.TribeCraft.TribeCraft;
+import com.HotFlow.TribeCraft.Main;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -63,7 +63,7 @@ public class Writter
         }
         catch (IOException ex)
         {
-            TribeCraft.logger.warning(ex.toString());
+            Main.logger.warning(ex.toString());
         }
     }
 
@@ -98,7 +98,7 @@ public class Writter
         }
         catch (IOException ex)
         {
-            TribeCraft.logger.warning(ex.toString());
+            Main.logger.warning(ex.toString());
         }
     }
 

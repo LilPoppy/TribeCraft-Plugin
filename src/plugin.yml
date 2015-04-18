@@ -1,5 +1,5 @@
 name: TribeCraft
-main: com.HotFlow.TribeCraft.TribeCraft
+main: com.HotFlow.TribeCraft.Main
 version: 1.0.0.0
 author: HotFlow
 depend: [Residence,Vault]

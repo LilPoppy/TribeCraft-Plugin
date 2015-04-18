@@ -1,6 +1,6 @@
 package com.HotFlow.TribeCraft.Timer;
 
-import com.HotFlow.TribeCraft.TribeCraft;
+import com.HotFlow.TribeCraft.Main;
 
 /**
  * @author HotFlow
@@ -12,7 +12,7 @@ public final class ServerTimer
 
     public ServerTimer()
     {
-        this.task = new TimerTask(TribeCraft.plugin, this);
+        this.task = new TimerTask(Main.plugin, this);
         this.time = 0;
     }
 

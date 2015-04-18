@@ -51,7 +51,7 @@ public class PluginConfig
 
             List<Integer> itemIDs = new ArrayList<Integer>();
 
-            for (Integer itemID : TribeCraft.config.getIntegerList("全局配置.服务器设置.禁止发射器物品列表"))
+            for (Integer itemID : Main.config.getIntegerList("全局配置.服务器设置.禁止发射器物品列表"))
             {
                 itemIDs.add(itemID);
             }
@@ -60,25 +60,25 @@ public class PluginConfig
 
             List<String> entityNames = new ArrayList<String>();
 
-            for (String entityName : TribeCraft.config.getStringList("全局配置.服务器设置.禁止物体通过地狱门列表"))
+            for (String entityName : Main.config.getStringList("全局配置.服务器设置.禁止物体通过地狱门列表"))
             {
                 entityNames.add(entityName);
             }
 
             this.netherPortalEntityBans = new NetherPortalEntityBansConfiguration(entityNames);
 
-            this.blockCantFloating = TribeCraft.config.getBoolean("全局配置.服务器设置.禁止浮空方块.开启");
+            this.blockCantFloating = Main.config.getBoolean("全局配置.服务器设置.禁止浮空方块.开启");
 
-            this.cleanRedstoneClock = TribeCraft.config.getBoolean("全局配置.服务器设置.清理高频红石.开启");
+            this.cleanRedstoneClock = Main.config.getBoolean("全局配置.服务器设置.清理高频红石.开启");
 
-            this.heightWaterRemoves = new HeightWaterRemovesConfiguration(TribeCraft.config.getBoolean("全局配置.服务器设置.清理高空流水.开启"),
-                    TribeCraft.config.getInt("全局配置.服务器设置.清理高空流水.源环境高度"),
-                    TribeCraft.config.getInt("全局配置.服务器设置.清理高空流水.流水向下流动长度")
+            this.heightWaterRemoves = new HeightWaterRemovesConfiguration(Main.config.getBoolean("全局配置.服务器设置.清理高空流水.开启"),
+                    Main.config.getInt("全局配置.服务器设置.清理高空流水.源环境高度"),
+                    Main.config.getInt("全局配置.服务器设置.清理高空流水.流水向下流动长度")
             );
 
-            this.heightLavaRemoves = new HeightLavaRemovesConfiguration(TribeCraft.config.getBoolean("全局配置.服务器设置.清理高空岩浆.开启"),
-                    TribeCraft.config.getInt("全局配置.服务器设置.清理高空岩浆.源环境高度"),
-                    TribeCraft.config.getInt("全局配置.服务器设置.清理高空岩浆.岩浆向下流动长度")
+            this.heightLavaRemoves = new HeightLavaRemovesConfiguration(Main.config.getBoolean("全局配置.服务器设置.清理高空岩浆.开启"),
+                    Main.config.getInt("全局配置.服务器设置.清理高空岩浆.源环境高度"),
+                    Main.config.getInt("全局配置.服务器设置.清理高空岩浆.岩浆向下流动长度")
             );
         }
 
@@ -259,13 +259,13 @@ public class PluginConfig
         public CommandsInfo()
         {
             this.survival = new SurvivalConfiguration(
-                    TribeCraft.config.getBoolean("全局配置.用户指令.Survival.开启"),
-                    TribeCraft.config.getString("全局配置.用户指令.Survival.主城领地"),
-                    TribeCraft.config.getString("全局配置.用户指令.Survival.子领地"),
-                    TribeCraft.config.getBoolean("全局配置.用户指令.Survival.目的地可为领地"),
-                    TribeCraft.config.getInt("全局配置.用户指令.Survival.随机最大X"),
-                    TribeCraft.config.getInt("全局配置.用户指令.Survival.随机最大Y"),
-                    TribeCraft.config.getInt("全局配置.用户指令.Survival.随机最大Z"));
+                    Main.config.getBoolean("全局配置.用户指令.Survival.开启"),
+                    Main.config.getString("全局配置.用户指令.Survival.主城领地"),
+                    Main.config.getString("全局配置.用户指令.Survival.子领地"),
+                    Main.config.getBoolean("全局配置.用户指令.Survival.目的地可为领地"),
+                    Main.config.getInt("全局配置.用户指令.Survival.随机最大X"),
+                    Main.config.getInt("全局配置.用户指令.Survival.随机最大Y"),
+                    Main.config.getInt("全局配置.用户指令.Survival.随机最大Z"));
         }
 
         /**
