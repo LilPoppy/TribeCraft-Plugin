@@ -320,9 +320,18 @@ public class Listeners implements Listener
     @EventHandler
     public void onBlockDispense(BlockDispenseEvent event)
     {
-        for (int id : Main.config.getIntegerList(""))
+        if(Main.getPluginConfig().getServerConfig().isClearInfinityItems())
         {
-            if (event.getItem().getType().equals(Material.getMaterial(id)) || event.getItem().getAmount() <= -1)
+            if(event.getItem().getAmount() <= -1)
+            {
+                event.setCancelled(true);
+                return;
+            }
+        }
+        
+        for (int id : Main.getPluginConfig().getServerConfig().getDispenserItemBans().itemIDs)
+        {
+            if (event.getItem().getType().equals(Material.getMaterial(id)))
             {
                 event.setCancelled(true);
             }
