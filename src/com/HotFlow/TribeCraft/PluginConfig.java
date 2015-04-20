@@ -1,6 +1,8 @@
 package com.HotFlow.TribeCraft;
 
+import com.HotFlow.TribeCraft.CommandExecutor.AdminExecutor;
 import com.HotFlow.TribeCraft.Player.VIP.VIP;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -14,15 +16,40 @@ import org.bukkit.configuration.ConfigurationSection;
 public class PluginConfig
 {
 
-    private final ServerConfig serverConfig;
-    private final CommandsInfo commandsInfo;
-    private final VIPInfo vipInfo;
+    private ServerConfig serverConfig;
+    private CommandsInfo commandsInfo;
+    private VIPInfo vipInfo;
 
     public PluginConfig()
     {
         this.serverConfig = new ServerConfig();
         this.commandsInfo = new CommandsInfo();
         this.vipInfo = new VIPInfo();
+    }
+
+    /**
+     * 重载服务器配置
+     */
+    public void reload()
+    {
+        this.serverConfig = new ServerConfig();
+        this.commandsInfo = new CommandsInfo();
+        this.vipInfo = new VIPInfo();
+    }
+    
+    /**
+     * 保存服务器配置
+     */
+    public void save()
+    {
+        try
+        {
+            Main.config.save(Main.configFile);
+        }
+        catch (IOException ex)
+        {
+            Logger.getLogger(AdminExecutor.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /**
@@ -57,6 +84,7 @@ public class PluginConfig
 
     public class ServerConfig
     {
+        private final PermissionDetectorConfiguration permissionDetector;
         private final DispenserItemBansConfiguration dispenserItemBans;
         private final NetherPortalEntityBansConfiguration netherPortalEntityBans;
         private final Boolean blockCantFloating;
@@ -67,6 +95,23 @@ public class PluginConfig
 
         public ServerConfig()
         {
+            List<String> opList = new ArrayList<String>();
+
+            for (String name : Main.config.getStringList("全局配置.服务器设置.权限检测.OP检测.白名单"))
+            {
+                opList.add(name);
+            }
+
+            List<String> creativeList = new ArrayList<String>();
+
+            for (String name : Main.config.getStringList("全局配置.服务器设置.权限检测.创造检测.白名单"))
+            {
+                creativeList.add(name);
+            }
+
+            this.permissionDetector = new PermissionDetectorConfiguration(
+                    Main.config.getBoolean("全局配置.服务器设置.权限检测.OP检测.开启"), opList,
+                    Main.config.getBoolean("全局配置.服务器设置.权限检测.创造检测.开启"), creativeList);
 
             List<Integer> itemIDs = new ArrayList<Integer>();
 
@@ -101,6 +146,11 @@ public class PluginConfig
             );
 
             this.clearInfinityItems = Main.config.getBoolean("全局配置.服务器设置.清理无限物品");
+        }
+
+        public PermissionDetectorConfiguration getPermissionDetector()
+        {
+            return this.permissionDetector;
         }
 
         /**
@@ -163,16 +213,16 @@ public class PluginConfig
             return this.clearInfinityItems;
         }
 
-        public class PermissionDetectorConfigraution
+        public class PermissionDetectorConfiguration
         {
 
             private final OPDetector opDetector;
             private final CreativeDetector creativeDetector;
 
-            public PermissionDetectorConfigraution(OPDetector opDetector, CreativeDetector creativeDetector)
+            public PermissionDetectorConfiguration(Boolean opDetectorEnable, List<String> opList, Boolean creativeDetectorEnable, List<String> creativeList)
             {
-                this.opDetector = opDetector;
-                this.creativeDetector = creativeDetector;
+                this.opDetector = new OPDetector(opDetectorEnable, opList);
+                this.creativeDetector = new CreativeDetector(creativeDetectorEnable, creativeList);
             }
 
             /**
@@ -197,7 +247,6 @@ public class PluginConfig
 
             public class OPDetector
             {
-
                 public final Boolean enable;
                 public final List<String> whiteList = new ArrayList<String>();
 

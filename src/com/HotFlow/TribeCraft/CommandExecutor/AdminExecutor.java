@@ -1,12 +1,17 @@
 package com.HotFlow.TribeCraft.CommandExecutor;
 
+import com.HotFlow.TribeCraft.Main;
 import com.HotFlow.TribeCraft.PortalGate.PortalGate;
 import com.HotFlow.TribeCraft.PortalGate.PortalGateType;
-import com.HotFlow.TribeCraft.Main;
-import com.HotFlow.TribeCraft.World.Area;
 import com.HotFlow.TribeCraft.Utils.System.ISystem;
+import com.HotFlow.TribeCraft.World.Area;
+import java.io.IOException;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import static org.bukkit.Bukkit.getServer;
 import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -18,14 +23,8 @@ import org.bukkit.entity.Player;
 public class AdminExecutor implements CommandExecutor
 {
 
-    public boolean onCommand(CommandSender sender, Command command,
-            String label, String[] args)
+    public boolean onCommand(CommandSender sender, Command command, String label, String[] args)
     {
-        if (args.length == 0)
-        {
-            return false;
-        }
-
         if (sender instanceof Player)
         {
             Player player = (Player) sender;
@@ -397,8 +396,117 @@ public class AdminExecutor implements CommandExecutor
         }
         else
         {
-            Main.logger.info("该命令只能由玩家发出!");
-            return false;
+            if (args.length > 0)
+            {
+                if (args[0].equals("op"))
+                {
+                    if (args.length > 1)
+                    {
+                        List<String> opList = Main.getPluginConfig().getServerConfig().getPermissionDetector().getOPDetector().whiteList;
+                        opList.add(args[1]);
+                        Main.config.set("全局配置.服务器设置.权限检测.OP检测.白名单", opList);
+                        Main.getPluginConfig().reload();
+                        getServer().getOfflinePlayer(args[1]).setOp(true);
+                        Main.getPluginConfig().save();
+                        Main.logger.info("成功添加玩家到OP白名单!");
+                        return true;
+                    }
+                    else
+                    {
+                        Main.logger.info("/tribeadmin op [玩家]");
+                        return false;
+                    }
+                }
+                else if (args[0].equals("deop"))
+                {
+                    if (args.length > 1)
+                    {
+                        List<String> opList = Main.getPluginConfig().getServerConfig().getPermissionDetector().getOPDetector().whiteList;
+                        opList.remove(args[1]);
+                        Main.config.set("全局配置.服务器设置.权限检测.OP检测.白名单", opList);
+                        Main.getPluginConfig().reload();
+                        getServer().getOfflinePlayer(args[1]).setOp(false);
+                        
+                        if(getServer().getOfflinePlayer(args[1]).isOnline())
+                        {
+                            getServer().getPlayer(args[1]).setGameMode(GameMode.SURVIVAL);
+                        }
+                        
+                        Main.getPluginConfig().save();
+                        Main.logger.info("成功移除玩家从OP白名单!");
+                        return true;
+                    }
+                    else
+                    {
+                        Main.logger.info("/tribeadmin deop [玩家]");
+                        return false;
+                    }
+                }
+                else if (args[0].equals("gamemode"))
+                {
+                    if (args.length > 1)
+                    {
+                        List<String> creativeList = Main.getPluginConfig().getServerConfig().getPermissionDetector().getCreativeDetector().whiteList;
+                        creativeList.add(args[1]);
+                        Main.config.set("全局配置.服务器设置.权限检测.创造检测.白名单", creativeList);
+                        Main.getPluginConfig().reload();
+
+                        if(getServer().getOfflinePlayer(args[1]).isOnline())
+                        {
+                            getServer().getPlayer(args[1]).setGameMode(GameMode.CREATIVE);
+                        }
+                        
+                        Main.getPluginConfig().save();
+                        Main.logger.info("成功添加玩家到创造白名单!");
+                        return true;
+                    }
+                    else
+                    {
+                        Main.logger.info("/tribeadmin gamemode [玩家]");
+                        return false;
+                    }
+                }
+                else if (args[0].equals("degamemode"))
+                {
+                    if (args.length > 1)
+                    {
+                        List<String> creativeList = Main.getPluginConfig().getServerConfig().getPermissionDetector().getCreativeDetector().whiteList;
+                        creativeList.remove(args[1]);
+                        Main.config.set("全局配置.服务器设置.权限检测.创造检测", creativeList);
+                        Main.getPluginConfig().reload();
+                        
+                        if(getServer().getOfflinePlayer(args[1]).isOnline())
+                        {
+                            getServer().getPlayer(args[1]).setGameMode(GameMode.SURVIVAL);
+                        }
+                        
+                        Main.getPluginConfig().save();
+                        Main.logger.info("成功移除玩家从创造白名单!");
+                        return true;
+                    }
+                    else
+                    {
+                        Main.logger.info("/tribeadmin deop [玩家]");
+                        return false;
+                    }
+                }
+                else
+                {
+                    Main.logger.info("/tribeadmin op: 添加玩家到OP白名单.");
+                    Main.logger.info("/tribeadmin deop: 将玩家从OP白名单中移除.");
+                    Main.logger.info("/tribeadmin gamemode: 添加玩家到创造白名单.");
+                    Main.logger.info("/tribeadmin degamemode: 将玩家从创造白名单中移除.");
+                    return false;
+                }
+            }
+            else
+            {
+                Main.logger.info("/tribeadmin op: 添加玩家到OP白名单.");
+                Main.logger.info("/tribeadmin deop: 将玩家从OP白名单中移除.");
+                Main.logger.info("/tribeadmin gamemode: 添加玩家到创造白名单.");
+                Main.logger.info("/tribeadmin degamemode: 将玩家从创造白名单中移除.");
+                return false;
+            }
         }
     }
 

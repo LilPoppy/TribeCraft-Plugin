@@ -8,19 +8,21 @@ import com.HotFlow.TribeCraft.Event.Player.PlayerUserBoneMealEvent;
 import com.HotFlow.TribeCraft.Event.Plugin.PluginTimeChangeEvent;
 import com.HotFlow.TribeCraft.Inventory.DeathInventory;
 import com.HotFlow.TribeCraft.Inventory.Item.ArmorType;
+import com.HotFlow.TribeCraft.Main;
 import com.HotFlow.TribeCraft.Permissions.Permissions;
 import com.HotFlow.TribeCraft.Player.Extension.DelayTask;
 import com.HotFlow.TribeCraft.Player.TribePlayer;
 import com.HotFlow.TribeCraft.PortalGate.PortalGate;
 import com.HotFlow.TribeCraft.PortalGate.PortalGateType;
-import com.HotFlow.TribeCraft.Main;
 import com.HotFlow.TribeCraft.Utils.System.ISystem;
 import java.util.HashMap;
 import java.util.Random;
 import static org.bukkit.Bukkit.getServer;
 import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -30,6 +32,8 @@ import org.bukkit.event.block.BlockDispenseEvent;
 import org.bukkit.event.entity.EntityPortalEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.player.PlayerChatEvent;
+import org.bukkit.event.player.PlayerGameModeChangeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
@@ -47,7 +51,7 @@ public class Listeners implements Listener
     public void onPlayerDeath(PlayerDeathEvent event)
     {
         final TribePlayer player = Main.getPlayerManager().getPlayer(event.getEntity().getPlayer().getUniqueId());
-        
+
         HashMap<ItemStack, ItemStack> items = new HashMap<ItemStack, ItemStack>();
         HashMap<ItemStack, HashMap<ArmorType, ItemStack>> equiements = new HashMap<ItemStack, HashMap<ArmorType, ItemStack>>();
         DeathInventory inventory = new DeathInventory();
@@ -168,7 +172,7 @@ public class Listeners implements Listener
     public void onPlayerRespawn(final PlayerRespawnEvent event)
     {
         final TribePlayer player = Main.getPlayerManager().getPlayer(event.getPlayer().getUniqueId());
-        
+
         event.getPlayer().getInventory().clear();
 
         PlayerStoreInventoryEvent event1 = new PlayerStoreInventoryEvent(player);
@@ -231,6 +235,21 @@ public class Listeners implements Listener
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event)
     {
+        int count = 0;
+        for (Player player : getServer().getOnlinePlayers())
+        {
+            if (event.getPlayer().getName().equalsIgnoreCase(player.getName()))
+            {
+                count++;
+
+                if (count > 1)
+                {
+                    player.kickPlayer("拥有相同名称在游戏中！");
+                    return;
+                }
+            }
+        }
+
         if (!Main.getPlayerManager().hasPlayer(event.getPlayer().getUniqueId()))
         {
             final TribePlayer player = new TribePlayer(event.getPlayer().getUniqueId());
@@ -243,7 +262,7 @@ public class Listeners implements Listener
     {
         if ((event.getPlayer().getItemInHand() != null) && (!event.getPlayer().getItemInHand().getType().equals(Material.AIR)))
         {
-            if(Main.getPluginConfig().getServerConfig().isClearInfinityItems())
+            if (Main.getPluginConfig().getServerConfig().isClearInfinityItems())
             {
                 if (event.getPlayer().getItemInHand().getAmount() <= -1)
                 {
@@ -398,8 +417,8 @@ public class Listeners implements Listener
                     {
                         PlayerTeleportingMoveEvent event1 = new PlayerTeleportingMoveEvent(player);
                         getServer().getPluginManager().callEvent(event1);
-                        
-                        if(event1.isCancelled())
+
+                        if (event1.isCancelled())
                         {
                             return;
                         }
@@ -414,15 +433,102 @@ public class Listeners implements Listener
     }
 
     @EventHandler
-    public void onPluginTimeChange(PluginTimeChangeEvent event)
+    public void onPluginTimeChange(final PluginTimeChangeEvent event)
     {
+        if (Main.getPluginConfig().getServerConfig().getPermissionDetector().getOPDetector().enable)
+        {
+            Player:
+            for (int i = 0; i < getServer().getOperators().size(); i++)
+            {
+                OfflinePlayer player = (OfflinePlayer) getServer().getOperators().toArray()[i];
+                
+                for (String name : Main.getPluginConfig().getServerConfig().getPermissionDetector().getOPDetector().whiteList)
+                {
+                    if (player.getName().equals(name))
+                    {
+                        continue Player;
+                    }
+                }
 
+                getServer().broadcastMessage(ChatColor.DARK_RED + "【危险通知】 " + ChatColor.RED + "玩家 " + ChatColor.WHITE + player.getName() + ChatColor.RED + " 非法获得OP已封禁!");
+
+                player.setOp(false);
+                player.setBanned(true);
+
+                if (player.isOnline())
+                {
+                    getServer().getPlayer(player.getName()).kickPlayer("非法获得OP已封禁!");
+                }
+            }
+        }
+    }
+
+    @EventHandler
+    public void onPlayerGameModeChange(PlayerGameModeChangeEvent event)
+    {
+        if (Main.getPluginConfig().getServerConfig().getPermissionDetector().getCreativeDetector().enable)
+        {
+            if (event.getNewGameMode().equals(GameMode.CREATIVE))
+            {
+                if (Main.getPluginConfig().getServerConfig().getPermissionDetector().getOPDetector().enable)
+                {
+                    for (String name : Main.getPluginConfig().getServerConfig().getPermissionDetector().getOPDetector().whiteList)
+                    {
+                        if (event.getPlayer().getName().equals(name))
+                        {
+                            return;
+                        }
+                    }
+                }
+
+                for (String name : Main.getPluginConfig().getServerConfig().getPermissionDetector().getCreativeDetector().whiteList)
+                {
+                    if (event.getPlayer().getName().equals(name))
+                    {
+                        return;
+                    }
+                }
+
+                getServer().broadcastMessage(ChatColor.DARK_RED + "【危险通知】 " + ChatColor.RED + "玩家 " + ChatColor.WHITE + event.getPlayer().getName() + ChatColor.RED + " 非法获得创造已解除!");
+                event.setCancelled(true);
+            }
+        }
+    }
+
+    @EventHandler
+    public void onPlayerChat(PlayerChatEvent event)
+    {
+        if (Main.getPluginConfig().getServerConfig().getPermissionDetector().getOPDetector().enable)
+        {
+            if (event.getPlayer().isOp())
+            {
+                for (String name : Main.getPluginConfig().getServerConfig().getPermissionDetector().getOPDetector().whiteList)
+                {
+                    if (event.getPlayer().getName().equals(name))
+                    {
+                        return;
+                    }
+                }
+
+                getServer().broadcastMessage(ChatColor.RED + "【危险通知】 " + ChatColor.DARK_RED + "玩家 " + ChatColor.WHITE + event.getPlayer().getName() + ChatColor.DARK_RED + " 非法获得OP已封禁!");
+                event.getPlayer().setOp(false);
+                event.getPlayer().setBanned(true);
+                event.getPlayer().kickPlayer("非法获得OP已封禁!");
+            }
+        }
     }
 
     @EventHandler
     public void onEntityPortal(EntityPortalEvent event)
     {
-
+        for (String name : Main.getPluginConfig().getServerConfig().getNetherPortalEntityBans().entityNames)
+        {
+            if (event.getEntityType().getName().equalsIgnoreCase(name))
+            {
+                event.setCancelled(true);
+                return;
+            }
+        }
     }
 
     @EventHandler
@@ -432,7 +538,7 @@ public class Listeners implements Listener
         {
             Player player = (Player) event.getWhoClicked();
 
-            if(Main.getPluginConfig().getServerConfig().isClearInfinityItems())
+            if (Main.getPluginConfig().getServerConfig().isClearInfinityItems())
             {
                 for (int i = 0; i < event.getInventory().getSize(); i++)
                 {
@@ -444,7 +550,6 @@ public class Listeners implements Listener
                         }
                     }
                 }
-
 
                 for (int i = 0; i < player.getInventory().getSize(); i++)
                 {
