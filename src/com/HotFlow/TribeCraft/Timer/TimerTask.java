@@ -20,7 +20,6 @@ public final class TimerTask
     {
         this.taskState = TaskState.Suspending;
 
-        @SuppressWarnings("deprecation")
         int taskID = getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable()
         {
             @Override

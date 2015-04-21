@@ -1,5 +1,6 @@
 package com.HotFlow.TribeCraft;
 
+import com.HotFlow.TribeCraft.Configuration.PluginConfig;
 import com.HotFlow.TribeCraft.Configuration.TribeConfiguration;
 import com.HotFlow.TribeCraft.Configuration.Writter;
 import com.HotFlow.TribeCraft.Manager.PlayerManager;
@@ -12,6 +13,8 @@ import com.bekvon.bukkit.residence.Residence;
 import com.bekvon.bukkit.residence.protection.ResidenceManager;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -20,6 +23,7 @@ import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.block.Block;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.plugin.RegisteredServiceProvider;
@@ -46,6 +50,7 @@ public class Main extends JavaPlugin
     private static Permission permissionManager;
     private static Chat chatManager;
     public static ServerTimer serverTimer;
+    public static List<Location> Active_RedStone_List;
 
     @Override
     public void onEnable()
@@ -100,6 +105,8 @@ public class Main extends JavaPlugin
         getCommand("Tribe").setExecutor(new com.HotFlow.TribeCraft.CommandExecutor.UserExecutor());
         getCommand("TribeAdmin").setExecutor(new com.HotFlow.TribeCraft.CommandExecutor.AdminExecutor());
         getServer().getPluginManager().registerEvents(new com.HotFlow.TribeCraft.Listener.Listeners(), this);
+        
+        this.Active_RedStone_List = new ArrayList<Location>();
     }
 
     @Override

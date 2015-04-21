@@ -29,6 +29,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockDispenseEvent;
+import org.bukkit.event.block.BlockRedstoneEvent;
 import org.bukkit.event.entity.EntityPortalEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -320,15 +321,15 @@ public class Listeners implements Listener
     @EventHandler
     public void onBlockDispense(BlockDispenseEvent event)
     {
-        if(Main.getPluginConfig().getServerConfig().isClearInfinityItems())
+        if (Main.getPluginConfig().getServerConfig().isClearInfinityItems())
         {
-            if(event.getItem().getAmount() <= -1)
+            if (event.getItem().getAmount() <= -1)
             {
                 event.setCancelled(true);
                 return;
             }
         }
-        
+
         for (int id : Main.getPluginConfig().getServerConfig().getDispenserItemBans().itemIDs)
         {
             if (event.getItem().getType().equals(Material.getMaterial(id)))
@@ -444,13 +445,18 @@ public class Listeners implements Listener
     @EventHandler
     public void onPluginTimeChange(final PluginTimeChangeEvent event)
     {
+        if (Main.getPluginConfig().getServerConfig().isClearRedstoneClock())
+        {
+            Main.Active_RedStone_List.clear();
+        }
+
         if (Main.getPluginConfig().getServerConfig().getPermissionDetector().getOPDetector().enable)
         {
             Player:
             for (int i = 0; i < getServer().getOperators().size(); i++)
             {
                 OfflinePlayer player = (OfflinePlayer) getServer().getOperators().toArray()[i];
-                
+
                 for (String name : Main.getPluginConfig().getServerConfig().getPermissionDetector().getOPDetector().whiteList)
                 {
                     if (player.getName().equals(name))
@@ -459,7 +465,7 @@ public class Listeners implements Listener
                     }
                 }
 
-                getServer().broadcastMessage(ChatColor.DARK_RED + "【危险通知】 " + ChatColor.RED + "玩家 " + ChatColor.WHITE + player.getName() + ChatColor.RED + " 非法获得OP已封禁!");
+                getServer().broadcastMessage(ChatColor.RED + "【危险通知】 " + ChatColor.WHITE + "玩家 " + ChatColor.RED + player.getName() + ChatColor.WHITE + " 非法获得OP已封禁!");
 
                 player.setOp(false);
                 player.setBanned(true);
@@ -498,7 +504,7 @@ public class Listeners implements Listener
                     }
                 }
 
-                getServer().broadcastMessage(ChatColor.DARK_RED + "【危险通知】 " + ChatColor.RED + "玩家 " + ChatColor.WHITE + event.getPlayer().getName() + ChatColor.RED + " 非法获得创造已解除!");
+                getServer().broadcastMessage(ChatColor.RED + "【危险通知】 " + ChatColor.WHITE + "玩家 " + ChatColor.RED + event.getPlayer().getName() + ChatColor.WHITE + " 非法获得创造已解除!");
                 event.setCancelled(true);
             }
         }
@@ -519,7 +525,7 @@ public class Listeners implements Listener
                     }
                 }
 
-                getServer().broadcastMessage(ChatColor.RED + "【危险通知】 " + ChatColor.DARK_RED + "玩家 " + ChatColor.WHITE + event.getPlayer().getName() + ChatColor.DARK_RED + " 非法获得OP已封禁!");
+                getServer().broadcastMessage(ChatColor.RED + "【危险通知】 " + ChatColor.WHITE + "玩家 " + ChatColor.RED + event.getPlayer().getName() + ChatColor.WHITE + " 非法获得OP已封禁!");
                 event.getPlayer().setOp(false);
                 event.getPlayer().setBanned(true);
                 event.getPlayer().kickPlayer("非法获得OP已封禁!");
@@ -570,6 +576,43 @@ public class Listeners implements Listener
                         }
                     }
                 }
+            }
+        }
+    }
+
+    @EventHandler
+    public void onBlockRedstone(BlockRedstoneEvent event)
+    {
+        if (Main.getPluginConfig().getServerConfig().isClearRedstoneClock())
+        {
+            if (event.getBlock().getBlockPower() == 0)
+            {
+                return;
+            }
+
+            if (event.getBlock().getType().equals(Material.REDSTONE_WIRE))
+            {
+                if (event.getNewCurrent() < 15)
+                {
+                    return;
+                }
+
+                for (int i = 0; i < Main.Active_RedStone_List.size(); i++)
+                {
+                    if (Main.Active_RedStone_List.get(i).equals(event.getBlock().getLocation()))
+                    {
+                        event.getBlock().setType(Material.AIR);
+
+                        getServer().broadcastMessage(ChatColor.RED + "【高频红石通知】" + ChatColor.WHITE + "已删除高频红石坐标:"
+                                + "[世界:" + event.getBlock().getWorld().getName()
+                                + ",x:" + event.getBlock().getX()
+                                + ",y:" + event.getBlock().getY()
+                                + ",z:" + event.getBlock().getZ() + "] !");
+                        return;
+                    }
+                }
+                
+                Main.Active_RedStone_List.add(event.getBlock().getLocation());
             }
         }
     }

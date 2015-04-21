@@ -1,6 +1,7 @@
-package com.HotFlow.TribeCraft;
+package com.HotFlow.TribeCraft.Configuration;
 
 import com.HotFlow.TribeCraft.CommandExecutor.AdminExecutor;
+import com.HotFlow.TribeCraft.Main;
 import com.HotFlow.TribeCraft.Player.VIP.VIP;
 import java.io.IOException;
 import java.util.ArrayList;

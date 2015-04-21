@@ -122,6 +122,8 @@ public class Writter
         this.write("        开启: true");
         this.write("        白名单: []");
         this.write("    禁止发射器物品列表:");
+        this.write("    - 326");
+        this.write("    - 327");
         this.write("    - 351");
         this.write("    禁止物体通过地狱门列表:");
         this.write("    - MINECART");
