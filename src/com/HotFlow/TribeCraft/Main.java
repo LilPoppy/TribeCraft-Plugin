@@ -9,7 +9,6 @@ import com.HotFlow.TribeCraft.Manager.PortalGateManager;
 import com.HotFlow.TribeCraft.PortalGate.PortalGate;
 import com.HotFlow.TribeCraft.PortalGate.PortalGateType;
 import com.HotFlow.TribeCraft.Timer.ServerTimer;
-import com.HotFlow.TribeCraft.Timer.Task.DelayTask;
 import com.HotFlow.TribeCraft.World.Area;
 import com.bekvon.bukkit.residence.Residence;
 import com.bekvon.bukkit.residence.protection.ResidenceManager;

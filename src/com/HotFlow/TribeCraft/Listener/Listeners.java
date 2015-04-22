@@ -19,12 +19,17 @@ import java.util.HashMap;
 import java.util.Random;
 import static org.bukkit.Bukkit.getServer;
 import org.bukkit.ChatColor;
+import org.bukkit.Chunk;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Horse;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -53,186 +58,191 @@ public class Listeners implements Listener
     @EventHandler
     public void onPlayerDeath(PlayerDeathEvent event)
     {
-        final TribePlayer player = Main.getPlayerManager().getPlayer(event.getEntity().getPlayer().getUniqueId());
-
-        HashMap<ItemStack, ItemStack> items = new HashMap<ItemStack, ItemStack>();
-        HashMap<ItemStack, HashMap<ArmorType, ItemStack>> equiements = new HashMap<ItemStack, HashMap<ArmorType, ItemStack>>();
-        DeathInventory inventory = new DeathInventory();
-
-        for (ItemStack item : event.getEntity().getPlayer().getInventory().getContents())
+        if (Main.getPluginConfig().getServerConfig().isEnabledDeathProtect())
         {
-            if (item != null && item.getType() != Material.AIR)
+            final TribePlayer player = Main.getPlayerManager().getPlayer(event.getEntity().getPlayer().getUniqueId());
+
+            HashMap<ItemStack, ItemStack> items = new HashMap<ItemStack, ItemStack>();
+            HashMap<ItemStack, HashMap<ArmorType, ItemStack>> equiements = new HashMap<ItemStack, HashMap<ArmorType, ItemStack>>();
+            DeathInventory inventory = new DeathInventory();
+
+            for (ItemStack item : event.getEntity().getPlayer().getInventory().getContents())
             {
-                items.put(item, item);
-            }
-        }
-
-        if (player.getCraftPlayer().getInventory().getHelmet() != null)
-        {
-            HashMap<ArmorType, ItemStack> map = new HashMap<ArmorType, ItemStack>();
-            map.put(ArmorType.Helmet, player.getCraftPlayer().getInventory().getHelmet());
-            equiements.put(player.getCraftPlayer().getInventory().getHelmet(), map);
-        }
-        if (player.getCraftPlayer().getInventory().getChestplate() != null)
-        {
-            HashMap<ArmorType, ItemStack> map = new HashMap<ArmorType, ItemStack>();
-            map.put(ArmorType.Chestplate, player.getCraftPlayer().getInventory().getChestplate());
-            equiements.put(player.getCraftPlayer().getInventory().getChestplate(), map);
-        }
-        if (player.getCraftPlayer().getInventory().getLeggings() != null)
-        {
-            HashMap<ArmorType, ItemStack> map = new HashMap<ArmorType, ItemStack>();
-            map.put(ArmorType.Leggings, player.getCraftPlayer().getInventory().getLeggings());
-            equiements.put(player.getCraftPlayer().getInventory().getLeggings(), map);
-        }
-        if (player.getCraftPlayer().getInventory().getBoots() != null)
-        {
-            HashMap<ArmorType, ItemStack> map = new HashMap<ArmorType, ItemStack>();
-            map.put(ArmorType.Boots, player.getCraftPlayer().getInventory().getBoots());
-            equiements.put(player.getCraftPlayer().getInventory().getBoots(), map);
-        }
-
-        if (!player.getCraftPlayer().hasPermission(new Permissions().deathSaveAll))
-        {
-            player.getCraftPlayer().sendMessage("您的VIP等级为: " + player.getVIPLevel());
-            player.getCraftPlayer().sendMessage("物品掉落机率: " + (Main.getPluginConfig().getVIPInfo().getVIP(player.getVIPLevel()).getItemDropChance() * 100) + "%");
-            player.getCraftPlayer().sendMessage("装备掉落机率: " + (Main.getPluginConfig().getVIPInfo().getVIP(player.getVIPLevel()).getArmorDropChance() * 100) + "%");
-            player.getCraftPlayer().sendMessage("经验掉落百分比: " + (Main.getPluginConfig().getVIPInfo().getVIP(player.getVIPLevel()).getExpDropPercentage() * 100) + "%");
-
-            player.setDeathProtectedExp((int) (ISystem.experience.getTotalExperience(player.getCraftPlayer()) * Main.getPluginConfig().getVIPInfo().getVIP(player.getVIPLevel()).getExpDropPercentage()));
-            event.setDroppedExp((int) (ISystem.experience.getTotalExperience(player.getCraftPlayer()) * Main.getPluginConfig().getVIPInfo().getVIP(player.getVIPLevel()).getExpDropPercentage()));
-
-            for (ItemStack item : items.keySet())
-            {
-                ItemStack newItem = item.clone();
-
-                for (int i = 0; i <= item.getAmount(); i++)
+                if (item != null && item.getType() != Material.AIR)
                 {
-                    if (Math.random() <= Main.getPluginConfig().getVIPInfo().getVIP(player.getVIPLevel()).getItemDropChance())
+                    items.put(item, item);
+                }
+            }
+
+            if (player.getCraftPlayer().getInventory().getHelmet() != null)
+            {
+                HashMap<ArmorType, ItemStack> map = new HashMap<ArmorType, ItemStack>();
+                map.put(ArmorType.Helmet, player.getCraftPlayer().getInventory().getHelmet());
+                equiements.put(player.getCraftPlayer().getInventory().getHelmet(), map);
+            }
+            if (player.getCraftPlayer().getInventory().getChestplate() != null)
+            {
+                HashMap<ArmorType, ItemStack> map = new HashMap<ArmorType, ItemStack>();
+                map.put(ArmorType.Chestplate, player.getCraftPlayer().getInventory().getChestplate());
+                equiements.put(player.getCraftPlayer().getInventory().getChestplate(), map);
+            }
+            if (player.getCraftPlayer().getInventory().getLeggings() != null)
+            {
+                HashMap<ArmorType, ItemStack> map = new HashMap<ArmorType, ItemStack>();
+                map.put(ArmorType.Leggings, player.getCraftPlayer().getInventory().getLeggings());
+                equiements.put(player.getCraftPlayer().getInventory().getLeggings(), map);
+            }
+            if (player.getCraftPlayer().getInventory().getBoots() != null)
+            {
+                HashMap<ArmorType, ItemStack> map = new HashMap<ArmorType, ItemStack>();
+                map.put(ArmorType.Boots, player.getCraftPlayer().getInventory().getBoots());
+                equiements.put(player.getCraftPlayer().getInventory().getBoots(), map);
+            }
+
+            if (!player.getCraftPlayer().hasPermission(new Permissions().deathSaveAll))
+            {
+                player.getCraftPlayer().sendMessage("您的VIP等级为: " + player.getVIPLevel());
+                player.getCraftPlayer().sendMessage("物品掉落机率: " + (Main.getPluginConfig().getVIPInfo().getVIP(player.getVIPLevel()).getItemDropChance() * 100) + "%");
+                player.getCraftPlayer().sendMessage("装备掉落机率: " + (Main.getPluginConfig().getVIPInfo().getVIP(player.getVIPLevel()).getArmorDropChance() * 100) + "%");
+                player.getCraftPlayer().sendMessage("经验掉落百分比: " + (Main.getPluginConfig().getVIPInfo().getVIP(player.getVIPLevel()).getExpDropPercentage() * 100) + "%");
+
+                player.setDeathProtectedExp((int) (ISystem.experience.getTotalExperience(player.getCraftPlayer()) * Main.getPluginConfig().getVIPInfo().getVIP(player.getVIPLevel()).getExpDropPercentage()));
+                event.setDroppedExp((int) (ISystem.experience.getTotalExperience(player.getCraftPlayer()) * Main.getPluginConfig().getVIPInfo().getVIP(player.getVIPLevel()).getExpDropPercentage()));
+
+                for (ItemStack item : items.keySet())
+                {
+                    ItemStack newItem = item.clone();
+
+                    for (int i = 0; i <= item.getAmount(); i++)
                     {
-                        newItem.setAmount(newItem.getAmount() - 1);
+                        if (Math.random() <= Main.getPluginConfig().getVIPInfo().getVIP(player.getVIPLevel()).getItemDropChance())
+                        {
+                            newItem.setAmount(newItem.getAmount() - 1);
+                        }
+                    }
+
+                    items.put(item, newItem);
+                    inventory.items.add(newItem);
+                }
+
+                for (HashMap<ArmorType, ItemStack> map : equiements.values())
+                {
+                    for (ArmorType type : map.keySet())
+                    {
+                        ItemStack armor = map.get(type);
+
+                        if (Math.random() > Main.getPluginConfig().getVIPInfo().getVIP(player.getVIPLevel()).getArmorDropChance())
+                        {
+                            equiements.put(armor, null);
+                            inventory.equiments.put(type, armor);
+                        }
                     }
                 }
 
-                items.put(item, newItem);
-                inventory.items.add(newItem);
-            }
-
-            for (HashMap<ArmorType, ItemStack> map : equiements.values())
-            {
-                for (ArmorType type : map.keySet())
+                for (ItemStack armor : equiements.keySet())
                 {
-                    ItemStack armor = map.get(type);
-
-                    if (Math.random() > Main.getPluginConfig().getVIPInfo().getVIP(player.getVIPLevel()).getArmorDropChance())
+                    if (equiements.get(armor) == null)
                     {
-                        equiements.put(armor, null);
+                        event.getDrops().remove(armor);
+                    }
+                }
+
+                for (ItemStack item : items.keySet())
+                {
+                    event.getDrops().remove(item);
+                    ItemStack newItem = item.clone();
+                    newItem.setAmount(item.getAmount() - items.get(item).getAmount());
+                    event.getDrops().add(newItem);
+                }
+            }
+            else
+            {
+                for (ItemStack item : items.keySet())
+                {
+                    inventory.items.add(item);
+                }
+
+                for (HashMap<ArmorType, ItemStack> map : equiements.values())
+                {
+                    for (ArmorType type : map.keySet())
+                    {
+                        ItemStack armor = map.get(type);
                         inventory.equiments.put(type, armor);
                     }
                 }
+
+                event.getDrops().clear();
+                event.setKeepLevel(true);
             }
 
-            for (ItemStack armor : equiements.keySet())
-            {
-                if (equiements.get(armor) == null)
-                {
-                    event.getDrops().remove(armor);
-                }
-            }
-
-            for (ItemStack item : items.keySet())
-            {
-                event.getDrops().remove(item);
-                ItemStack newItem = item.clone();
-                newItem.setAmount(item.getAmount() - items.get(item).getAmount());
-                event.getDrops().add(newItem);
-            }
+            player.setDeathProtectedItems(inventory);
         }
-        else
-        {
-            for (ItemStack item : items.keySet())
-            {
-                inventory.items.add(item);
-            }
-
-            for (HashMap<ArmorType, ItemStack> map : equiements.values())
-            {
-                for (ArmorType type : map.keySet())
-                {
-                    ItemStack armor = map.get(type);
-                    inventory.equiments.put(type, armor);
-                }
-            }
-
-            event.getDrops().clear();
-            event.setKeepLevel(true);
-        }
-
-        player.setDeathProtectedItems(inventory);
     }
 
     @EventHandler
     public void onPlayerRespawn(final PlayerRespawnEvent event)
     {
-        final TribePlayer player = Main.getPlayerManager().getPlayer(event.getPlayer().getUniqueId());
-
-        event.getPlayer().getInventory().clear();
-
-        PlayerStoreInventoryEvent event1 = new PlayerStoreInventoryEvent(player);
-        getServer().getPluginManager().callEvent(event1);
-
-        if (!event1.isCancelled())
+        if (Main.getPluginConfig().getServerConfig().isEnabledDeathProtect())
         {
-            for (ItemStack item : player.getDeathProtectedItems().items)
+            final TribePlayer player = Main.getPlayerManager().getPlayer(event.getPlayer().getUniqueId());
+
+            event.getPlayer().getInventory().clear();
+
+            PlayerStoreInventoryEvent event1 = new PlayerStoreInventoryEvent(player);
+            getServer().getPluginManager().callEvent(event1);
+
+            if (!event1.isCancelled())
             {
-                event.getPlayer().getInventory().addItem(item);
-            }
-
-            for (ArmorType type : player.getDeathProtectedItems().equiments.keySet())
-            {
-                ItemStack armor = player.getDeathProtectedItems().equiments.get(type);
-
-                if (type == ArmorType.Helmet)
+                for (ItemStack item : player.getDeathProtectedItems().items)
                 {
-                    event.getPlayer().getInventory().setHelmet(armor);
+                    event.getPlayer().getInventory().addItem(item);
                 }
-                else if (type == ArmorType.Chestplate)
-                {
-                    event.getPlayer().getInventory().setChestplate(armor);
-                }
-                else if (type == ArmorType.Leggings)
-                {
-                    event.getPlayer().getInventory().setLeggings(armor);
-                }
-                else if (type == ArmorType.Boots)
-                {
-                    event.getPlayer().getInventory().setBoots(armor);
-                }
-            }
-        }
 
-        player.setDeathProtectedItems(null);
-
-        PlayerStoreExperienceEvent event2 = new PlayerStoreExperienceEvent(player);
-        getServer().getPluginManager().callEvent(event2);
-
-        if (!event2.isCancelled())
-        {
-            Main.getDelayTaskManager().getTasks().add(new DelayTask(1, event.getPlayer().getName() + ":Experience")
-            {
-                @Override
-                public void run()
+                for (ArmorType type : player.getDeathProtectedItems().equiments.keySet())
                 {
-                    if (!event.getPlayer().isDead() && event.getPlayer().isOnline())
+                    ItemStack armor = player.getDeathProtectedItems().equiments.get(type);
+
+                    if (type == ArmorType.Helmet)
                     {
-                        ISystem.experience.setTotalExperience(event.getPlayer(), player.getDeathProtectedExp());
-                        player.setDeathProtectedExp(0);
+                        event.getPlayer().getInventory().setHelmet(armor);
+                    }
+                    else if (type == ArmorType.Chestplate)
+                    {
+                        event.getPlayer().getInventory().setChestplate(armor);
+                    }
+                    else if (type == ArmorType.Leggings)
+                    {
+                        event.getPlayer().getInventory().setLeggings(armor);
+                    }
+                    else if (type == ArmorType.Boots)
+                    {
+                        event.getPlayer().getInventory().setBoots(armor);
                     }
                 }
+            }
 
-            });
+            player.setDeathProtectedItems(null);
+
+            PlayerStoreExperienceEvent event2 = new PlayerStoreExperienceEvent(player);
+            getServer().getPluginManager().callEvent(event2);
+
+            if (!event2.isCancelled())
+            {
+                Main.getDelayTaskManager().getTasks().add(new DelayTask(1, event.getPlayer().getName() + ":Experience")
+                {
+                    @Override
+                    public void run()
+                    {
+                        if (!event.getPlayer().isDead() && event.getPlayer().isOnline())
+                        {
+                            ISystem.experience.setTotalExperience(event.getPlayer(), player.getDeathProtectedExp());
+                            player.setDeathProtectedExp(0);
+                        }
+                    }
+
+                });
+            }
         }
-
     }
 
     @EventHandler
@@ -447,9 +457,80 @@ public class Listeners implements Listener
     @EventHandler
     public void onPluginTimeChange(final PluginTimeChangeEvent event)
     {
-        if (Main.getPluginConfig().getServerConfig().isClearRedstoneClock())
+        if (Main.getPluginConfig().getServerConfig().isEnabledClearRedstoneClock())
         {
             Main.Active_RedStone_List.clear();
+        }
+
+        if (Main.getPluginConfig().getServerConfig().getChunkRemoves().enable)
+        {
+            if ((event.getTime() % Main.getPluginConfig().getServerConfig().getChunkRemoves().cooldown) == 0)
+            {
+                int i = 0;
+                int e = 0;
+                for (World world : getServer().getWorlds())
+                {
+                    Chunks:
+                    for (Chunk chunk : world.getLoadedChunks())
+                    {
+                        if(Main.getPluginConfig().getServerConfig().getChunkEntityRemoves().enable)
+                        {
+                            HashMap<EntityType,Integer> map = new HashMap<EntityType,Integer>();
+
+                            for(EntityType type : Main.getPluginConfig().getServerConfig().getChunkEntityRemoves().list.keySet())
+                            {
+                                int num = 0;
+                                for (Entity entity : chunk.getEntities())
+                                {
+                                    if(entity.getType().equals(type))
+                                    {
+                                        num++;
+                                    }
+                                }
+                                map.put(type, num);
+                            }
+
+                            for(EntityType type : map.keySet())
+                            {
+                                int num = map.get(type) - Main.getPluginConfig().getServerConfig().getChunkEntityRemoves().list.get(type);
+                                
+                                if(num > 0)
+                                {
+                                    for(Entity entity : chunk.getEntities())
+                                    {
+                                        if(num > 0)
+                                        {
+                                            if(entity.getType().equals(type))
+                                            {
+                                                e++;
+                                                entity.remove();
+                                                num--;
+                                            }
+                                        }
+                                        else
+                                        {
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        
+                        for (Entity entity : chunk.getEntities())
+                        {
+                            if (entity.getType().equals(EntityType.PLAYER))
+                            {
+                                continue Chunks;
+                            }
+                        }
+                        
+                        chunk.unload(true, true);
+                        i++;
+                    }
+                }
+                
+                getServer().broadcastMessage(ChatColor.RED + "【区块清理】" + ChatColor.WHITE + "已清理 " + i + " 个区块 " + e + " 个实体!");
+            }
         }
 
         if (Main.getPluginConfig().getServerConfig().getPermissionDetector().getOPDetector().enable)
@@ -585,7 +666,7 @@ public class Listeners implements Listener
     @EventHandler
     public void onBlockRedstone(BlockRedstoneEvent event)
     {
-        if (Main.getPluginConfig().getServerConfig().isClearRedstoneClock())
+        if (Main.getPluginConfig().getServerConfig().isEnabledClearRedstoneClock())
         {
             if (event.getBlock().getBlockPower() == 0)
             {
@@ -640,17 +721,17 @@ public class Listeners implements Listener
                                 {
                                     event.getBlock().getWorld().getBlockAt(sourceLoc).setType(Material.STONE);
 
-                                    for(BlockFace face : BlockFace.values())
+                                    for (BlockFace face : BlockFace.values())
                                     {
-                                        if(event.getBlock().getWorld().getBlockAt(sourceLoc).getRelative(face).getType() != Material.AIR || event.getBlock().getWorld().getBlockAt(sourceLoc) != null)
+                                        if (event.getBlock().getWorld().getBlockAt(sourceLoc).getRelative(face).getType() != Material.AIR || event.getBlock().getWorld().getBlockAt(sourceLoc) != null)
                                         {
                                             event.getBlock().getWorld().getBlockAt(sourceLoc).setType(Material.STONE);
                                         }
                                     }
-                                    
+
                                     Main.Source_Height_Water.remove(sourceLoc);
                                 }
-                                
+
                                 return;
                             }
                         }
@@ -680,16 +761,16 @@ public class Listeners implements Listener
                                 if ((sourceLoc.getY() - event.getToBlock().getY()) >= Main.getPluginConfig().getServerConfig().getHeightLavaRemoves().flowRange)
                                 {
                                     event.getBlock().getWorld().getBlockAt(sourceLoc).setType(Material.STONE);
-                                    
-                                    for(BlockFace face : BlockFace.values())
+
+                                    for (BlockFace face : BlockFace.values())
                                     {
-                                        if(event.getBlock().getWorld().getBlockAt(sourceLoc).getRelative(face).getType() != Material.AIR || event.getBlock().getWorld().getBlockAt(sourceLoc) != null)
+                                        if (event.getBlock().getWorld().getBlockAt(sourceLoc).getRelative(face).getType() != Material.AIR || event.getBlock().getWorld().getBlockAt(sourceLoc) != null)
                                         {
                                             event.getBlock().getWorld().getBlockAt(sourceLoc).setType(Material.STONE);
                                         }
                                     }
                                 }
-                                
+
                                 return;
                             }
                         }

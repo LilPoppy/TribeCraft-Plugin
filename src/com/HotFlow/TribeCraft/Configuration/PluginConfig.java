@@ -5,11 +5,13 @@ import com.HotFlow.TribeCraft.Main;
 import com.HotFlow.TribeCraft.Player.VIP.VIP;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.entity.EntityType;
 
 /**
  * @author HotFlow
@@ -85,17 +87,21 @@ public class PluginConfig
 
     public class ServerConfig
     {
+        private final Boolean deathProtect;
         private final PermissionDetectorConfiguration permissionDetector;
         private final DispenserItemBansConfiguration dispenserItemBans;
         private final NetherPortalEntityBansConfiguration netherPortalEntityBans;
-        private final Boolean blockCantFloating;
         private final Boolean clearRedstoneClock;
         private final HeightWaterRemovesConfiguration heightWaterRemoves;
         private final HeightLavaRemovesConfiguration heightLavaRemoves;
         private final Boolean clearInfinityItems;
+        private final ChunkRemovesConfiguration chunkRemoves;
+        private final ChunkEntityRemovesConfiguration chunkEntityRemoves;
 
         public ServerConfig()
         {
+            this.deathProtect = Main.config.getBoolean("全局配置.服务器设置.死亡保护");
+
             List<String> opList = new ArrayList<String>();
 
             for (String name : Main.config.getStringList("全局配置.服务器设置.权限检测.OP检测.白名单"))
@@ -132,8 +138,6 @@ public class PluginConfig
 
             this.netherPortalEntityBans = new NetherPortalEntityBansConfiguration(entityNames);
 
-            this.blockCantFloating = Main.config.getBoolean("全局配置.服务器设置.禁止浮空方块.开启");
-
             this.clearRedstoneClock = Main.config.getBoolean("全局配置.服务器设置.清理高频红石.开启");
 
             this.heightWaterRemoves = new HeightWaterRemovesConfiguration(Main.config.getBoolean("全局配置.服务器设置.清理高空流水.开启"),
@@ -147,6 +151,31 @@ public class PluginConfig
             );
 
             this.clearInfinityItems = Main.config.getBoolean("全局配置.服务器设置.清理无限物品");
+
+            this.chunkRemoves = new ChunkRemovesConfiguration(Main.config.getBoolean("全局配置.服务器设置.清理区块.开启"), Main.config.getInt("全局配置.服务器设置.清理区块.周期"));
+
+            ConfigurationSection sections = Main.config.getConfigurationSection("全局配置.服务器设置.区块实体上限.实体列表");
+
+            Set<String> keys = sections.getKeys(false);
+
+            HashMap<EntityType, Integer> map = new HashMap<EntityType, Integer>();
+
+            for (String key : keys)
+            {
+                map.put(EntityType.fromName(key), Main.config.getInt("全局配置.服务器设置.区块实体上限.实体列表." + key));
+            }
+
+            this.chunkEntityRemoves = new ChunkEntityRemovesConfiguration(Main.config.getBoolean("全局配置.服务器设置.区块实体上限.开启"), map);
+        }
+
+        /**
+         * 是否开启了死亡保护
+         *
+         * @return
+         */
+        public Boolean isEnabledDeathProtect()
+        {
+            return this.deathProtect;
         }
 
         /**
@@ -180,21 +209,11 @@ public class PluginConfig
         }
 
         /**
-         * 是否禁止浮空方块
+         * 是否开启了清理高频红石
          *
          * @return
          */
-        public Boolean isBlockCantFloating()
-        {
-            return this.blockCantFloating;
-        }
-
-        /**
-         * 是否清理高频红石
-         *
-         * @return
-         */
-        public Boolean isClearRedstoneClock()
+        public Boolean isEnabledClearRedstoneClock()
         {
             return this.clearRedstoneClock;
         }
@@ -227,6 +246,26 @@ public class PluginConfig
         public Boolean isClearInfinityItems()
         {
             return this.clearInfinityItems;
+        }
+
+        /**
+         * 获取清理区块
+         *
+         * @return
+         */
+        public ChunkRemovesConfiguration getChunkRemoves()
+        {
+            return this.chunkRemoves;
+        }
+
+        /**
+         * 获取区块实体上限
+         *
+         * @return
+         */
+        public ChunkEntityRemovesConfiguration getChunkEntityRemoves()
+        {
+            return this.chunkEntityRemoves;
         }
 
         public class PermissionDetectorConfiguration
@@ -353,6 +392,31 @@ public class PluginConfig
             }
         }
 
+        public class ChunkRemovesConfiguration
+        {
+
+            public final Boolean enable;
+            public final int cooldown;
+
+            public ChunkRemovesConfiguration(Boolean enable, int cooldown)
+            {
+                this.enable = enable;
+                this.cooldown = cooldown;
+            }
+        }
+
+        public class ChunkEntityRemovesConfiguration
+        {
+
+            public final Boolean enable;
+            public final HashMap<EntityType, Integer> list;
+
+            public ChunkEntityRemovesConfiguration(Boolean enable, HashMap<EntityType, Integer> list)
+            {
+                this.enable = enable;
+                this.list = list;
+            }
+        }
     }
 
     public class CommandsInfo

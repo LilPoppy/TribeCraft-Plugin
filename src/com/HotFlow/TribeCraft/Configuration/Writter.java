@@ -111,6 +111,7 @@ public class Writter
     {
         this.write("全局配置:");
         this.write("  服务器设置:");
+        this.write("    死亡保护: true");
         this.write("    权限检测:");
         this.write("      OP检测:");
         this.write("        开启: true");
@@ -127,8 +128,6 @@ public class Writter
         this.write("    - 351");
         this.write("    禁止物体通过地狱门列表:");
         this.write("    - MINECART");
-        this.write("    禁止浮空方块:");
-        this.write("      开启: true");
         this.write("    清理高频红石:");
         this.write("      开启: true");
         this.write("    清理高空流水:");
@@ -145,9 +144,9 @@ public class Writter
         this.write("    区块实体上限:");
         this.write("      开启: true");
         this.write("      实体列表:");
-        this.write("        CHICKEN: 60");
-        this.write("        COW: 60");
-        this.write("        SHEEP: 60");
+        this.write("        CHICKEN: 15");
+        this.write("        COW: 15");
+        this.write("        SHEEP: 15");
         this.write("    清理无限物品: true");
         this.write("    清理掉落物:");
         this.write("      开启: true");
