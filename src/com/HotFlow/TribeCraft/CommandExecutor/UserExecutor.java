@@ -1,14 +1,11 @@
 package com.HotFlow.TribeCraft.CommandExecutor;
 
-import com.HotFlow.TribeCraft.Player.Extension.DelayTask;
-import com.HotFlow.TribeCraft.Player.TribePlayer;
 import com.HotFlow.TribeCraft.Main;
+import com.HotFlow.TribeCraft.Player.TribePlayer;
+import com.HotFlow.TribeCraft.Timer.Task.DelayTask;
 import com.HotFlow.TribeCraft.World.Area;
-
 import java.util.Random;
-
 import static org.bukkit.Bukkit.getServer;
-
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -34,11 +31,11 @@ public class UserExecutor implements CommandExecutor
             {
                 if (args[0].equalsIgnoreCase("survival"))
                 {
-                    for (DelayTask task : tribePlayer.getDelayTaskList())
+                    for (DelayTask task : Main.getDelayTaskManager().getTasks())
                     {
                         if (task.getDescription() != null)
                         {
-                            if (task.getDescription().equalsIgnoreCase("Teleport"))
+                            if (task.getDescription().equalsIgnoreCase(player.getName() + ":Teleport"))
                             {
                                 player.sendMessage("请勿重复使用此命令!");
                                 return false;
@@ -98,7 +95,7 @@ public class UserExecutor implements CommandExecutor
                                                         {
                                                             player.sendMessage(ChatColor.GOLD + "传送将在" + 10 + " 秒内开始.不要移动");
 
-                                                            tribePlayer.addDelayTask(new DelayTask(10, "Teleport")
+                                                            Main.getDelayTaskManager().getTasks().add(new DelayTask(10, player.getName() + ":Teleport")
                                                             {
                                                                 @Override
                                                                 public void run()

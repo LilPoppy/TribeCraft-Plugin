@@ -8,16 +8,11 @@ import com.HotFlow.TribeCraft.NBT.NBTInputStream;
 import com.HotFlow.TribeCraft.NBT.NBTOutputStream;
 import com.HotFlow.TribeCraft.NBT.StringTag;
 import com.HotFlow.TribeCraft.NBT.Tag;
-import com.HotFlow.TribeCraft.Player.Extension.DelayTask;
-import com.HotFlow.TribeCraft.Player.VIP.VIP;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,7 +35,6 @@ public class TribePlayer
     private final int vipLevel;
     private DeathInventory deathInventory = new DeathInventory();
     private int deathExp;
-    private final List<DelayTask> delayTaskList = new ArrayList<DelayTask>();
     private int dollar;
 
     public TribePlayer(UUID uuid)
@@ -56,14 +50,14 @@ public class TribePlayer
      */
     public Player getCraftPlayer()
     {
-        for(Player player : getServer().getOnlinePlayers())
+        for (Player player : getServer().getOnlinePlayers())
         {
-            if(player.getUniqueId().equals(uuid))
+            if (player.getUniqueId().equals(uuid))
             {
                 return player;
             }
         }
-        
+
         return null;
     }
 
@@ -155,36 +149,6 @@ public class TribePlayer
     public int getDeathProtectedExp()
     {
         return this.deathExp;
-    }
-
-    /**
-     * 获取预约执行器列表
-     *
-     * @return
-     */
-    public List<DelayTask> getDelayTaskList()
-    {
-        return this.delayTaskList;
-    }
-
-    /**
-     * 添加预约执行器
-     *
-     * @param task
-     */
-    public void addDelayTask(DelayTask task)
-    {
-        this.delayTaskList.add(task);
-    }
-
-    /**
-     * 移除预约执行器
-     *
-     * @param task
-     */
-    public void removeDelayTask(DelayTask task)
-    {
-        this.delayTaskList.remove(task);
     }
 
     /**
@@ -286,7 +250,7 @@ public class TribePlayer
             Logger.getLogger(Player.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
     /**
      * 获取玩家点卷数量
      *

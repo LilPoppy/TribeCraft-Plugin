@@ -37,7 +37,7 @@ public class PluginConfig
         this.commandsInfo = new CommandsInfo();
         this.vipInfo = new VIPInfo();
     }
-    
+
     /**
      * 保存服务器配置
      */
@@ -149,6 +149,11 @@ public class PluginConfig
             this.clearInfinityItems = Main.config.getBoolean("全局配置.服务器设置.清理无限物品");
         }
 
+        /**
+         * 获取权限检测
+         *
+         * @return
+         */
         public PermissionDetectorConfiguration getPermissionDetector()
         {
             return this.permissionDetector;
@@ -202,6 +207,16 @@ public class PluginConfig
         public HeightWaterRemovesConfiguration getHeightWaterRemoves()
         {
             return this.heightWaterRemoves;
+        }
+
+        /**
+         * 获取清理高空岩浆
+         *
+         * @return
+         */
+        public HeightLavaRemovesConfiguration getHeightLavaRemoves()
+        {
+            return this.heightLavaRemoves;
         }
 
         /**

@@ -1,22 +1,22 @@
 package com.HotFlow.TribeCraft.Timer;
 
+import com.HotFlow.TribeCraft.Event.Plugin.PluginDelayTaskRunEvent;
+import com.HotFlow.TribeCraft.Event.Plugin.PluginDelayTaskTimeChangeEvent;
 import com.HotFlow.TribeCraft.Event.Plugin.PluginTimeChangeEvent;
-import com.HotFlow.TribeCraft.Player.Extension.DelayTask;
-import com.HotFlow.TribeCraft.Player.TribePlayer;
 import com.HotFlow.TribeCraft.Main;
+import com.HotFlow.TribeCraft.Timer.Task.DelayTask;
 import static org.bukkit.Bukkit.getServer;
-
 import org.bukkit.plugin.Plugin;
 
 /**
  * @author HotFlow
  */
-public final class TimerTask
+public final class ServerTimerRunnable
 {
     private final int taskID;
     private TaskState taskState;
 
-    public TimerTask(final Plugin plugin, final ServerTimer timer)
+    public ServerTimerRunnable(final Plugin plugin, final ServerTimer timer)
     {
         this.taskState = TaskState.Suspending;
 
@@ -37,23 +37,35 @@ public final class TimerTask
 
                     timer.setTime(event.getTime());
 
-                    for (TribePlayer player : Main.getPlayerManager().getPlayers())
+                    for (int i = 0; i < Main.getDelayTaskManager().getTasks().size(); i++)
                     {
-                        for (int i = 0; i < player.getDelayTaskList().size(); i++)
+                        DelayTask task = Main.getDelayTaskManager().getTasks().get(i);
+
+                        if (task.getTime() > 0)
                         {
-                            DelayTask task = player.getDelayTaskList().get(i);
+                            PluginDelayTaskTimeChangeEvent event1 = new PluginDelayTaskTimeChangeEvent(plugin, task, timer.getTime());
+                            getServer().getPluginManager().callEvent(event1);
 
-                            if (task.getTime() > 0)
+                            if (event1.isCancelled())
                             {
-                                task.setTime(task.getTime() - 1);
+                                return;
                             }
-                            else
-                            {
-                                task.run();
-                                player.removeDelayTask(task);
-                            }
+
+                            task.setTime(task.getTime() - 1);
                         }
-
+                        else
+                        {
+                            PluginDelayTaskRunEvent event1 = new PluginDelayTaskRunEvent(plugin, task, timer.getTime());
+                            getServer().getPluginManager().callEvent(event1);
+                            
+                            if(event1.isCancelled())
+                            {
+                                return;
+                            }
+                            
+                            task.run();
+                            Main.getDelayTaskManager().getTasks().remove(task);
+                        }
                     }
                 }
                 else

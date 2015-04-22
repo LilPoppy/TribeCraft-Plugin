@@ -1,7 +1,7 @@
-package com.HotFlow.TribeCraft.Player.Extension;
+package com.HotFlow.TribeCraft.Timer.Task;
 
 /**
- * @author Jerry
+ * @author HotFlow
  */
 public abstract class DelayTask
 {

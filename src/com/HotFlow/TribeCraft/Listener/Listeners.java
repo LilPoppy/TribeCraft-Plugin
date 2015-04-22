@@ -10,10 +10,10 @@ import com.HotFlow.TribeCraft.Inventory.DeathInventory;
 import com.HotFlow.TribeCraft.Inventory.Item.ArmorType;
 import com.HotFlow.TribeCraft.Main;
 import com.HotFlow.TribeCraft.Permissions.Permissions;
-import com.HotFlow.TribeCraft.Player.Extension.DelayTask;
 import com.HotFlow.TribeCraft.Player.TribePlayer;
 import com.HotFlow.TribeCraft.PortalGate.PortalGate;
 import com.HotFlow.TribeCraft.PortalGate.PortalGateType;
+import com.HotFlow.TribeCraft.Timer.Task.DelayTask;
 import com.HotFlow.TribeCraft.Utils.System.ISystem;
 import java.util.HashMap;
 import java.util.Random;
@@ -24,11 +24,13 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockDispenseEvent;
+import org.bukkit.event.block.BlockFromToEvent;
 import org.bukkit.event.block.BlockRedstoneEvent;
 import org.bukkit.event.entity.EntityPortalEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
@@ -216,7 +218,7 @@ public class Listeners implements Listener
 
         if (!event2.isCancelled())
         {
-            player.addDelayTask(new DelayTask(1, "Experience")
+            Main.getDelayTaskManager().getTasks().add(new DelayTask(1, event.getPlayer().getName() + ":Experience")
             {
                 @Override
                 public void run()
@@ -391,7 +393,7 @@ public class Listeners implements Listener
                 {
                     Main.getPermissionManager().playerAdd(event.getPlayer(), "Tribe.user.survival");
 
-                    Main.getPlayerManager().getPlayer(event.getPlayer().getUniqueId()).addDelayTask(new DelayTask(5)
+                    Main.getDelayTaskManager().getTasks().add(new DelayTask(5, event.getPlayer().getName() + ":Permission")
                     {
                         @Override
                         public void run()
@@ -419,11 +421,11 @@ public class Listeners implements Listener
 
         if ((event.getFrom().getX() != event.getTo().getX()) || (event.getFrom().getZ() != event.getTo().getZ()))
         {
-            for (DelayTask task : player.getDelayTaskList())
+            for (DelayTask task : Main.getDelayTaskManager().getTasks())
             {
                 if (task.getDescription() != null)
                 {
-                    if (task.getDescription().equalsIgnoreCase("Teleport"))
+                    if (task.getDescription().equalsIgnoreCase(event.getPlayer().getName() + ":Teleport"))
                     {
                         PlayerTeleportingMoveEvent event1 = new PlayerTeleportingMoveEvent(player);
                         getServer().getPluginManager().callEvent(event1);
@@ -433,7 +435,7 @@ public class Listeners implements Listener
                             return;
                         }
 
-                        player.removeDelayTask(task);
+                        Main.getDelayTaskManager().getTasks().remove(task);
                         player.getCraftPlayer().sendMessage(ChatColor.GOLD + "已取消传送!");
                         return;
                     }
@@ -611,8 +613,93 @@ public class Listeners implements Listener
                         return;
                     }
                 }
-                
+
                 Main.Active_RedStone_List.add(event.getBlock().getLocation());
+            }
+        }
+    }
+
+    @EventHandler
+    public void onBlockMove(BlockFromToEvent event)
+    {
+        if (event.getBlock().getType().equals(Material.WATER) || event.getBlock().getType().equals(Material.STATIONARY_WATER))
+        {
+            if (Main.getPluginConfig().getServerConfig().getHeightWaterRemoves().enable)
+            {
+                if (event.getFace().equals(BlockFace.DOWN))
+                {
+                    for (int i = 0; i < Main.Source_Height_Water.size(); i++)
+                    {
+                        Location sourceLoc = Main.Source_Height_Water.get(i);
+
+                        if (sourceLoc.getY() >= Main.getPluginConfig().getServerConfig().getHeightWaterRemoves().height)
+                        {
+                            if (sourceLoc.getX() == event.getBlock().getLocation().getX() && sourceLoc.getZ() == event.getBlock().getLocation().getZ())
+                            {
+                                if ((sourceLoc.getY() - event.getToBlock().getY()) >= Main.getPluginConfig().getServerConfig().getHeightWaterRemoves().flowRange)
+                                {
+                                    event.getBlock().getWorld().getBlockAt(sourceLoc).setType(Material.STONE);
+
+                                    for(BlockFace face : BlockFace.values())
+                                    {
+                                        if(event.getBlock().getWorld().getBlockAt(sourceLoc).getRelative(face).getType() != Material.AIR || event.getBlock().getWorld().getBlockAt(sourceLoc) != null)
+                                        {
+                                            event.getBlock().getWorld().getBlockAt(sourceLoc).setType(Material.STONE);
+                                        }
+                                    }
+                                    
+                                    Main.Source_Height_Water.remove(sourceLoc);
+                                }
+                                
+                                return;
+                            }
+                        }
+                    }
+
+                    if (event.getBlock().getY() >= Main.getPluginConfig().getServerConfig().getHeightWaterRemoves().height)
+                    {
+                        Main.Source_Height_Water.add(event.getBlock().getLocation());
+                    }
+                }
+            }
+        }
+        else if (event.getBlock().getType().equals(Material.LAVA) || event.getBlock().getType().equals(Material.STATIONARY_LAVA))
+        {
+            if (Main.getPluginConfig().getServerConfig().getHeightLavaRemoves().enable)
+            {
+                if (event.getFace().equals(BlockFace.DOWN))
+                {
+                    for (int i = 0; i < Main.Source_Height_Lava.size(); i++)
+                    {
+                        final Location sourceLoc = Main.Source_Height_Lava.get(i);
+
+                        if (sourceLoc.getY() >= Main.getPluginConfig().getServerConfig().getHeightLavaRemoves().height)
+                        {
+                            if (sourceLoc.getX() == event.getBlock().getLocation().getX() && sourceLoc.getZ() == event.getBlock().getLocation().getZ())
+                            {
+                                if ((sourceLoc.getY() - event.getToBlock().getY()) >= Main.getPluginConfig().getServerConfig().getHeightLavaRemoves().flowRange)
+                                {
+                                    event.getBlock().getWorld().getBlockAt(sourceLoc).setType(Material.STONE);
+                                    
+                                    for(BlockFace face : BlockFace.values())
+                                    {
+                                        if(event.getBlock().getWorld().getBlockAt(sourceLoc).getRelative(face).getType() != Material.AIR || event.getBlock().getWorld().getBlockAt(sourceLoc) != null)
+                                        {
+                                            event.getBlock().getWorld().getBlockAt(sourceLoc).setType(Material.STONE);
+                                        }
+                                    }
+                                }
+                                
+                                return;
+                            }
+                        }
+                    }
+
+                    if (event.getBlock().getY() >= Main.getPluginConfig().getServerConfig().getHeightLavaRemoves().height)
+                    {
+                        Main.Source_Height_Lava.add(event.getBlock().getLocation());
+                    }
+                }
             }
         }
     }

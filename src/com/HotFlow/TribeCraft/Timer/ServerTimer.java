@@ -7,12 +7,12 @@ import com.HotFlow.TribeCraft.Main;
  */
 public final class ServerTimer
 {
-    private final TimerTask task;
+    private final ServerTimerRunnable task;
     private int time;
 
     public ServerTimer()
     {
-        this.task = new TimerTask(Main.plugin, this);
+        this.task = new ServerTimerRunnable(Main.plugin, this);
         this.time = 0;
     }
 
@@ -41,7 +41,7 @@ public final class ServerTimer
      *
      * @return
      */
-    public TimerTask getTimerTask()
+    public ServerTimerRunnable getTimerTask()
     {
         return this.task;
     }

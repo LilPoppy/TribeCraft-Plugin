@@ -1,40 +1,43 @@
 package com.HotFlow.TribeCraft.Event.Plugin;
 
+import com.HotFlow.TribeCraft.Timer.Task.DelayTask;
 import org.bukkit.event.Cancellable;
 import org.bukkit.plugin.Plugin;
 
 /**
  * @author HotFlow
  */
-public class PluginTimeChangeEvent extends PluginEvent implements Cancellable
+public class PluginDelayTaskRunEvent extends PluginEvent implements Cancellable
 {
-    private int time;
+    private final DelayTask task;
+    private final int time;
     private Boolean cancelled = false;
 
-    public PluginTimeChangeEvent(Plugin plugin, int time)
+    public PluginDelayTaskRunEvent(Plugin plugin, DelayTask task, int time)
     {
         super(plugin);
+        this.task = task;
         this.time = time;
     }
 
     /**
-     * 获取时间
+     * 获取延时执行器
+     *
+     * @return
+     */
+    public DelayTask getTask()
+    {
+        return this.task;
+    }
+
+    /**
+     * 获取服务器时间
      *
      * @return
      */
     public int getTime()
     {
         return this.time;
-    }
-
-    /**
-     * 设置时间
-     *
-     * @param time
-     */
-    public void setTime(int time)
-    {
-        this.time = time;
     }
 
     public boolean isCancelled()

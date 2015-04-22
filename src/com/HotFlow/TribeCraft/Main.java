@@ -3,11 +3,13 @@ package com.HotFlow.TribeCraft;
 import com.HotFlow.TribeCraft.Configuration.PluginConfig;
 import com.HotFlow.TribeCraft.Configuration.TribeConfiguration;
 import com.HotFlow.TribeCraft.Configuration.Writter;
+import com.HotFlow.TribeCraft.Manager.DelayTaskManager;
 import com.HotFlow.TribeCraft.Manager.PlayerManager;
 import com.HotFlow.TribeCraft.Manager.PortalGateManager;
 import com.HotFlow.TribeCraft.PortalGate.PortalGate;
 import com.HotFlow.TribeCraft.PortalGate.PortalGateType;
 import com.HotFlow.TribeCraft.Timer.ServerTimer;
+import com.HotFlow.TribeCraft.Timer.Task.DelayTask;
 import com.HotFlow.TribeCraft.World.Area;
 import com.bekvon.bukkit.residence.Residence;
 import com.bekvon.bukkit.residence.protection.ResidenceManager;
@@ -23,7 +25,6 @@ import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.block.Block;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.plugin.RegisteredServiceProvider;
@@ -41,6 +42,7 @@ public class Main extends JavaPlugin
     public final static TribeConfiguration data = new TribeConfiguration();
     private static final PlayerManager playerManager = new PlayerManager();
     private static final PortalGateManager portalGateManager = new PortalGateManager();
+    private static DelayTaskManager delayTaskManager = new DelayTaskManager();
     private static PluginConfig pluginConfig;
     public static final Logger logger = Logger.getLogger("HotFlow");
     public static final String prefix = "[蛮族部落]";
@@ -51,6 +53,8 @@ public class Main extends JavaPlugin
     private static Chat chatManager;
     public static ServerTimer serverTimer;
     public static List<Location> Active_RedStone_List;
+    public static List<Location> Source_Height_Water;
+    public static List<Location> Source_Height_Lava;
 
     @Override
     public void onEnable()
@@ -105,8 +109,10 @@ public class Main extends JavaPlugin
         getCommand("Tribe").setExecutor(new com.HotFlow.TribeCraft.CommandExecutor.UserExecutor());
         getCommand("TribeAdmin").setExecutor(new com.HotFlow.TribeCraft.CommandExecutor.AdminExecutor());
         getServer().getPluginManager().registerEvents(new com.HotFlow.TribeCraft.Listener.Listeners(), this);
-        
-        this.Active_RedStone_List = new ArrayList<Location>();
+
+        Main.Active_RedStone_List = new ArrayList<Location>();
+        Main.Source_Height_Water = new ArrayList<Location>();
+        Main.Source_Height_Lava = new ArrayList<Location>();
     }
 
     @Override
@@ -137,6 +143,16 @@ public class Main extends JavaPlugin
     public static PortalGateManager getPortalGateManager()
     {
         return Main.portalGateManager;
+    }
+
+    /**
+     * 获取延时执行器管理中心
+     *
+     * @return
+     */
+    public static DelayTaskManager getDelayTaskManager()
+    {
+        return Main.delayTaskManager;
     }
 
     /**
