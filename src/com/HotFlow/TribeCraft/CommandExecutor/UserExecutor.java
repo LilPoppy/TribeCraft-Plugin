@@ -79,38 +79,37 @@ public class UserExecutor implements CommandExecutor
 
                                                 final Location location = new Location(player.getWorld(), x, (y + 1), z);
 
-                                                Block block1 = location.getBlock();
-
                                                 if (!Area.isAreaContainLocation(area, location))
                                                 {
-                                                    if (Main.getResidenceManager().getByLoc(location) == null)
+                                                    if(!Main.getPluginConfig().getCommandsInfo().getSurvival().canInResidence)
                                                     {
-                                                        if (Main.getPermissionManager().playerHas(player, "Tribe.user.survival"))
+                                                        if (Main.getResidenceManager().getByLoc(location) != null)
                                                         {
-                                                            player.sendMessage(ChatColor.GOLD + "正在传送...");
-                                                            player.teleport(location);
-                                                            return;
+                                                            break;
                                                         }
-                                                        else
-                                                        {
-                                                            player.sendMessage(ChatColor.GOLD + "传送将在" + 10 + " 秒内开始.不要移动");
+                                                    }
 
-                                                            Main.getDelayTaskManager().getTasks().add(new DelayTask(10, player.getName() + ":Teleport")
-                                                            {
-                                                                @Override
-                                                                public void run()
-                                                                {
-                                                                    tribePlayer.getCraftPlayer().sendMessage(ChatColor.GOLD + "准备传送...");
-                                                                    tribePlayer.getCraftPlayer().teleport(location);
-                                                                }
-
-                                                            });
-                                                            return;
-                                                        }
+                                                    if (Main.getPermissionManager().playerHas(player, "Tribe.user.survival"))
+                                                    {
+                                                        player.sendMessage(ChatColor.GOLD + "正在传送...");
+                                                        player.teleport(location);
+                                                        return;
                                                     }
                                                     else
                                                     {
-                                                        break;
+                                                        player.sendMessage(ChatColor.GOLD + "传送将在" + 10 + " 秒内开始.不要移动");
+
+                                                        Main.getDelayTaskManager().getTasks().add(new DelayTask(10, player.getName() + ":Teleport")
+                                                        {
+                                                            @Override
+                                                            public void run()
+                                                            {
+                                                                tribePlayer.getCraftPlayer().sendMessage(ChatColor.GOLD + "准备传送...");
+                                                                tribePlayer.getCraftPlayer().teleport(location);
+                                                            }
+
+                                                        });
+                                                        return;
                                                     }
                                                 }
                                                 else
