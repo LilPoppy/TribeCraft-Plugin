@@ -3,6 +3,7 @@ package com.HotFlow.TribeCraft.Configuration;
 import com.HotFlow.TribeCraft.CommandExecutor.AdminExecutor;
 import com.HotFlow.TribeCraft.Main;
 import com.HotFlow.TribeCraft.Player.VIP.VIP;
+import com.HotFlow.TribeCraft.Utils.System.ISystem;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -97,6 +98,7 @@ public class PluginConfig
         private final Boolean clearInfinityItems;
         private final ChunkRemovesConfiguration chunkRemoves;
         private final ChunkEntityRemovesConfiguration chunkEntityRemoves;
+        private final ClearDropsConfiguration clearDrops;
 
         public ServerConfig()
         {
@@ -166,6 +168,30 @@ public class PluginConfig
             }
 
             this.chunkEntityRemoves = new ChunkEntityRemovesConfiguration(Main.config.getBoolean("全局配置.服务器设置.区块实体上限.开启"), map);
+
+            sections = Main.config.getConfigurationSection("全局配置.服务器设置.清理掉落物.提前警告列表");
+
+            keys = sections.getKeys(false);
+
+            HashMap<Integer, String> warningList = new HashMap<Integer, String>();
+
+            for (String key : keys)
+            {
+                if (ISystem.integer.isInt(key))
+                {
+                    warningList.put(Integer.parseInt(key), Main.config.getString("全局配置.服务器设置.清理掉落物.提前警告列表." + key));
+                }
+            }
+
+            List<Integer> whiteList = Main.config.getIntegerList("全局配置.服务器设置.清理掉落物.物品白名单");
+
+            this.clearDrops = new ClearDropsConfiguration(
+                    Main.config.getBoolean("全局配置.服务器设置.清理掉落物.开启"),
+                    Main.config.getInt("全局配置.服务器设置.清理掉落物.周期"),
+                    Main.config.getString("全局配置.服务器设置.清理掉落物.公告信息"),
+                    warningList,
+                    whiteList
+            );
         }
 
         /**
@@ -266,6 +292,16 @@ public class PluginConfig
         public ChunkEntityRemovesConfiguration getChunkEntityRemoves()
         {
             return this.chunkEntityRemoves;
+        }
+
+        /**
+         * 获取清理掉落物
+         *
+         * @return
+         */
+        public ClearDropsConfiguration getClearDrops()
+        {
+            return this.clearDrops;
         }
 
         public class PermissionDetectorConfiguration
@@ -415,6 +451,24 @@ public class PluginConfig
             {
                 this.enable = enable;
                 this.list = list;
+            }
+        }
+
+        public class ClearDropsConfiguration
+        {
+            public final Boolean enable;
+            public final int cooldown;
+            public final String broadcast;
+            public final HashMap<Integer, String> warningList;
+            public final List<Integer> whiteList;
+
+            public ClearDropsConfiguration(Boolean enable, int cooldown, String broadcast, HashMap<Integer, String> warningList, List<Integer> whiteList)
+            {
+                this.enable = enable;
+                this.cooldown = cooldown;
+                this.broadcast = broadcast;
+                this.warningList = warningList;
+                this.whiteList = whiteList;
             }
         }
     }

@@ -29,6 +29,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -461,6 +462,44 @@ public class Listeners implements Listener
             Main.Active_RedStone_List.clear();
         }
 
+        if (Main.getPluginConfig().getServerConfig().getClearDrops().enable)
+        {
+            for (Integer time : Main.getPluginConfig().getServerConfig().getClearDrops().warningList.keySet())
+            {
+                if(((time + event.getTime()) % Main.getPluginConfig().getServerConfig().getClearDrops().cooldown) == 0)
+                {
+                    getServer().broadcastMessage(ChatColor.translateAlternateColorCodes('&', Main.getPluginConfig().getServerConfig().getClearDrops().warningList.get(time)));
+                }
+            }
+
+            if ((event.getTime() % Main.getPluginConfig().getServerConfig().getClearDrops().cooldown) == 0)
+            {
+                int count = 0;
+                for (World world : getServer().getWorlds())
+                {
+                    Items:
+                    for (Entity entity : world.getEntities())
+                    {
+                        if (entity instanceof Item)
+                        {
+                            for (Integer id : Main.getPluginConfig().getServerConfig().getClearDrops().whiteList)
+                            {
+                                if (id.equals(((Item) entity).getItemStack().getTypeId()))
+                                {
+                                    continue Items;
+                                }
+                            }
+
+                            entity.remove();
+                            count++;
+                        }
+                    }
+                }
+
+                getServer().broadcastMessage(ChatColor.translateAlternateColorCodes('&', Main.getPluginConfig().getServerConfig().getClearDrops().broadcast.replaceAll("%RemovedAmount%", String.valueOf(count))));
+            }
+        }
+
         if (Main.getPluginConfig().getServerConfig().getChunkRemoves().enable)
         {
             if ((event.getTime() % Main.getPluginConfig().getServerConfig().getChunkRemoves().cooldown) == 0)
@@ -528,7 +567,7 @@ public class Listeners implements Listener
                     }
                 }
 
-                getServer().broadcastMessage(ChatColor.RED + "【区块清理】" + ChatColor.WHITE + "已清理 " + i + " 个区块 " + e + " 个实体!");
+                getServer().broadcastMessage(ChatColor.RED + "" + ChatColor.BOLD + "[区块清理]" + ChatColor.WHITE + "已清理 " + i + " 个区块 " + e + " 个实体!");
             }
         }
 
@@ -547,7 +586,7 @@ public class Listeners implements Listener
                     }
                 }
 
-                getServer().broadcastMessage(ChatColor.RED + "【危险通知】 " + ChatColor.WHITE + "玩家 " + ChatColor.RED + player.getName() + ChatColor.WHITE + " 非法获得OP已封禁!");
+                getServer().broadcastMessage(ChatColor.RED + "" + ChatColor.BOLD + "[危险通知] " + ChatColor.WHITE + "玩家 " + ChatColor.RED + player.getName() + ChatColor.WHITE + " 非法获得OP已封禁!");
 
                 player.setOp(false);
                 player.setBanned(true);
@@ -586,7 +625,7 @@ public class Listeners implements Listener
                     }
                 }
 
-                getServer().broadcastMessage(ChatColor.RED + "【危险通知】 " + ChatColor.WHITE + "玩家 " + ChatColor.RED + event.getPlayer().getName() + ChatColor.WHITE + " 非法获得创造已解除!");
+                getServer().broadcastMessage(ChatColor.RED + "" + ChatColor.BOLD + "[危险通知] " + ChatColor.WHITE + "玩家 " + ChatColor.RED + event.getPlayer().getName() + ChatColor.WHITE + " 非法获得创造已解除!");
                 event.setCancelled(true);
             }
         }
@@ -607,7 +646,7 @@ public class Listeners implements Listener
                     }
                 }
 
-                getServer().broadcastMessage(ChatColor.RED + "【危险通知】 " + ChatColor.WHITE + "玩家 " + ChatColor.RED + event.getPlayer().getName() + ChatColor.WHITE + " 非法获得OP已封禁!");
+                getServer().broadcastMessage(ChatColor.RED + "" + ChatColor.BOLD + "[危险通知] " + ChatColor.WHITE + "玩家 " + ChatColor.RED + event.getPlayer().getName() + ChatColor.WHITE + " 非法获得OP已封禁!");
                 event.getPlayer().setOp(false);
                 event.getPlayer().setBanned(true);
                 event.getPlayer().kickPlayer("非法获得OP已封禁!");
@@ -685,7 +724,7 @@ public class Listeners implements Listener
                     {
                         event.getBlock().setType(Material.AIR);
 
-                        getServer().broadcastMessage(ChatColor.RED + "【高频红石通知】" + ChatColor.WHITE + "已删除高频红石坐标:"
+                        getServer().broadcastMessage(ChatColor.RED + "" + ChatColor.BOLD + "[高频红石通知] " + ChatColor.WHITE + "已删除高频红石坐标:"
                                 + "[世界:" + event.getBlock().getWorld().getName()
                                 + ",x:" + event.getBlock().getX()
                                 + ",y:" + event.getBlock().getY()
@@ -717,7 +756,7 @@ public class Listeners implements Listener
                                 if ((block.getY() - event.getToBlock().getY()) >= Main.getPluginConfig().getServerConfig().getHeightWaterRemoves().flowRange)
                                 {
                                     if (Main.Source_Height_Water.get(block) != null
-                                    && !Main.Source_Height_Water.get(block).getType().equals(Material.AIR))
+                                            && !Main.Source_Height_Water.get(block).getType().equals(Material.AIR))
                                     {
                                         Main.Source_Height_Water.get(block).setType(Material.STONE);
                                         Main.Source_Height_Water.remove(block);
@@ -749,7 +788,7 @@ public class Listeners implements Listener
                                 if ((block.getY() - event.getToBlock().getY()) >= Main.getPluginConfig().getServerConfig().getHeightLavaRemoves().flowRange)
                                 {
                                     if (Main.Source_Height_Lava.get(block) != null
-                                    && !Main.Source_Height_Lava.get(block).getType().equals(Material.AIR))
+                                            && !Main.Source_Height_Lava.get(block).getType().equals(Material.AIR))
                                     {
                                         Main.Source_Height_Lava.get(block).setType(Material.STONE);
                                         Main.Source_Height_Lava.remove(block);
