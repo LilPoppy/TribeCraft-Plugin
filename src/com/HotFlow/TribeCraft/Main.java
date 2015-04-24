@@ -15,6 +15,7 @@ import com.bekvon.bukkit.residence.protection.ResidenceManager;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
@@ -24,6 +25,8 @@ import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.plugin.RegisteredServiceProvider;
@@ -41,7 +44,7 @@ public class Main extends JavaPlugin
     public final static TribeConfiguration data = new TribeConfiguration();
     private static final PlayerManager playerManager = new PlayerManager();
     private static final PortalGateManager portalGateManager = new PortalGateManager();
-    private static DelayTaskManager delayTaskManager = new DelayTaskManager();
+    private static final DelayTaskManager delayTaskManager = new DelayTaskManager();
     private static PluginConfig pluginConfig;
     public static final Logger logger = Logger.getLogger("HotFlow");
     public static final String prefix = "[Âù×å²¿Âä]";
@@ -52,8 +55,8 @@ public class Main extends JavaPlugin
     private static Chat chatManager;
     public static ServerTimer serverTimer;
     public static List<Location> Active_RedStone_List;
-    public static List<Location> Source_Height_Water;
-    public static List<Location> Source_Height_Lava;
+    public static final HashMap<Block, Block> Source_Height_Water = new HashMap<Block, Block>();
+    public static final HashMap<Block, Block> Source_Height_Lava = new HashMap<Block, Block>();
 
     @Override
     public void onEnable()
@@ -110,8 +113,6 @@ public class Main extends JavaPlugin
         getServer().getPluginManager().registerEvents(new com.HotFlow.TribeCraft.Listener.Listeners(), this);
 
         Main.Active_RedStone_List = new ArrayList<Location>();
-        Main.Source_Height_Water = new ArrayList<Location>();
-        Main.Source_Height_Lava = new ArrayList<Location>();
     }
 
     @Override

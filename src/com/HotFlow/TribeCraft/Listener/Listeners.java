@@ -29,7 +29,6 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Horse;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -473,16 +472,16 @@ public class Listeners implements Listener
                     Chunks:
                     for (Chunk chunk : world.getLoadedChunks())
                     {
-                        if(Main.getPluginConfig().getServerConfig().getChunkEntityRemoves().enable)
+                        if (Main.getPluginConfig().getServerConfig().getChunkEntityRemoves().enable)
                         {
-                            HashMap<EntityType,Integer> map = new HashMap<EntityType,Integer>();
+                            HashMap<EntityType, Integer> map = new HashMap<EntityType, Integer>();
 
-                            for(EntityType type : Main.getPluginConfig().getServerConfig().getChunkEntityRemoves().list.keySet())
+                            for (EntityType type : Main.getPluginConfig().getServerConfig().getChunkEntityRemoves().list.keySet())
                             {
                                 int num = 0;
                                 for (Entity entity : chunk.getEntities())
                                 {
-                                    if(entity.getType().equals(type))
+                                    if (entity.getType().equals(type))
                                     {
                                         num++;
                                     }
@@ -490,17 +489,17 @@ public class Listeners implements Listener
                                 map.put(type, num);
                             }
 
-                            for(EntityType type : map.keySet())
+                            for (EntityType type : map.keySet())
                             {
                                 int num = map.get(type) - Main.getPluginConfig().getServerConfig().getChunkEntityRemoves().list.get(type);
-                                
-                                if(num > 0)
+
+                                if (num > 0)
                                 {
-                                    for(Entity entity : chunk.getEntities())
+                                    for (Entity entity : chunk.getEntities())
                                     {
-                                        if(num > 0)
+                                        if (num > 0)
                                         {
-                                            if(entity.getType().equals(type))
+                                            if (entity.getType().equals(type))
                                             {
                                                 e++;
                                                 entity.remove();
@@ -515,7 +514,7 @@ public class Listeners implements Listener
                                 }
                             }
                         }
-                        
+
                         for (Entity entity : chunk.getEntities())
                         {
                             if (entity.getType().equals(EntityType.PLAYER))
@@ -523,12 +522,12 @@ public class Listeners implements Listener
                                 continue Chunks;
                             }
                         }
-                        
+
                         chunk.unload(true, true);
                         i++;
                     }
                 }
-                
+
                 getServer().broadcastMessage(ChatColor.RED + "【区块清理】" + ChatColor.WHITE + "已清理 " + i + " 个区块 " + e + " 个实体!");
             }
         }
@@ -709,38 +708,29 @@ public class Listeners implements Listener
             {
                 if (event.getFace().equals(BlockFace.DOWN))
                 {
-                    for (int i = 0; i < Main.Source_Height_Water.size(); i++)
+                    for (Block block : Main.Source_Height_Water.keySet())
                     {
-                        Location sourceLoc = Main.Source_Height_Water.get(i);
-
-                        if (sourceLoc.getY() >= Main.getPluginConfig().getServerConfig().getHeightWaterRemoves().height)
+                        if (block.getY() >= Main.getPluginConfig().getServerConfig().getHeightWaterRemoves().height)
                         {
-                            if (sourceLoc.getX() == event.getBlock().getLocation().getX() && sourceLoc.getZ() == event.getBlock().getLocation().getZ())
+                            if (block.getX() == event.getBlock().getLocation().getX() && block.getZ() == event.getBlock().getLocation().getZ())
                             {
-                                if ((sourceLoc.getY() - event.getToBlock().getY()) >= Main.getPluginConfig().getServerConfig().getHeightWaterRemoves().flowRange)
+                                if ((block.getY() - event.getToBlock().getY()) >= Main.getPluginConfig().getServerConfig().getHeightWaterRemoves().flowRange)
                                 {
-                                    event.getBlock().getWorld().getBlockAt(sourceLoc).setType(Material.STONE);
-
-                                    for (BlockFace face : BlockFace.values())
+                                    if (Main.Source_Height_Water.get(block) != null
+                                    && !Main.Source_Height_Water.get(block).getType().equals(Material.AIR))
                                     {
-                                        if (event.getBlock().getWorld().getBlockAt(sourceLoc).getRelative(face).getType() != Material.AIR || event.getBlock().getWorld().getBlockAt(sourceLoc) != null)
-                                        {
-                                            event.getBlock().getWorld().getBlockAt(sourceLoc).setType(Material.STONE);
-                                        }
+                                        Main.Source_Height_Water.get(block).setType(Material.STONE);
+                                        Main.Source_Height_Water.remove(block);
+                                        return;
                                     }
-
-                                    Main.Source_Height_Water.remove(sourceLoc);
                                 }
-
-                                return;
                             }
                         }
                     }
-
-                    if (event.getBlock().getY() >= Main.getPluginConfig().getServerConfig().getHeightWaterRemoves().height)
-                    {
-                        Main.Source_Height_Water.add(event.getBlock().getLocation());
-                    }
+                }
+                else
+                {
+                    Main.Source_Height_Water.put(event.getToBlock(), event.getBlock());
                 }
             }
         }
@@ -750,36 +740,29 @@ public class Listeners implements Listener
             {
                 if (event.getFace().equals(BlockFace.DOWN))
                 {
-                    for (int i = 0; i < Main.Source_Height_Lava.size(); i++)
+                    for (Block block : Main.Source_Height_Lava.keySet())
                     {
-                        final Location sourceLoc = Main.Source_Height_Lava.get(i);
-
-                        if (sourceLoc.getY() >= Main.getPluginConfig().getServerConfig().getHeightLavaRemoves().height)
+                        if (block.getY() >= Main.getPluginConfig().getServerConfig().getHeightLavaRemoves().height)
                         {
-                            if (sourceLoc.getX() == event.getBlock().getLocation().getX() && sourceLoc.getZ() == event.getBlock().getLocation().getZ())
+                            if (block.getX() == event.getBlock().getLocation().getX() && block.getZ() == event.getBlock().getLocation().getZ())
                             {
-                                if ((sourceLoc.getY() - event.getToBlock().getY()) >= Main.getPluginConfig().getServerConfig().getHeightLavaRemoves().flowRange)
+                                if ((block.getY() - event.getToBlock().getY()) >= Main.getPluginConfig().getServerConfig().getHeightLavaRemoves().flowRange)
                                 {
-                                    event.getBlock().getWorld().getBlockAt(sourceLoc).setType(Material.STONE);
-
-                                    for (BlockFace face : BlockFace.values())
+                                    if (Main.Source_Height_Lava.get(block) != null
+                                    && !Main.Source_Height_Lava.get(block).getType().equals(Material.AIR))
                                     {
-                                        if (event.getBlock().getWorld().getBlockAt(sourceLoc).getRelative(face).getType() != Material.AIR || event.getBlock().getWorld().getBlockAt(sourceLoc) != null)
-                                        {
-                                            event.getBlock().getWorld().getBlockAt(sourceLoc).setType(Material.STONE);
-                                        }
+                                        Main.Source_Height_Lava.get(block).setType(Material.STONE);
+                                        Main.Source_Height_Lava.remove(block);
+                                        return;
                                     }
                                 }
-
-                                return;
                             }
                         }
                     }
-
-                    if (event.getBlock().getY() >= Main.getPluginConfig().getServerConfig().getHeightLavaRemoves().height)
-                    {
-                        Main.Source_Height_Lava.add(event.getBlock().getLocation());
-                    }
+                }
+                else
+                {
+                    Main.Source_Height_Lava.put(event.getToBlock(), event.getBlock());
                 }
             }
         }
