@@ -17,7 +17,7 @@ public class Area
     }
 
     /**
-     * »ñÈ¡×ø±êµã1
+     * èŽ·å–åæ ‡ç‚¹1
      *
      * @return
      */
@@ -27,7 +27,7 @@ public class Area
     }
 
     /**
-     * »ñÈ¡×ø±êµã2
+     * èŽ·å–åæ ‡ç‚¹2
      *
      * @return
      */
@@ -37,25 +37,24 @@ public class Area
     }
 
     /**
-     * ÇøÓòÊÇ·ñÓëÇøÓòÖØµþ
+     * åŒºåŸŸæ˜¯å¦ä¸ŽåŒºåŸŸé‡å 
      *
-     * @param area1
-     * @param area2
+     * @param area
      * @return
      */
-    public static Boolean isAreaOverlappingArea(Area area1, Area area2)
+    public static Boolean isOverlappingArea(Area area)
     {
-        if (area1.getLocation1().getWorld().getName() == null ? area2.getLocation1().getWorld().getName() == null : area1.getLocation1().getWorld().getName().equals(area2.getLocation1().getWorld().getName())
-                && area1.getLocation2().getWorld().getName() == null ? area2.getLocation1().getWorld().getName() == null : area1.getLocation2().getWorld().getName().equals(area2.getLocation1().getWorld().getName()))
+        if (this.getLocation1().getWorld().getName() == null ? area.getLocation1().getWorld().getName() == null : this.getLocation1().getWorld().getName().equals(area.getLocation1().getWorld().getName())
+                && this.getLocation2().getWorld().getName() == null ? area.getLocation1().getWorld().getName() == null : this.getLocation2().getWorld().getName().equals(area.getLocation1().getWorld().getName()))
         {
-            if ((area1.getLocation1().getBlockX() >= area2.getLocation1().getBlockX() && area1.getLocation1().getBlockX() <= area2.getLocation2().getBlockX()) || (area1.getLocation1().getBlockX() <= area2.getLocation1().getBlockX() && area1.getLocation1().getBlockX() >= area2.getLocation2().getBlockX())
-                    || (area1.getLocation2().getBlockX() >= area2.getLocation1().getBlockX() && area1.getLocation2().getBlockX() <= area2.getLocation2().getBlockX()) || (area1.getLocation2().getBlockX() <= area2.getLocation1().getBlockX() && area1.getLocation2().getBlockX() >= area2.getLocation2().getBlockX()))
+            if ((this.getLocation1().getBlockX() >= area.getLocation1().getBlockX() && this.getLocation1().getBlockX() <= area.getLocation2().getBlockX()) || (this.getLocation1().getBlockX() <= area.getLocation1().getBlockX() && this.getLocation1().getBlockX() >= area.getLocation2().getBlockX())
+                    || (this.getLocation2().getBlockX() >= area.getLocation1().getBlockX() && this.getLocation2().getBlockX() <= area.getLocation2().getBlockX()) || (this.getLocation2().getBlockX() <= area.getLocation1().getBlockX() && this.getLocation2().getBlockX() >= area.getLocation2().getBlockX()))
             {
-                if ((area1.getLocation1().getBlockZ() >= area2.getLocation1().getBlockZ() && area1.getLocation1().getBlockZ() <= area2.getLocation2().getBlockZ()) || (area1.getLocation1().getBlockZ() <= area2.getLocation1().getBlockZ() && area1.getLocation1().getBlockZ() >= area2.getLocation2().getBlockZ())
-                        || (area1.getLocation2().getBlockZ() >= area2.getLocation1().getBlockZ() && area1.getLocation2().getBlockZ() <= area2.getLocation2().getBlockZ()) || (area1.getLocation2().getBlockZ() <= area2.getLocation1().getBlockZ() && area1.getLocation2().getBlockZ() >= area2.getLocation2().getBlockZ()))
+                if ((this.getLocation1().getBlockZ() >= area.getLocation1().getBlockZ() && this.getLocation1().getBlockZ() <= area.getLocation2().getBlockZ()) || (this.getLocation1().getBlockZ() <= area.getLocation1().getBlockZ() && this.getLocation1().getBlockZ() >= area.getLocation2().getBlockZ())
+                        || (this.getLocation2().getBlockZ() >= area.getLocation1().getBlockZ() && this.getLocation2().getBlockZ() <= area.getLocation2().getBlockZ()) || (this.getLocation2().getBlockZ() <= area.getLocation1().getBlockZ() && this.getLocation2().getBlockZ() >= area.getLocation2().getBlockZ()))
                 {
-                    if ((area1.getLocation1().getBlockY() >= area2.getLocation1().getBlockY() && area1.getLocation1().getBlockY() <= area2.getLocation2().getBlockY()) || (area1.getLocation1().getBlockY() <= area2.getLocation1().getBlockY() && area1.getLocation1().getBlockY() >= area2.getLocation2().getBlockY())
-                            || (area1.getLocation2().getBlockY() >= area2.getLocation1().getBlockY() && area1.getLocation2().getBlockY() <= area2.getLocation2().getBlockY()) || (area1.getLocation2().getBlockY() <= area2.getLocation1().getBlockY() && area1.getLocation2().getBlockY() >= area2.getLocation2().getBlockY()))
+                    if ((this.getLocation1().getBlockY() >= area.getLocation1().getBlockY() && this.getLocation1().getBlockY() <= area.getLocation2().getBlockY()) || (this.getLocation1().getBlockY() <= area.getLocation1().getBlockY() && this.getLocation1().getBlockY() >= area.getLocation2().getBlockY())
+                            || (this.getLocation2().getBlockY() >= area.getLocation1().getBlockY() && this.getLocation2().getBlockY() <= area.getLocation2().getBlockY()) || (this.getLocation2().getBlockY() <= area.getLocation1().getBlockY() && this.getLocation2().getBlockY() >= area.getLocation2().getBlockY()))
                     {
                         return true;
                     }
@@ -67,21 +66,20 @@ public class Area
     }
 
     /**
-     * ÇøÓòÊÇ·ñ°üº¬×ø±ê
+     * åŒºåŸŸæ˜¯å¦åŒ…å«åæ ‡
      *
-     * @param area
      * @param location
      * @return
      */
-    public static Boolean isAreaContainLocation(Area area, Location location)
+    public static Boolean isContainLocation(Location location)
     {
-        if (location.getWorld().getName() == null ? area.getLocation1().getWorld().getName() == null : location.getWorld().getName().equals(area.getLocation1().getWorld().getName()))
+        if (location.getWorld().getName() == null ? this.getLocation1().getWorld().getName() == null : location.getWorld().getName().equals(this.getLocation1().getWorld().getName()))
         {
-            if ((location.getBlockX() >= area.getLocation1().getBlockX() && location.getBlockX() <= area.getLocation2().getBlockX()) || (location.getBlockX() <= area.getLocation1().getBlockX() && location.getBlockX() >= area.getLocation2().getBlockX()))
+            if ((location.getBlockX() >= this.getLocation1().getBlockX() && location.getBlockX() <= this.getLocation2().getBlockX()) || (location.getBlockX() <= this.getLocation1().getBlockX() && location.getBlockX() >= this.getLocation2().getBlockX()))
             {
-                if ((location.getBlockZ() >= area.getLocation1().getBlockZ() && location.getBlockZ() <= area.getLocation2().getBlockZ()) || (location.getBlockZ() <= area.getLocation1().getBlockZ() && location.getBlockZ() >= area.getLocation2().getBlockZ()))
+                if ((location.getBlockZ() >= this.getLocation1().getBlockZ() && location.getBlockZ() <= this.getLocation2().getBlockZ()) || (location.getBlockZ() <= this.getLocation1().getBlockZ() && location.getBlockZ() >= this.getLocation2().getBlockZ()))
                 {
-                    if ((location.getBlockY() >= area.getLocation1().getBlockY() && location.getBlockY() <= area.getLocation2().getBlockY()) || (location.getBlockY() <= area.getLocation1().getBlockY() && location.getBlockY() >= area.getLocation2().getBlockY()))
+                    if ((location.getBlockY() >= this.getLocation1().getBlockY() && location.getBlockY() <= this.getLocation2().getBlockY()) || (location.getBlockY() <= this.getLocation1().getBlockY() && location.getBlockY() >= this.getLocation2().getBlockY()))
                     {
                         return true;
                     }
